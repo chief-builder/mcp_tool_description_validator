@@ -3,9 +3,14 @@
  *
  * A governance validator for Model Context Protocol (MCP) tool definitions
  * that ensures quality, security, and LLM-compatibility.
+ *
+ * @packageDocumentation
  */
 
-// Export all types
+// ============================================================================
+// Types
+// ============================================================================
+
 export type {
   JSONSchema,
   ToolDefinition,
@@ -24,5 +29,52 @@ export type {
   LLMConfig,
 } from './types/index.js';
 
-// Placeholder exports for future implementation
-// export { validate, validateFile, validateServer } from './core/validator.js';
+// ============================================================================
+// Core validation functions
+// ============================================================================
+
+export {
+  validate,
+  validateFile,
+  validateServer,
+  type ValidateOptions,
+} from './core/validator.js';
+
+// ============================================================================
+// Configuration
+// ============================================================================
+
+export {
+  loadConfig,
+  mergeConfig,
+  getDefaultConfig,
+} from './core/config.js';
+
+// ============================================================================
+// Reporters
+// ============================================================================
+
+export {
+  formatHumanOutput,
+  formatJsonOutput,
+  formatSarifOutput,
+} from './reporters/index.js';
+
+// ============================================================================
+// Parsers (for advanced use)
+// ============================================================================
+
+export { parseFile } from './parsers/file.js';
+
+export {
+  connectToServer,
+  getToolDefinitions,
+  disconnect,
+  fetchToolsFromServer,
+} from './parsers/mcp-client.js';
+
+// ============================================================================
+// Rule types (for custom rules in future)
+// ============================================================================
+
+export type { Rule, RuleContext } from './rules/types.js';
