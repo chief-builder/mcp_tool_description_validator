@@ -5,13 +5,13 @@
     "validTools": 0,
     "issuesByCategory": {
       "schema": 0,
-      "security": 2,
+      "security": 1,
       "llm-compatibility": 5,
       "naming": 1,
       "best-practice": 3
     },
     "issuesBySeverity": {
-      "error": 2,
+      "error": 1,
       "warning": 2,
       "suggestion": 7
     }
@@ -25,15 +25,6 @@
       "tool": "sequentialthinking",
       "path": "name",
       "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
-    },
-    {
-      "id": "SEC-001",
-      "category": "security",
-      "severity": "error",
-      "message": "String parameter 'thought' is missing maxLength constraint",
-      "tool": "sequentialthinking",
-      "path": "inputSchema.properties.thought",
-      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
     },
     {
       "id": "SEC-001",
@@ -292,15 +283,6 @@
           "id": "SEC-001",
           "category": "security",
           "severity": "error",
-          "message": "String parameter 'thought' is missing maxLength constraint",
-          "tool": "sequentialthinking",
-          "path": "inputSchema.properties.thought",
-          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
-        },
-        {
-          "id": "SEC-001",
-          "category": "security",
-          "severity": "error",
           "message": "String parameter 'branchId' is missing maxLength constraint",
           "tool": "sequentialthinking",
           "path": "inputSchema.properties.branchId",
@@ -381,8 +363,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-08T03:33:29.659Z",
-    "duration": 4,
+    "timestamp": "2026-01-08T03:41:36.035Z",
+    "duration": 5,
     "configUsed": "",
     "llmAnalysisUsed": false
   }

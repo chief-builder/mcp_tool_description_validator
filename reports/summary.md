@@ -1,6 +1,6 @@
 # MCP Tool Definition Validator - Official Server Test Results
 
-Generated: 2026-01-08T03:33:29.660Z
+Generated: 2026-01-08T03:41:36.037Z
 
 ## Summary
 
@@ -10,7 +10,7 @@ Generated: 2026-01-08T03:33:29.660Z
 | Successful | 4 |
 | Failed | 0 |
 | Total Tools | 35 |
-| Total Errors | 99 |
+| Total Errors | 93 |
 | Total Warnings | 55 |
 | Total Suggestions | 143 |
 
@@ -25,7 +25,7 @@ Generated: 2026-01-08T03:33:29.660Z
 | Status | ✅ Success |
 | Tools | 14 |
 | Valid | No |
-| Errors | 63 |
+| Errors | 61 |
 | Warnings | 15 |
 | Suggestions | 38 |
 
@@ -59,7 +59,7 @@ Generated: 2026-01-08T03:33:29.660Z
 - `NAM-002`: 14 occurrence(s)
 - `NAM-005`: 2 occurrence(s)
 - `SCH-006`: 1 occurrence(s)
-- `SEC-001`: 16 occurrence(s)
+- `SEC-001`: 14 occurrence(s)
 - `SEC-002`: 4 occurrence(s)
 - `SEC-003`: 4 occurrence(s)
 - `SEC-004`: 11 occurrence(s)
@@ -73,7 +73,7 @@ Generated: 2026-01-08T03:33:29.660Z
 | Status | ✅ Success |
 | Tools | 9 |
 | Valid | No |
-| Errors | 21 |
+| Errors | 20 |
 | Warnings | 11 |
 | Suggestions | 49 |
 
@@ -100,7 +100,6 @@ Generated: 2026-01-08T03:33:29.660Z
 - `NAM-002`: 9 occurrence(s)
 - `NAM-005`: 1 occurrence(s)
 - `SCH-006`: 1 occurrence(s)
-- `SEC-001`: 1 occurrence(s)
 - `SEC-002`: 7 occurrence(s)
 - `SEC-006`: 1 occurrence(s)
 - `SEC-010`: 1 occurrence(s)
@@ -114,12 +113,12 @@ Generated: 2026-01-08T03:33:29.660Z
 | Status | ✅ Success |
 | Tools | 11 |
 | Valid | No |
-| Errors | 13 |
+| Errors | 11 |
 | Warnings | 27 |
 | Suggestions | 49 |
 
 **Tools:**
-- ❌ `echo`
+- ✅ `echo`
 - ✅ `add`
 - ❌ `longRunningOperation`
 - ❌ `printEnv`
@@ -147,7 +146,7 @@ Generated: 2026-01-08T03:33:29.660Z
 - `NAM-005`: 7 occurrence(s)
 - `SCH-006`: 2 occurrence(s)
 - `SCH-007`: 2 occurrence(s)
-- `SEC-001`: 4 occurrence(s)
+- `SEC-001`: 2 occurrence(s)
 - `SEC-003`: 5 occurrence(s)
 - `SEC-007`: 1 occurrence(s)
 - `SEC-008`: 1 occurrence(s)
@@ -161,7 +160,7 @@ Generated: 2026-01-08T03:33:29.660Z
 | Status | ✅ Success |
 | Tools | 1 |
 | Valid | No |
-| Errors | 2 |
+| Errors | 1 |
 | Warnings | 2 |
 | Suggestions | 7 |
 
@@ -175,17 +174,17 @@ Generated: 2026-01-08T03:33:29.660Z
 - `LLM-002`: 1 occurrence(s)
 - `LLM-009`: 4 occurrence(s)
 - `NAM-005`: 1 occurrence(s)
-- `SEC-001`: 2 occurrence(s)
+- `SEC-001`: 1 occurrence(s)
 
 ## Common Issues Across Servers
 
 | Rule | Occurrences | Servers |
 |------|-------------|--------|
-| `SEC-001` | 4 | filesystem, memory, everything, sequential-thinking |
 | `BP-001` | 4 | filesystem, memory, everything, sequential-thinking |
 | `BP-004` | 4 | filesystem, memory, everything, sequential-thinking |
 | `NAM-005` | 4 | filesystem, memory, everything, sequential-thinking |
 | `NAM-002` | 3 | filesystem, memory, everything |
+| `SEC-001` | 3 | filesystem, everything, sequential-thinking |
 | `LLM-004` | 3 | filesystem, memory, everything |
 | `LLM-005` | 3 | filesystem, memory, everything |
 | `BP-008` | 3 | filesystem, memory, everything |

@@ -5,13 +5,13 @@
     "validTools": 0,
     "issuesByCategory": {
       "schema": 1,
-      "security": 10,
+      "security": 9,
       "llm-compatibility": 20,
       "naming": 10,
       "best-practice": 40
     },
     "issuesBySeverity": {
-      "error": 21,
+      "error": 20,
       "warning": 11,
       "suggestion": 49
     }
@@ -575,15 +575,6 @@
       "tool": "search_nodes",
       "path": "name",
       "suggestion": "Use kebab-case format: \"search-nodes\""
-    },
-    {
-      "id": "SEC-001",
-      "category": "security",
-      "severity": "error",
-      "message": "String parameter 'query' is missing maxLength constraint",
-      "tool": "search_nodes",
-      "path": "inputSchema.properties.query",
-      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
     },
     {
       "id": "SEC-006",
@@ -2148,15 +2139,6 @@
           "suggestion": "Use kebab-case format: \"search-nodes\""
         },
         {
-          "id": "SEC-001",
-          "category": "security",
-          "severity": "error",
-          "message": "String parameter 'query' is missing maxLength constraint",
-          "tool": "search_nodes",
-          "path": "inputSchema.properties.query",
-          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
-        },
-        {
           "id": "SEC-006",
           "category": "security",
           "severity": "warning",
@@ -2411,8 +2393,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-08T03:33:26.705Z",
-    "duration": 9,
+    "timestamp": "2026-01-08T03:41:33.388Z",
+    "duration": 8,
     "configUsed": "",
     "llmAnalysisUsed": false
   }

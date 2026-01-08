@@ -87,10 +87,51 @@ describe('SEC-001: String parameters must have maxLength constraint', () => {
 
     it('should provide helpful suggestion', () => {
       const tool = createTool({
-        query: { type: 'string' },
+        userId: { type: 'string' },
       });
       const issues = rule.check(tool, createContext());
       expect(issues[0].suggestion).toContain('maxLength');
+    });
+  });
+
+  describe('content field exceptions', () => {
+    it('should pass for content field names', () => {
+      const tool = createTool({
+        content: { type: 'string' },
+        message: { type: 'string' },
+        prompt: { type: 'string' },
+        thought: { type: 'string' },
+        body: { type: 'string' },
+        text: { type: 'string' },
+        query: { type: 'string' },
+        data: { type: 'string' },
+        code: { type: 'string' },
+      });
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(0);
+    });
+
+    it('should pass for fields ending with content suffixes', () => {
+      const tool = createTool({
+        fileContent: { type: 'string' },
+        requestBody: { type: 'string' },
+        plainText: { type: 'string' },
+        jsonData: { type: 'string' },
+      });
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(0);
+    });
+
+    it('should still fail for non-content string fields', () => {
+      const tool = createTool({
+        content: { type: 'string' }, // exempt
+        userId: { type: 'string' }, // should fail
+        path: { type: 'string' }, // should fail
+      });
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(2);
+      expect(issues.map((i) => i.path)).toContain('inputSchema.properties.userId');
+      expect(issues.map((i) => i.path)).toContain('inputSchema.properties.path');
     });
   });
 

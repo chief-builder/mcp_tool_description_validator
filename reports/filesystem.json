@@ -5,13 +5,13 @@
     "validTools": 0,
     "issuesByCategory": {
       "schema": 1,
-      "security": 35,
+      "security": 33,
       "llm-compatibility": 38,
       "naming": 16,
       "best-practice": 26
     },
     "issuesBySeverity": {
-      "error": 63,
+      "error": 61,
       "warning": 15,
       "suggestion": 38
     }
@@ -340,15 +340,6 @@
       "message": "String parameter 'path' is missing maxLength constraint",
       "tool": "write_file",
       "path": "inputSchema.properties.path",
-      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
-    },
-    {
-      "id": "SEC-001",
-      "category": "security",
-      "severity": "error",
-      "message": "String parameter 'content' is missing maxLength constraint",
-      "tool": "write_file",
-      "path": "inputSchema.properties.content",
       "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
     },
     {
@@ -791,15 +782,6 @@
       "tool": "move_file",
       "path": "name",
       "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
-    },
-    {
-      "id": "SEC-001",
-      "category": "security",
-      "severity": "error",
-      "message": "String parameter 'source' is missing maxLength constraint",
-      "tool": "move_file",
-      "path": "inputSchema.properties.source",
-      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
     },
     {
       "id": "SEC-001",
@@ -1768,15 +1750,6 @@
           "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
         },
         {
-          "id": "SEC-001",
-          "category": "security",
-          "severity": "error",
-          "message": "String parameter 'content' is missing maxLength constraint",
-          "tool": "write_file",
-          "path": "inputSchema.properties.content",
-          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
-        },
-        {
           "id": "SEC-004",
           "category": "security",
           "severity": "error",
@@ -2715,15 +2688,6 @@
           "id": "SEC-001",
           "category": "security",
           "severity": "error",
-          "message": "String parameter 'source' is missing maxLength constraint",
-          "tool": "move_file",
-          "path": "inputSchema.properties.source",
-          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
-        },
-        {
-          "id": "SEC-001",
-          "category": "security",
-          "severity": "error",
           "message": "String parameter 'destination' is missing maxLength constraint",
           "tool": "move_file",
           "path": "inputSchema.properties.destination",
@@ -3166,8 +3130,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-08T03:33:26.249Z",
-    "duration": 48,
+    "timestamp": "2026-01-08T03:41:33.066Z",
+    "duration": 67,
     "configUsed": "",
     "llmAnalysisUsed": false
   }
