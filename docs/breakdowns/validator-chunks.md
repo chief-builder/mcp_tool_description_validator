@@ -22,10 +22,11 @@
 ### [ ] CHUNK-01: Types & Data Models
 **Goal**: All TypeScript types and interfaces defined, project initialized with tsconfig and package.json
 **Scope**:
-- `src/types/index.ts` - ToolDefinition, ToolSource, ToolAnnotations, ValidationResult, ValidationSummary, ValidationIssue, IssueCategory, IssueSeverity, ValidationMetadata, ValidatorConfig, RuleConfig, OutputConfig, LLMConfig
+- `src/types/index.ts` - ToolDefinition, ToolSource, ToolAnnotations, ValidationResult, ValidationSummary, ValidationIssue, ToolValidationResult, IssueCategory, IssueSeverity, ValidationMetadata, ValidatorConfig, RuleConfig, OutputConfig, LLMConfig
 - `package.json` - Project setup with all dependencies from architecture doc
 - `tsconfig.json` - TypeScript configuration for ESM
 - `tsup.config.ts` - Build configuration
+- `vitest.config.ts` - Test configuration
 **Size**: L
 **Risk**: None
 **Beads**: #bqk
@@ -68,6 +69,7 @@
 **Goal**: Rule loading, execution, and aggregation working; rule interface defined
 **Scope**:
 - `src/rules/types.ts` - Rule interface, RuleContext
+- `src/rules/index.ts` - Rule registry, RULE_MODULES map
 - `src/core/rule-loader.ts` - loadRules(), dynamic imports
 - `src/core/rule-engine.ts` - executeRules(), aggregateResults()
 **Size**: L
@@ -195,19 +197,26 @@ Building layer by layer allows:
 
 ### Dependencies Summary
 ```
-Phase 1 (Foundation) ─┬─► Phase 2 (Input)
-                      ├─► Phase 3 (Rules)
-                      └─► Phase 4 (Output)
+CHUNK-01 (Types) ───┬──► CHUNK-02 (Config)
+                    ├──► CHUNK-03 (File Parser)
+                    ├──► CHUNK-04 (MCP Client)
+                    ├──► CHUNK-05 (Rule Engine) ──► CHUNK-06..10 (Rules)
+                    └──► CHUNK-11 (Reporters)
                               │
-                              ▼
-                      Phase 5 (Integration)
-                              │
-                              ▼
-                      Phase 6 (LLM - optional)
+        ┌─────────────────────┼─────────────────────┐
+        ▼                     ▼                     ▼
+    CHUNK-02              CHUNK-03/04           CHUNK-05
+        │                     │                     │
+        └─────────────────────┴──────────┬──────────┘
+                                         ▼
+                               CHUNK-12 (Core Validator)
+                                         │
+                    ┌────────────────────┼────────────────────┐
+                    ▼                    ▼                    ▼
+          CHUNK-13 (CLI)         CHUNK-14 (HTTP)     CHUNK-15 (LLM)
 ```
 
 ### Parallel Opportunities
-- CHUNK-03 and CHUNK-04 can run in parallel (both depend only on types)
+- CHUNK-02, CHUNK-03, CHUNK-04, CHUNK-05, CHUNK-11 can all start after CHUNK-01
 - CHUNK-06 through CHUNK-10 can all run in parallel (all depend only on rule engine)
-- CHUNK-11 can run in parallel with rule chunks
-- CHUNK-13 and CHUNK-14 can run in parallel (both depend on core validator)
+- CHUNK-13, CHUNK-14, CHUNK-15 can all run in parallel (all depend on core validator)
