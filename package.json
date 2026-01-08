@@ -1,0 +1,68 @@
+{
+  "name": "mcp-tool-validator",
+  "version": "0.1.0",
+  "description": "A governance validator for Model Context Protocol (MCP) tool definitions that ensures quality, security, and LLM-compatibility",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bin": {
+    "mcp-validate": "./bin/mcp-validate.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "validator",
+    "llm",
+    "ai",
+    "tools"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "ajv": "^8.17.0",
+    "ajv-formats": "^3.0.0",
+    "commander": "^14.0.0",
+    "cosmiconfig": "^9.0.0",
+    "chalk": "^5.0.0",
+    "hono": "^4.0.0",
+    "yaml": "^2.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "ai": "^6.0.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "tsup": "^8.0.0",
+    "vitest": "^4.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "peerDependencies": {
+    "@ai-sdk/openai": "^1.0.0",
+    "@ai-sdk/anthropic": "^1.0.0",
+    "ollama-ai-provider": "^1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@ai-sdk/openai": {
+      "optional": true
+    },
+    "@ai-sdk/anthropic": {
+      "optional": true
+    },
+    "ollama-ai-provider": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/cli.ts"],"sourcesContent":["/**\n * MCP Tool Validator - CLI Entry Point\n *\n * Command-line interface for validating MCP tool definitions.\n */\n\n// Placeholder for CLI implementation\n// Will be implemented in a future chunk\n\nconsole.log('mcp-validate CLI - not yet implemented');\n"],"mappings":";AASA,QAAQ,IAAI,wCAAwC;","names":[]}

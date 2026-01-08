@@ -1,0 +1,1 @@
+A governance validator for Model Context Protocol (MCP) tool definitions, ensuring quality, security, and LLM-compatibility. Please do comprehensice research on the web for best practices in this domain.
