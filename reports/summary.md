@@ -1,6 +1,6 @@
 # MCP Tool Definition Validator - Official Server Test Results
 
-Generated: 2026-01-08T03:54:34.935Z
+Generated: 2026-01-08T04:13:50.666Z
 
 ## Summary
 
@@ -26,7 +26,7 @@ Generated: 2026-01-08T03:54:34.935Z
 | Tools | 14 |
 | Valid | No |
 | Errors | 61 |
-| Warnings | 14 |
+| Warnings | 13 |
 | Suggestions | 38 |
 
 **Tools:**
@@ -52,7 +52,6 @@ Generated: 2026-01-08T03:54:34.935Z
 - `LLM-004`: 3 occurrence(s)
 - `LLM-005`: 8 occurrence(s)
 - `LLM-006`: 18 occurrence(s)
-- `LLM-008`: 1 occurrence(s)
 - `LLM-009`: 1 occurrence(s)
 - `LLM-011`: 3 occurrence(s)
 - `LLM-012`: 4 occurrence(s)
@@ -160,7 +159,7 @@ Generated: 2026-01-08T03:54:34.935Z
 | Tools | 1 |
 | Valid | No |
 | Errors | 1 |
-| Warnings | 2 |
+| Warnings | 3 |
 | Suggestions | 7 |
 
 **Tools:**
@@ -171,6 +170,7 @@ Generated: 2026-01-08T03:54:34.935Z
 - `BP-002`: 1 occurrence(s)
 - `BP-004`: 1 occurrence(s)
 - `LLM-002`: 1 occurrence(s)
+- `LLM-008`: 1 occurrence(s)
 - `LLM-009`: 4 occurrence(s)
 - `NAM-005`: 1 occurrence(s)
 - `SEC-001`: 1 occurrence(s)
@@ -197,7 +197,6 @@ Generated: 2026-01-08T03:54:34.935Z
 | `BP-003` | 2 | memory, everything |
 | `LLM-002` | 2 | everything, sequential-thinking |
 | `SEC-004` | 1 | filesystem |
-| `LLM-008` | 1 | filesystem |
 | `LLM-011` | 1 | filesystem |
 | `SEC-006` | 1 | memory |
 | `SEC-010` | 1 | memory |
@@ -205,3 +204,4 @@ Generated: 2026-01-08T03:54:34.935Z
 | `SCH-007` | 1 | everything |
 | `SEC-007` | 1 | everything |
 | `SEC-008` | 1 | everything |
+| `LLM-008` | 1 | sequential-thinking |

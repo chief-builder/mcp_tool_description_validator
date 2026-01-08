@@ -6,13 +6,13 @@
     "issuesByCategory": {
       "schema": 0,
       "security": 1,
-      "llm-compatibility": 5,
+      "llm-compatibility": 6,
       "naming": 1,
       "best-practice": 3
     },
     "issuesBySeverity": {
       "error": 1,
-      "warning": 2,
+      "warning": 3,
       "suggestion": 7
     }
   },
@@ -43,6 +43,15 @@
       "tool": "sequentialthinking",
       "path": "description",
       "suggestion": "Shorten the description to under 500 characters while keeping essential information"
+    },
+    {
+      "id": "LLM-008",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Parameter 'totalThoughts' description uses ambiguous term(s) without context: value",
+      "tool": "sequentialthinking",
+      "path": "inputSchema.properties.totalThoughts.description",
+      "suggestion": "Clarify what kind of value is expected (e.g., \"user data\", \"configuration value\")"
     },
     {
       "id": "LLM-009",
@@ -298,6 +307,15 @@
           "suggestion": "Shorten the description to under 500 characters while keeping essential information"
         },
         {
+          "id": "LLM-008",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Parameter 'totalThoughts' description uses ambiguous term(s) without context: value",
+          "tool": "sequentialthinking",
+          "path": "inputSchema.properties.totalThoughts.description",
+          "suggestion": "Clarify what kind of value is expected (e.g., \"user data\", \"configuration value\")"
+        },
+        {
           "id": "LLM-009",
           "category": "llm-compatibility",
           "severity": "suggestion",
@@ -363,7 +381,7 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-08T03:54:34.935Z",
+    "timestamp": "2026-01-08T04:13:50.665Z",
     "duration": 5,
     "configUsed": "",
     "llmAnalysisUsed": false

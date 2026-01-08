@@ -137,6 +137,40 @@ describe('LLM-008: Avoid ambiguous terms without context', () => {
     expect(issues).toHaveLength(0);
   });
 
+  it('should pass when tool name provides context', () => {
+    // write_file.content - "file" in tool name provides context for "content"
+    const tool = createTool({
+      name: 'write_file',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          content: {
+            type: 'string',
+          },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(0);
+  });
+
+  it('should pass when tool name provides context for body param', () => {
+    // send_message.body - "message" in tool name provides context for "body"
+    const tool = createTool({
+      name: 'send_message',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          body: {
+            type: 'string',
+          },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(0);
+  });
+
   it('should provide helpful suggestion', () => {
     const tool = createTool({
       inputSchema: {

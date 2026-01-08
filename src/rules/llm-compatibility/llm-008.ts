@@ -132,8 +132,13 @@ interface PropertySchema {
 }
 
 function hasContext(text: string): boolean {
-  const textLower = text.toLowerCase();
-  return CONTEXT_INDICATORS.some(indicator => textLower.includes(indicator));
+  // Normalize separators: replace underscores and hyphens with spaces for word matching
+  const normalized = text.toLowerCase().replace(/[-_]/g, ' ');
+  // Use word boundary matching to avoid false positives (e.g., 'to' matching 'testtool')
+  return CONTEXT_INDICATORS.some(indicator => {
+    const regex = new RegExp(`\\b${indicator}\\b`, 'i');
+    return regex.test(normalized);
+  });
 }
 
 function findAmbiguousTerms(text: string): string[] {
@@ -181,8 +186,9 @@ const rule: Rule = {
       const nameTerms = findAmbiguousTerms(paramName);
 
       // Check if description provides context
+      // Also include tool name as context - e.g., write_file.content is clear
       const descriptionText = typeof description === 'string' ? description : '';
-      const combinedContext = `${paramName} ${descriptionText}`;
+      const combinedContext = `${tool.name} ${paramName} ${descriptionText}`;
 
       if (nameTerms.length > 0 && !hasContext(combinedContext)) {
         issues.push({

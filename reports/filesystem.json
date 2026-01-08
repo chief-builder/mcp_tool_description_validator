@@ -6,13 +6,13 @@
     "issuesByCategory": {
       "schema": 1,
       "security": 33,
-      "llm-compatibility": 38,
+      "llm-compatibility": 37,
       "naming": 15,
       "best-practice": 26
     },
     "issuesBySeverity": {
       "error": 61,
-      "warning": 14,
+      "warning": 13,
       "suggestion": 38
     }
   },
@@ -386,15 +386,6 @@
       "tool": "write_file",
       "path": "inputSchema.properties.content.description",
       "suggestion": "Add a description to the 'content' parameter explaining its purpose and expected values"
-    },
-    {
-      "id": "LLM-008",
-      "category": "llm-compatibility",
-      "severity": "warning",
-      "message": "Parameter 'content' uses ambiguous term(s): content",
-      "tool": "write_file",
-      "path": "inputSchema.properties.content",
-      "suggestion": "Use more specific names like 'userData', 'configValue', or add context in the description"
     },
     {
       "id": "LLM-011",
@@ -1786,15 +1777,6 @@
           "suggestion": "Add a description to the 'content' parameter explaining its purpose and expected values"
         },
         {
-          "id": "LLM-008",
-          "category": "llm-compatibility",
-          "severity": "warning",
-          "message": "Parameter 'content' uses ambiguous term(s): content",
-          "tool": "write_file",
-          "path": "inputSchema.properties.content",
-          "suggestion": "Use more specific names like 'userData', 'configValue', or add context in the description"
-        },
-        {
           "id": "LLM-011",
           "category": "llm-compatibility",
           "severity": "suggestion",
@@ -3112,8 +3094,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-08T03:54:31.937Z",
-    "duration": 64,
+    "timestamp": "2026-01-08T04:13:47.715Z",
+    "duration": 67,
     "configUsed": "",
     "llmAnalysisUsed": false
   }
