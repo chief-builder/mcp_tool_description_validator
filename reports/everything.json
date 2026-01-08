@@ -1,0 +1,2133 @@
+{
+  "valid": false,
+  "summary": {
+    "totalTools": 11,
+    "validTools": 2,
+    "issuesByCategory": {
+      "schema": 4,
+      "security": 11,
+      "llm-compatibility": 24,
+      "naming": 15,
+      "best-practice": 35
+    },
+    "issuesBySeverity": {
+      "error": 13,
+      "warning": 27,
+      "suggestion": 49
+    }
+  },
+  "issues": [
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"echo\" should start with a descriptive verb",
+      "tool": "echo",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'message' is missing maxLength constraint",
+      "tool": "echo",
+      "path": "inputSchema.properties.message",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-003",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not clearly explain what the tool does",
+      "tool": "echo",
+      "path": "description",
+      "suggestion": "Start the description with an action verb (e.g., \"Creates...\", \"Retrieves...\", \"Sends...\")"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "echo",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "echo",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "echo",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "echo",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "echo",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "severity": "warning",
+      "message": "Number parameter 'a' is missing minimum/maximum constraints",
+      "tool": "add",
+      "path": "inputSchema.properties.a",
+      "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "severity": "warning",
+      "message": "Number parameter 'b' is missing minimum/maximum constraints",
+      "tool": "add",
+      "path": "inputSchema.properties.b",
+      "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+    },
+    {
+      "id": "LLM-002",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description is too short (16 characters, minimum 20)",
+      "tool": "add",
+      "path": "description",
+      "suggestion": "Expand the description to at least 20 characters with details about what the tool does and when to use it"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "add",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "add",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "add",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "add",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-003",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool name \"add\" suggests data modification but is missing destructiveHint annotation",
+      "tool": "add",
+      "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "add",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "SCH-007",
+      "category": "schema",
+      "severity": "warning",
+      "message": "inputSchema has properties but no \"required\" array - all parameters will be optional",
+      "tool": "longRunningOperation",
+      "path": "inputSchema.required",
+      "suggestion": "Add a \"required\" array listing parameters that must be provided, or leave empty array [] if all are truly optional",
+      "documentation": "https://json-schema.org/understanding-json-schema/reference/object#required"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"longRunningOperation\" must use kebab-case format",
+      "tool": "longRunningOperation",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"long-running-operation\""
+    },
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"longRunningOperation\" should start with a descriptive verb",
+      "tool": "longRunningOperation",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "severity": "warning",
+      "message": "Number parameter 'duration' is missing minimum/maximum constraints",
+      "tool": "longRunningOperation",
+      "path": "inputSchema.properties.duration",
+      "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "severity": "warning",
+      "message": "Number parameter 'steps' is missing minimum/maximum constraints",
+      "tool": "longRunningOperation",
+      "path": "inputSchema.properties.steps",
+      "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "longRunningOperation",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "longRunningOperation",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "longRunningOperation",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "longRunningOperation",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "longRunningOperation",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "SCH-006",
+      "category": "schema",
+      "severity": "warning",
+      "message": "inputSchema.properties is empty - tool takes no parameters",
+      "tool": "printEnv",
+      "path": "inputSchema.properties",
+      "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+      "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"printEnv\" must use kebab-case format",
+      "tool": "printEnv",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"print-env\""
+    },
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"printEnv\" should start with a descriptive verb",
+      "tool": "printEnv",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "printEnv",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "printEnv",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "printEnv",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "printEnv",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"sampleLLM\" must use kebab-case format",
+      "tool": "sampleLLM",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"sample-llm\""
+    },
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"sampleLLM\" should start with a descriptive verb",
+      "tool": "sampleLLM",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'prompt' is missing maxLength constraint",
+      "tool": "sampleLLM",
+      "path": "inputSchema.properties.prompt",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "severity": "warning",
+      "message": "Number parameter 'maxTokens' is missing minimum/maximum constraints",
+      "tool": "sampleLLM",
+      "path": "inputSchema.properties.maxTokens",
+      "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+    },
+    {
+      "id": "SEC-007",
+      "category": "security",
+      "severity": "warning",
+      "message": "Parameter 'maxTokens' appears to contain sensitive data",
+      "tool": "sampleLLM",
+      "path": "inputSchema.properties.maxTokens",
+      "suggestion": "Ensure this parameter is handled securely: avoid logging, use secure transmission, and consider if it should be passed at runtime instead of stored"
+    },
+    {
+      "id": "SEC-008",
+      "category": "security",
+      "severity": "error",
+      "message": "Security-sensitive parameter 'maxTokens' has a default value",
+      "tool": "sampleLLM",
+      "path": "inputSchema.properties.maxTokens",
+      "suggestion": "Remove the default value from this sensitive parameter. Credentials should always be explicitly provided"
+    },
+    {
+      "id": "LLM-003",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not clearly explain what the tool does",
+      "tool": "sampleLLM",
+      "path": "description",
+      "suggestion": "Start the description with an action verb (e.g., \"Creates...\", \"Retrieves...\", \"Sends...\")"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "sampleLLM",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "sampleLLM",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "sampleLLM",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "sampleLLM",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "SCH-006",
+      "category": "schema",
+      "severity": "warning",
+      "message": "inputSchema.properties is empty - tool takes no parameters",
+      "tool": "getTinyImage",
+      "path": "inputSchema.properties",
+      "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+      "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"getTinyImage\" must use kebab-case format",
+      "tool": "getTinyImage",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"get-tiny-image\""
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "getTinyImage",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "getTinyImage",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-012",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description is inconsistent with related 'get-*' tools: has shorter description while related tools have medium length descriptions",
+      "tool": "getTinyImage",
+      "path": "description",
+      "suggestion": "Align description style with related tools (getResourceReference, getResourceLinks) for consistency"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "getTinyImage",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "getTinyImage",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "getTinyImage",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"annotatedMessage\" must use kebab-case format",
+      "tool": "annotatedMessage",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"annotated-message\""
+    },
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"annotatedMessage\" should start with a descriptive verb",
+      "tool": "annotatedMessage",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'messageType' is missing maxLength constraint",
+      "tool": "annotatedMessage",
+      "path": "inputSchema.properties.messageType",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "annotatedMessage",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-009",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Parameter 'messageType' has schema constraints not mentioned in description: allowed values",
+      "tool": "annotatedMessage",
+      "path": "inputSchema.properties.messageType.description",
+      "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "annotatedMessage",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "annotatedMessage",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "annotatedMessage",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"getResourceReference\" must use kebab-case format",
+      "tool": "getResourceReference",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"get-resource-reference\""
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "getResourceReference",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-009",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Parameter 'resourceId' has schema constraints not mentioned in description: minimum value, maximum value",
+      "tool": "getResourceReference",
+      "path": "inputSchema.properties.resourceId.description",
+      "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "getResourceReference",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "getResourceReference",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "getResourceReference",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "SCH-007",
+      "category": "schema",
+      "severity": "warning",
+      "message": "inputSchema has properties but no \"required\" array - all parameters will be optional",
+      "tool": "getResourceLinks",
+      "path": "inputSchema.required",
+      "suggestion": "Add a \"required\" array listing parameters that must be provided, or leave empty array [] if all are truly optional",
+      "documentation": "https://json-schema.org/understanding-json-schema/reference/object#required"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"getResourceLinks\" must use kebab-case format",
+      "tool": "getResourceLinks",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"get-resource-links\""
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "getResourceLinks",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "getResourceLinks",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-009",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Parameter 'count' has schema constraints not mentioned in description: minimum value, maximum value",
+      "tool": "getResourceLinks",
+      "path": "inputSchema.properties.count.description",
+      "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "getResourceLinks",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "getResourceLinks",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "getResourceLinks",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"structuredContent\" must use kebab-case format",
+      "tool": "structuredContent",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"structured-content\""
+    },
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"structuredContent\" should start with a descriptive verb",
+      "tool": "structuredContent",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'location' is missing maxLength constraint",
+      "tool": "structuredContent",
+      "path": "inputSchema.properties.location",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "structuredContent",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-009",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Parameter 'location' has schema constraints not mentioned in description: minimum length",
+      "tool": "structuredContent",
+      "path": "inputSchema.properties.location.description",
+      "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "structuredContent",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "structuredContent",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "structuredContent",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"zip\" should start with a descriptive verb",
+      "tool": "zip",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "zip",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "zip",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "zip",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "zip",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"files\" is missing examples",
+      "tool": "zip",
+      "path": "inputSchema.properties.files",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    }
+  ],
+  "tools": [
+    {
+      "name": "echo",
+      "valid": false,
+      "tool": {
+        "name": "echo",
+        "description": "Echoes back the input",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Message to echo"
+            }
+          },
+          "required": [
+            "message"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "echo",
+            "description": "Echoes back the input",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Message to echo"
+                }
+              },
+              "required": [
+                "message"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"echo\" should start with a descriptive verb",
+          "tool": "echo",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'message' is missing maxLength constraint",
+          "tool": "echo",
+          "path": "inputSchema.properties.message",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-003",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not clearly explain what the tool does",
+          "tool": "echo",
+          "path": "description",
+          "suggestion": "Start the description with an action verb (e.g., \"Creates...\", \"Retrieves...\", \"Sends...\")"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "echo",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "echo",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "echo",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "echo",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "echo",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "add",
+      "valid": true,
+      "tool": {
+        "name": "add",
+        "description": "Adds two numbers",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "number",
+              "description": "First number"
+            },
+            "b": {
+              "type": "number",
+              "description": "Second number"
+            }
+          },
+          "required": [
+            "a",
+            "b"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "add",
+            "description": "Adds two numbers",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "a": {
+                  "type": "number",
+                  "description": "First number"
+                },
+                "b": {
+                  "type": "number",
+                  "description": "Second number"
+                }
+              },
+              "required": [
+                "a",
+                "b"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "SEC-003",
+          "category": "security",
+          "severity": "warning",
+          "message": "Number parameter 'a' is missing minimum/maximum constraints",
+          "tool": "add",
+          "path": "inputSchema.properties.a",
+          "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+        },
+        {
+          "id": "SEC-003",
+          "category": "security",
+          "severity": "warning",
+          "message": "Number parameter 'b' is missing minimum/maximum constraints",
+          "tool": "add",
+          "path": "inputSchema.properties.b",
+          "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+        },
+        {
+          "id": "LLM-002",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description is too short (16 characters, minimum 20)",
+          "tool": "add",
+          "path": "description",
+          "suggestion": "Expand the description to at least 20 characters with details about what the tool does and when to use it"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "add",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "add",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "add",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "add",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-003",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool name \"add\" suggests data modification but is missing destructiveHint annotation",
+          "tool": "add",
+          "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "add",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "longRunningOperation",
+      "valid": false,
+      "tool": {
+        "name": "longRunningOperation",
+        "description": "Demonstrates a long running operation with progress updates",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "duration": {
+              "type": "number",
+              "default": 10,
+              "description": "Duration of the operation in seconds"
+            },
+            "steps": {
+              "type": "number",
+              "default": 5,
+              "description": "Number of steps in the operation"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "longRunningOperation",
+            "description": "Demonstrates a long running operation with progress updates",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "duration": {
+                  "type": "number",
+                  "default": 10,
+                  "description": "Duration of the operation in seconds"
+                },
+                "steps": {
+                  "type": "number",
+                  "default": 5,
+                  "description": "Number of steps in the operation"
+                }
+              },
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "SCH-007",
+          "category": "schema",
+          "severity": "warning",
+          "message": "inputSchema has properties but no \"required\" array - all parameters will be optional",
+          "tool": "longRunningOperation",
+          "path": "inputSchema.required",
+          "suggestion": "Add a \"required\" array listing parameters that must be provided, or leave empty array [] if all are truly optional",
+          "documentation": "https://json-schema.org/understanding-json-schema/reference/object#required"
+        },
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"longRunningOperation\" must use kebab-case format",
+          "tool": "longRunningOperation",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"long-running-operation\""
+        },
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"longRunningOperation\" should start with a descriptive verb",
+          "tool": "longRunningOperation",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "SEC-003",
+          "category": "security",
+          "severity": "warning",
+          "message": "Number parameter 'duration' is missing minimum/maximum constraints",
+          "tool": "longRunningOperation",
+          "path": "inputSchema.properties.duration",
+          "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+        },
+        {
+          "id": "SEC-003",
+          "category": "security",
+          "severity": "warning",
+          "message": "Number parameter 'steps' is missing minimum/maximum constraints",
+          "tool": "longRunningOperation",
+          "path": "inputSchema.properties.steps",
+          "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "longRunningOperation",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "longRunningOperation",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "longRunningOperation",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "longRunningOperation",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "longRunningOperation",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "printEnv",
+      "valid": false,
+      "tool": {
+        "name": "printEnv",
+        "description": "Prints all environment variables, helpful for debugging MCP server configuration",
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "printEnv",
+            "description": "Prints all environment variables, helpful for debugging MCP server configuration",
+            "inputSchema": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "SCH-006",
+          "category": "schema",
+          "severity": "warning",
+          "message": "inputSchema.properties is empty - tool takes no parameters",
+          "tool": "printEnv",
+          "path": "inputSchema.properties",
+          "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+          "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+        },
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"printEnv\" must use kebab-case format",
+          "tool": "printEnv",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"print-env\""
+        },
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"printEnv\" should start with a descriptive verb",
+          "tool": "printEnv",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "printEnv",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "printEnv",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "printEnv",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "printEnv",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "sampleLLM",
+      "valid": false,
+      "tool": {
+        "name": "sampleLLM",
+        "description": "Samples from an LLM using MCP's sampling feature",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "description": "The prompt to send to the LLM"
+            },
+            "maxTokens": {
+              "type": "number",
+              "default": 100,
+              "description": "Maximum number of tokens to generate"
+            }
+          },
+          "required": [
+            "prompt"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "sampleLLM",
+            "description": "Samples from an LLM using MCP's sampling feature",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "description": "The prompt to send to the LLM"
+                },
+                "maxTokens": {
+                  "type": "number",
+                  "default": 100,
+                  "description": "Maximum number of tokens to generate"
+                }
+              },
+              "required": [
+                "prompt"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"sampleLLM\" must use kebab-case format",
+          "tool": "sampleLLM",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"sample-llm\""
+        },
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"sampleLLM\" should start with a descriptive verb",
+          "tool": "sampleLLM",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'prompt' is missing maxLength constraint",
+          "tool": "sampleLLM",
+          "path": "inputSchema.properties.prompt",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-003",
+          "category": "security",
+          "severity": "warning",
+          "message": "Number parameter 'maxTokens' is missing minimum/maximum constraints",
+          "tool": "sampleLLM",
+          "path": "inputSchema.properties.maxTokens",
+          "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+        },
+        {
+          "id": "SEC-007",
+          "category": "security",
+          "severity": "warning",
+          "message": "Parameter 'maxTokens' appears to contain sensitive data",
+          "tool": "sampleLLM",
+          "path": "inputSchema.properties.maxTokens",
+          "suggestion": "Ensure this parameter is handled securely: avoid logging, use secure transmission, and consider if it should be passed at runtime instead of stored"
+        },
+        {
+          "id": "SEC-008",
+          "category": "security",
+          "severity": "error",
+          "message": "Security-sensitive parameter 'maxTokens' has a default value",
+          "tool": "sampleLLM",
+          "path": "inputSchema.properties.maxTokens",
+          "suggestion": "Remove the default value from this sensitive parameter. Credentials should always be explicitly provided"
+        },
+        {
+          "id": "LLM-003",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not clearly explain what the tool does",
+          "tool": "sampleLLM",
+          "path": "description",
+          "suggestion": "Start the description with an action verb (e.g., \"Creates...\", \"Retrieves...\", \"Sends...\")"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "sampleLLM",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "sampleLLM",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "sampleLLM",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "sampleLLM",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "getTinyImage",
+      "valid": false,
+      "tool": {
+        "name": "getTinyImage",
+        "description": "Returns the MCP_TINY_IMAGE",
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "getTinyImage",
+            "description": "Returns the MCP_TINY_IMAGE",
+            "inputSchema": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "SCH-006",
+          "category": "schema",
+          "severity": "warning",
+          "message": "inputSchema.properties is empty - tool takes no parameters",
+          "tool": "getTinyImage",
+          "path": "inputSchema.properties",
+          "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+          "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+        },
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"getTinyImage\" must use kebab-case format",
+          "tool": "getTinyImage",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"get-tiny-image\""
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "getTinyImage",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "getTinyImage",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-012",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description is inconsistent with related 'get-*' tools: has shorter description while related tools have medium length descriptions",
+          "tool": "getTinyImage",
+          "path": "description",
+          "suggestion": "Align description style with related tools (getResourceReference, getResourceLinks) for consistency"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "getTinyImage",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "getTinyImage",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "getTinyImage",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "annotatedMessage",
+      "valid": false,
+      "tool": {
+        "name": "annotatedMessage",
+        "description": "Demonstrates how annotations can be used to provide metadata about content",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "messageType": {
+              "type": "string",
+              "enum": [
+                "error",
+                "success",
+                "debug"
+              ],
+              "description": "Type of message to demonstrate different annotation patterns"
+            },
+            "includeImage": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether to include an example image"
+            }
+          },
+          "required": [
+            "messageType"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "annotatedMessage",
+            "description": "Demonstrates how annotations can be used to provide metadata about content",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "messageType": {
+                  "type": "string",
+                  "enum": [
+                    "error",
+                    "success",
+                    "debug"
+                  ],
+                  "description": "Type of message to demonstrate different annotation patterns"
+                },
+                "includeImage": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Whether to include an example image"
+                }
+              },
+              "required": [
+                "messageType"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"annotatedMessage\" must use kebab-case format",
+          "tool": "annotatedMessage",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"annotated-message\""
+        },
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"annotatedMessage\" should start with a descriptive verb",
+          "tool": "annotatedMessage",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'messageType' is missing maxLength constraint",
+          "tool": "annotatedMessage",
+          "path": "inputSchema.properties.messageType",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "annotatedMessage",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-009",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Parameter 'messageType' has schema constraints not mentioned in description: allowed values",
+          "tool": "annotatedMessage",
+          "path": "inputSchema.properties.messageType.description",
+          "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "annotatedMessage",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "annotatedMessage",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "annotatedMessage",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "getResourceReference",
+      "valid": false,
+      "tool": {
+        "name": "getResourceReference",
+        "description": "Returns a resource reference that can be used by MCP clients",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "resourceId": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "ID of the resource to reference (1-100)"
+            }
+          },
+          "required": [
+            "resourceId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "getResourceReference",
+            "description": "Returns a resource reference that can be used by MCP clients",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "resourceId": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 100,
+                  "description": "ID of the resource to reference (1-100)"
+                }
+              },
+              "required": [
+                "resourceId"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"getResourceReference\" must use kebab-case format",
+          "tool": "getResourceReference",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"get-resource-reference\""
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "getResourceReference",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-009",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Parameter 'resourceId' has schema constraints not mentioned in description: minimum value, maximum value",
+          "tool": "getResourceReference",
+          "path": "inputSchema.properties.resourceId.description",
+          "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "getResourceReference",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "getResourceReference",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "getResourceReference",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "getResourceLinks",
+      "valid": false,
+      "tool": {
+        "name": "getResourceLinks",
+        "description": "Returns multiple resource links that reference different types of resources",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 10,
+              "default": 3,
+              "description": "Number of resource links to return (1-10)"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "getResourceLinks",
+            "description": "Returns multiple resource links that reference different types of resources",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 10,
+                  "default": 3,
+                  "description": "Number of resource links to return (1-10)"
+                }
+              },
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "SCH-007",
+          "category": "schema",
+          "severity": "warning",
+          "message": "inputSchema has properties but no \"required\" array - all parameters will be optional",
+          "tool": "getResourceLinks",
+          "path": "inputSchema.required",
+          "suggestion": "Add a \"required\" array listing parameters that must be provided, or leave empty array [] if all are truly optional",
+          "documentation": "https://json-schema.org/understanding-json-schema/reference/object#required"
+        },
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"getResourceLinks\" must use kebab-case format",
+          "tool": "getResourceLinks",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"get-resource-links\""
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "getResourceLinks",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "getResourceLinks",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-009",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Parameter 'count' has schema constraints not mentioned in description: minimum value, maximum value",
+          "tool": "getResourceLinks",
+          "path": "inputSchema.properties.count.description",
+          "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "getResourceLinks",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "getResourceLinks",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "getResourceLinks",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "structuredContent",
+      "valid": false,
+      "tool": {
+        "name": "structuredContent",
+        "description": "Returns structured content along with an output schema for client data validation",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "minLength": 1,
+              "description": "City name or zip code"
+            }
+          },
+          "required": [
+            "location"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "structuredContent",
+            "description": "Returns structured content along with an output schema for client data validation",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "location": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "City name or zip code"
+                }
+              },
+              "required": [
+                "location"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "temperature": {
+                  "type": "number",
+                  "description": "Temperature in celsius"
+                },
+                "conditions": {
+                  "type": "string",
+                  "description": "Weather conditions description"
+                },
+                "humidity": {
+                  "type": "number",
+                  "description": "Humidity percentage"
+                }
+              },
+              "required": [
+                "temperature",
+                "conditions",
+                "humidity"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"structuredContent\" must use kebab-case format",
+          "tool": "structuredContent",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"structured-content\""
+        },
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"structuredContent\" should start with a descriptive verb",
+          "tool": "structuredContent",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'location' is missing maxLength constraint",
+          "tool": "structuredContent",
+          "path": "inputSchema.properties.location",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "structuredContent",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-009",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Parameter 'location' has schema constraints not mentioned in description: minimum length",
+          "tool": "structuredContent",
+          "path": "inputSchema.properties.location.description",
+          "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "structuredContent",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "structuredContent",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "structuredContent",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "zip",
+      "valid": true,
+      "tool": {
+        "name": "zip",
+        "description": "Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "files": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the file to include in the zip"
+              },
+              "description": "Mapping of file names to URLs to include in the zip"
+            }
+          },
+          "required": [
+            "files"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-everything",
+          "raw": {
+            "name": "zip",
+            "description": "Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "files": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL of the file to include in the zip"
+                  },
+                  "description": "Mapping of file names to URLs to include in the zip"
+                }
+              },
+              "required": [
+                "files"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"zip\" should start with a descriptive verb",
+          "tool": "zip",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "zip",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "zip",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "zip",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "zip",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"files\" is missing examples",
+          "tool": "zip",
+          "path": "inputSchema.properties.files",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "validatorVersion": "0.1.0",
+    "mcpSpecVersion": "2025-11-25",
+    "timestamp": "2026-01-08T03:33:29.190Z",
+    "duration": 15,
+    "configUsed": "",
+    "llmAnalysisUsed": false
+  }
+}
