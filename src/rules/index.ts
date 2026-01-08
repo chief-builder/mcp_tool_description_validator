@@ -27,15 +27,24 @@ export const RULE_PATHS: Record<string, string> = {
   'SCH-002': './schema/sch-002.js',
   'SCH-003': './schema/sch-003.js',
   'SCH-004': './schema/sch-004.js',
+  'SCH-005': './schema/sch-005.js',
+  'SCH-006': './schema/sch-006.js',
+  'SCH-007': './schema/sch-007.js',
+  'SCH-008': './schema/sch-008.js',
 
-  // Security rules (CHUNK-07)
+  // Security rules (CHUNK-08)
   'SEC-001': './security/sec-001.js',
   'SEC-002': './security/sec-002.js',
   'SEC-003': './security/sec-003.js',
   'SEC-004': './security/sec-004.js',
   'SEC-005': './security/sec-005.js',
+  'SEC-006': './security/sec-006.js',
+  'SEC-007': './security/sec-007.js',
+  'SEC-008': './security/sec-008.js',
+  'SEC-009': './security/sec-009.js',
+  'SEC-010': './security/sec-010.js',
 
-  // LLM Compatibility rules (CHUNK-08)
+  // LLM Compatibility rules (CHUNK-09)
   'LLM-001': './llm-compatibility/llm-001.js',
   'LLM-002': './llm-compatibility/llm-002.js',
   'LLM-003': './llm-compatibility/llm-003.js',
