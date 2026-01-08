@@ -1,0 +1,7 @@
+[
+  {
+    "name": "tool-one",
+    "description": "First tool",
+    "inputSchema": { "type": "object" }
+  }
+]

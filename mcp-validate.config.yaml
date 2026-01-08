@@ -1,0 +1,38 @@
+# MCP Tool Validator Configuration
+# See https://github.com/your-org/mcp-tool-validator for full documentation
+
+# Rule configuration
+# Set to false to disable a rule, or set to 'error', 'warning', or 'suggestion' to override severity
+rules:
+  # Schema rules (SCH-xxx) - JSON Schema compliance
+  # SCH-001: true  # Require valid JSON Schema
+
+  # Naming rules (NAM-xxx) - Naming convention enforcement
+  # NAM-001: true  # Tool names should be kebab-case
+
+  # Security rules (SEC-xxx) - Security vulnerability detection
+  # SEC-001: true  # String parameters should have maxLength
+  # SEC-002: true  # Array parameters should have maxItems
+
+  # LLM compatibility rules (LLM-xxx) - LLM understanding optimization
+  # LLM-001: true  # Description should be present and non-empty
+  # LLM-005: error  # Override severity to error
+
+  # Best practice rules (BP-xxx) - Recommended patterns
+  # BP-001: false  # Disable a rule entirely
+
+# Output configuration
+output:
+  format: human    # human | json | sarif
+  verbose: false   # Show additional details
+  color: true      # Enable colored output (terminal only)
+
+# LLM analysis configuration (optional)
+# Enables AI-powered semantic analysis of tool definitions
+# llm:
+#   enabled: false
+#   provider: anthropic   # anthropic | openai | ollama
+#   model: claude-3-haiku-20240307
+#   # apiKey: sk-xxx      # Or set via ANTHROPIC_API_KEY / OPENAI_API_KEY env var
+#   # baseUrl: https://api.example.com  # For custom endpoints
+#   timeout: 30000        # Request timeout in milliseconds

@@ -1,0 +1,11 @@
+{
+  "name": "get-user",
+  "description": "Retrieves user by ID",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "userId": { "type": "string", "description": "The user ID" }
+    },
+    "required": ["userId"]
+  }
+}

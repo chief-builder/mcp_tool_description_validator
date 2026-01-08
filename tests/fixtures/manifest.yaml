@@ -1,0 +1,16 @@
+name: my-server
+version: "1.0.0"
+tools:
+  - name: search-files
+    description: Search for files in a directory
+    inputSchema:
+      type: object
+      properties:
+        query:
+          type: string
+          description: Search query
+        path:
+          type: string
+          description: Directory to search
+      required:
+        - query
