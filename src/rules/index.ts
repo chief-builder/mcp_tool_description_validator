@@ -17,12 +17,9 @@ export interface RuleModule {
 /**
  * Registry mapping rule IDs to their module paths (relative to this file).
  * Rules are loaded on-demand based on configuration.
- *
- * Note: Actual rule modules will be added in subsequent chunks.
- * Currently these imports will fail at runtime until rules are implemented.
  */
 export const RULE_PATHS: Record<string, string> = {
-  // Schema rules (CHUNK-06)
+  // Schema rules (8 rules)
   'SCH-001': './schema/sch-001.js',
   'SCH-002': './schema/sch-002.js',
   'SCH-003': './schema/sch-003.js',
@@ -32,7 +29,15 @@ export const RULE_PATHS: Record<string, string> = {
   'SCH-007': './schema/sch-007.js',
   'SCH-008': './schema/sch-008.js',
 
-  // Security rules (CHUNK-08)
+  // Naming rules (6 rules)
+  'NAM-001': './naming/nam-001.js',
+  'NAM-002': './naming/nam-002.js',
+  'NAM-003': './naming/nam-003.js',
+  'NAM-004': './naming/nam-004.js',
+  'NAM-005': './naming/nam-005.js',
+  'NAM-006': './naming/nam-006.js',
+
+  // Security rules (10 rules)
   'SEC-001': './security/sec-001.js',
   'SEC-002': './security/sec-002.js',
   'SEC-003': './security/sec-003.js',
@@ -44,22 +49,29 @@ export const RULE_PATHS: Record<string, string> = {
   'SEC-009': './security/sec-009.js',
   'SEC-010': './security/sec-010.js',
 
-  // LLM Compatibility rules (CHUNK-09)
+  // LLM Compatibility rules (12 rules)
   'LLM-001': './llm-compatibility/llm-001.js',
   'LLM-002': './llm-compatibility/llm-002.js',
   'LLM-003': './llm-compatibility/llm-003.js',
   'LLM-004': './llm-compatibility/llm-004.js',
   'LLM-005': './llm-compatibility/llm-005.js',
+  'LLM-006': './llm-compatibility/llm-006.js',
+  'LLM-007': './llm-compatibility/llm-007.js',
+  'LLM-008': './llm-compatibility/llm-008.js',
+  'LLM-009': './llm-compatibility/llm-009.js',
+  'LLM-010': './llm-compatibility/llm-010.js',
+  'LLM-011': './llm-compatibility/llm-011.js',
+  'LLM-012': './llm-compatibility/llm-012.js',
 
-  // Naming rules (CHUNK-09)
-  'NAM-001': './naming/nam-001.js',
-  'NAM-002': './naming/nam-002.js',
-  'NAM-003': './naming/nam-003.js',
-
-  // Best practice rules (CHUNK-10)
+  // Best practice rules (8 rules)
   'BP-001': './best-practice/bp-001.js',
   'BP-002': './best-practice/bp-002.js',
   'BP-003': './best-practice/bp-003.js',
+  'BP-004': './best-practice/bp-004.js',
+  'BP-005': './best-practice/bp-005.js',
+  'BP-006': './best-practice/bp-006.js',
+  'BP-007': './best-practice/bp-007.js',
+  'BP-008': './best-practice/bp-008.js',
 };
 
 /**
