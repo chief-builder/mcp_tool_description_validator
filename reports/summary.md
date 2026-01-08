@@ -1,6 +1,6 @@
 # MCP Tool Definition Validator - Official Server Test Results
 
-Generated: 2026-01-08T03:41:36.037Z
+Generated: 2026-01-08T03:54:34.935Z
 
 ## Summary
 
@@ -11,7 +11,7 @@ Generated: 2026-01-08T03:41:36.037Z
 | Failed | 0 |
 | Total Tools | 35 |
 | Total Errors | 93 |
-| Total Warnings | 55 |
+| Total Warnings | 49 |
 | Total Suggestions | 143 |
 
 ## Per-Server Results
@@ -26,7 +26,7 @@ Generated: 2026-01-08T03:41:36.037Z
 | Tools | 14 |
 | Valid | No |
 | Errors | 61 |
-| Warnings | 15 |
+| Warnings | 14 |
 | Suggestions | 38 |
 
 **Tools:**
@@ -57,7 +57,7 @@ Generated: 2026-01-08T03:41:36.037Z
 - `LLM-011`: 3 occurrence(s)
 - `LLM-012`: 4 occurrence(s)
 - `NAM-002`: 14 occurrence(s)
-- `NAM-005`: 2 occurrence(s)
+- `NAM-005`: 1 occurrence(s)
 - `SCH-006`: 1 occurrence(s)
 - `SEC-001`: 14 occurrence(s)
 - `SEC-002`: 4 occurrence(s)
@@ -74,7 +74,7 @@ Generated: 2026-01-08T03:41:36.037Z
 | Tools | 9 |
 | Valid | No |
 | Errors | 20 |
-| Warnings | 11 |
+| Warnings | 10 |
 | Suggestions | 49 |
 
 **Tools:**
@@ -98,7 +98,6 @@ Generated: 2026-01-08T03:41:36.037Z
 - `LLM-005`: 9 occurrence(s)
 - `LLM-006`: 4 occurrence(s)
 - `NAM-002`: 9 occurrence(s)
-- `NAM-005`: 1 occurrence(s)
 - `SCH-006`: 1 occurrence(s)
 - `SEC-002`: 7 occurrence(s)
 - `SEC-006`: 1 occurrence(s)
@@ -114,7 +113,7 @@ Generated: 2026-01-08T03:41:36.037Z
 | Tools | 11 |
 | Valid | No |
 | Errors | 11 |
-| Warnings | 27 |
+| Warnings | 23 |
 | Suggestions | 49 |
 
 **Tools:**
@@ -143,7 +142,7 @@ Generated: 2026-01-08T03:41:36.037Z
 - `LLM-009`: 4 occurrence(s)
 - `LLM-012`: 1 occurrence(s)
 - `NAM-002`: 8 occurrence(s)
-- `NAM-005`: 7 occurrence(s)
+- `NAM-005`: 3 occurrence(s)
 - `SCH-006`: 2 occurrence(s)
 - `SCH-007`: 2 occurrence(s)
 - `SEC-001`: 2 occurrence(s)
@@ -182,13 +181,13 @@ Generated: 2026-01-08T03:41:36.037Z
 |------|-------------|--------|
 | `BP-001` | 4 | filesystem, memory, everything, sequential-thinking |
 | `BP-004` | 4 | filesystem, memory, everything, sequential-thinking |
-| `NAM-005` | 4 | filesystem, memory, everything, sequential-thinking |
 | `NAM-002` | 3 | filesystem, memory, everything |
 | `SEC-001` | 3 | filesystem, everything, sequential-thinking |
 | `LLM-004` | 3 | filesystem, memory, everything |
 | `LLM-005` | 3 | filesystem, memory, everything |
 | `BP-008` | 3 | filesystem, memory, everything |
 | `LLM-009` | 3 | filesystem, everything, sequential-thinking |
+| `NAM-005` | 3 | filesystem, everything, sequential-thinking |
 | `SCH-006` | 3 | filesystem, memory, everything |
 | `BP-002` | 3 | memory, everything, sequential-thinking |
 | `SEC-003` | 2 | filesystem, everything |

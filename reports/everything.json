@@ -7,25 +7,16 @@
       "schema": 4,
       "security": 9,
       "llm-compatibility": 24,
-      "naming": 15,
+      "naming": 11,
       "best-practice": 35
     },
     "issuesBySeverity": {
       "error": 11,
-      "warning": 27,
+      "warning": 23,
       "suggestion": 49
     }
   },
   "issues": [
-    {
-      "id": "NAM-005",
-      "category": "naming",
-      "severity": "warning",
-      "message": "Tool name \"echo\" should start with a descriptive verb",
-      "tool": "echo",
-      "path": "name",
-      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
-    },
     {
       "id": "LLM-003",
       "category": "llm-compatibility",
@@ -262,15 +253,6 @@
       "suggestion": "Use kebab-case format: \"print-env\""
     },
     {
-      "id": "NAM-005",
-      "category": "naming",
-      "severity": "warning",
-      "message": "Tool name \"printEnv\" should start with a descriptive verb",
-      "tool": "printEnv",
-      "path": "name",
-      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
-    },
-    {
       "id": "LLM-005",
       "category": "llm-compatibility",
       "severity": "suggestion",
@@ -311,15 +293,6 @@
       "tool": "sampleLLM",
       "path": "name",
       "suggestion": "Use kebab-case format: \"sample-llm\""
-    },
-    {
-      "id": "NAM-005",
-      "category": "naming",
-      "severity": "warning",
-      "message": "Tool name \"sampleLLM\" should start with a descriptive verb",
-      "tool": "sampleLLM",
-      "path": "name",
-      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
     },
     {
       "id": "SEC-003",
@@ -720,15 +693,6 @@
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
     },
     {
-      "id": "NAM-005",
-      "category": "naming",
-      "severity": "warning",
-      "message": "Tool name \"zip\" should start with a descriptive verb",
-      "tool": "zip",
-      "path": "name",
-      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
-    },
-    {
       "id": "LLM-005",
       "category": "llm-compatibility",
       "severity": "suggestion",
@@ -816,15 +780,6 @@
         }
       },
       "issues": [
-        {
-          "id": "NAM-005",
-          "category": "naming",
-          "severity": "warning",
-          "message": "Tool name \"echo\" should start with a descriptive verb",
-          "tool": "echo",
-          "path": "name",
-          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
-        },
         {
           "id": "LLM-003",
           "category": "llm-compatibility",
@@ -1199,15 +1154,6 @@
           "suggestion": "Use kebab-case format: \"print-env\""
         },
         {
-          "id": "NAM-005",
-          "category": "naming",
-          "severity": "warning",
-          "message": "Tool name \"printEnv\" should start with a descriptive verb",
-          "tool": "printEnv",
-          "path": "name",
-          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
-        },
-        {
           "id": "LLM-005",
           "category": "llm-compatibility",
           "severity": "suggestion",
@@ -1304,15 +1250,6 @@
           "tool": "sampleLLM",
           "path": "name",
           "suggestion": "Use kebab-case format: \"sample-llm\""
-        },
-        {
-          "id": "NAM-005",
-          "category": "naming",
-          "severity": "warning",
-          "message": "Tool name \"sampleLLM\" should start with a descriptive verb",
-          "tool": "sampleLLM",
-          "path": "name",
-          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
         },
         {
           "id": "SEC-003",
@@ -2033,15 +1970,6 @@
       },
       "issues": [
         {
-          "id": "NAM-005",
-          "category": "naming",
-          "severity": "warning",
-          "message": "Tool name \"zip\" should start with a descriptive verb",
-          "tool": "zip",
-          "path": "name",
-          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
-        },
-        {
           "id": "LLM-005",
           "category": "llm-compatibility",
           "severity": "suggestion",
@@ -2089,8 +2017,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-08T03:41:35.731Z",
-    "duration": 18,
+    "timestamp": "2026-01-08T03:54:34.626Z",
+    "duration": 17,
     "configUsed": "",
     "llmAnalysisUsed": false
   }

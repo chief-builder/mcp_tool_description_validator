@@ -7,12 +7,12 @@
       "schema": 1,
       "security": 33,
       "llm-compatibility": 38,
-      "naming": 16,
+      "naming": 15,
       "best-practice": 26
     },
     "issuesBySeverity": {
       "error": 61,
-      "warning": 15,
+      "warning": 14,
       "suggestion": 38
     }
   },
@@ -773,15 +773,6 @@
       "tool": "move_file",
       "path": "name",
       "suggestion": "Use kebab-case format: \"move-file\""
-    },
-    {
-      "id": "NAM-005",
-      "category": "naming",
-      "severity": "warning",
-      "message": "Tool name \"move_file\" should start with a descriptive verb",
-      "tool": "move_file",
-      "path": "name",
-      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
     },
     {
       "id": "SEC-001",
@@ -2676,15 +2667,6 @@
           "suggestion": "Use kebab-case format: \"move-file\""
         },
         {
-          "id": "NAM-005",
-          "category": "naming",
-          "severity": "warning",
-          "message": "Tool name \"move_file\" should start with a descriptive verb",
-          "tool": "move_file",
-          "path": "name",
-          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
-        },
-        {
           "id": "SEC-001",
           "category": "security",
           "severity": "error",
@@ -3130,8 +3112,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-08T03:41:33.066Z",
-    "duration": 67,
+    "timestamp": "2026-01-08T03:54:31.937Z",
+    "duration": 64,
     "configUsed": "",
     "llmAnalysisUsed": false
   }
