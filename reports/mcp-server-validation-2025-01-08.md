@@ -3,6 +3,7 @@
 **Date:** 2025-01-08 (Updated: 2026-01-08)
 **Validator Version:** 0.1.0
 **MCP Spec Version:** 2025-11-25
+**Rules:** 46 (SCH: 8, NAM: 6, SEC: 10, LLM: 13, BP: 9)
 
 ---
 
@@ -16,9 +17,65 @@ Validated **62 tools** from **6 MCP servers** (4 official Anthropic + 2 third-pa
 | Valid Tools | 3 |
 | Total Errors | 154 |
 | Total Warnings | 138 |
-| Total Suggestions | 236 |
+| Total Suggestions | 379 |
 
-**Key Finding:** Most MCP tools have opportunities for improvement in LLM compatibility, security constraints, and best practices.
+**Key Finding:** Most MCP tools have opportunities for improvement in LLM compatibility, security constraints, and best practices. Only the Sequential Thinking server achieves a "Mature" rating.
+
+---
+
+## Maturity Scores
+
+| Server | Maintainer | Tools | Score | Level | Status |
+|--------|------------|-------|-------|-------|--------|
+| sequential-thinking | Anthropic | 1 | **80** | Mature | Reliable for complex workflows |
+| sqlite | Community | 5 | **12** | Immature | High risk of misuse |
+| everything | Anthropic | 11 | **0** | Immature | High risk of misuse |
+| memory | Anthropic | 9 | **0** | Immature | High risk of misuse |
+| filesystem | Anthropic | 14 | **0** | Immature | High risk of misuse |
+| playwright | Microsoft | 22 | **0** | Immature | High risk of misuse |
+
+### Maturity Level Guide
+
+| Score | Level | Description |
+|-------|-------|-------------|
+| 91-100 | Exemplary | Optimized for advanced multi-tool agents |
+| 71-90 | Mature | Reliable for complex workflows |
+| 41-70 | Moderate | Usable in simple agents; some guidance |
+| 0-40 | Immature | High risk of misuse; basic functionality only |
+
+### Scoring Formula
+
+- Start at 100 points
+- Each **error**: -5 points
+- Each **warning**: -2 points
+- Each **suggestion**: -1 point
+- Floor at 0
+
+---
+
+## Detailed Results
+
+### All Servers
+
+| Server | Package | Tools | Valid | Errors | Warnings | Suggestions | Score |
+|--------|---------|-------|-------|--------|----------|-------------|-------|
+| filesystem | `@modelcontextprotocol/server-filesystem` | 14 | 0 | 61 | 13 | 77 | 0 |
+| memory | `@modelcontextprotocol/server-memory` | 9 | 0 | 20 | 10 | 76 | 0 |
+| everything | `@modelcontextprotocol/server-everything` | 11 | 3 | 11 | 23 | 71 | 0 |
+| sequential-thinking | `@modelcontextprotocol/server-sequential-thinking` | 1 | 0 | 1 | 3 | 9 | 80 |
+| playwright | `@playwright/mcp` | 22 | 0 | 55 | 76 | 114 | 0 |
+| sqlite | `mcp-server-sqlite-npx` | 5 | 0 | 6 | 13 | 32 | 12 |
+| **Total** | | **62** | **3** | **154** | **138** | **379** | - |
+
+### Issues by Category
+
+| Category | filesystem | memory | everything | seq-thinking | playwright | sqlite | **Total** |
+|----------|------------|--------|------------|--------------|------------|--------|-----------|
+| Schema | 1 | 1 | 4 | 0 | 9 | 1 | **16** |
+| Security | 33 | 9 | 9 | 1 | 38 | 7 | **97** |
+| LLM-Compatibility | 51 | 29 | 33 | 7 | 106 | 14 | **240** |
+| Naming | 15 | 9 | 11 | 1 | 44 | 7 | **87** |
+| Best-Practice | 51 | 58 | 48 | 4 | 48 | 27 | **236** |
 
 ---
 
@@ -32,41 +89,16 @@ MCP servers define tools using **TypeScript with Zod schemas**. At runtime, the 
 2. **No transcription errors** - Avoids manual Zod-to-JSON conversion mistakes
 3. **Complete** - Includes all runtime-generated metadata
 
-### Step-by-Step Process
+### Validation Process
 
 ```
 1. Spawn MCP Server     $ npx -y <package-name> [args]
 2. Connect via STDIO    Validator connects as MCP client
 3. Request Tool List    Send: { method: "tools/list" }
-4. Validate Each Tool   Apply 44 rules across 5 categories
-5. Output Results       Save as JSON fixture
+4. Validate Each Tool   Apply 46 rules across 5 categories
+5. Calculate Score      100 - (5×errors + 2×warnings + 1×suggestions)
+6. Output Results       Save as JSON fixture
 ```
-
----
-
-## Results Summary
-
-### All Servers
-
-| Server | Maintainer | Package | Tools | Valid | Errors | Warnings | Suggestions |
-|--------|------------|---------|-------|-------|--------|----------|-------------|
-| filesystem | Anthropic | `@modelcontextprotocol/server-filesystem` | 14 | 0 | 61 | 13 | 38 |
-| memory | Anthropic | `@modelcontextprotocol/server-memory` | 9 | 0 | 20 | 10 | 49 |
-| everything | Anthropic | `@modelcontextprotocol/server-everything` | 11 | 3 | 11 | 23 | 49 |
-| sequential-thinking | Anthropic | `@modelcontextprotocol/server-sequential-thinking` | 1 | 0 | 1 | 3 | 7 |
-| playwright | Microsoft | `@playwright/mcp` | 22 | 0 | 55 | 76 | 71 |
-| sqlite | Community | `mcp-server-sqlite-npx` | 5 | 0 | 6 | 13 | 22 |
-| **Total** | | | **62** | **3** | **154** | **138** | **236** |
-
-### Issues by Category
-
-| Category | filesystem | memory | everything | seq-thinking | playwright | sqlite | **Total** |
-|----------|------------|--------|------------|--------------|------------|--------|-----------|
-| Schema | 1 | 1 | 4 | 0 | 9 | 1 | **16** |
-| Security | 33 | 9 | 9 | 1 | 38 | 7 | **97** |
-| LLM-Compatibility | 37 | 20 | 24 | 6 | 84 | 9 | **180** |
-| Naming | 15 | 9 | 11 | 1 | 44 | 7 | **87** |
-| Best-Practice | 26 | 40 | 35 | 3 | 27 | 17 | **148** |
 
 ---
 
@@ -89,119 +121,48 @@ MCP servers define tools using **TypeScript with Zod schemas**. At runtime, the 
 
 1. **BP-001**: Missing title annotation for display purposes
 2. **BP-002**: Missing readOnlyHint annotation
-3. **LLM-005**: Tool descriptions don't include usage examples
+3. **BP-009**: Missing outputSchema
+4. **LLM-005**: Tool descriptions don't include usage examples
+5. **LLM-013**: Missing workflow guidance
 
 ---
 
-## Server Details
+## Server Analysis
 
-### Official Anthropic Servers
+### Sequential Thinking (Score: 80 - Mature)
 
-#### Filesystem Server (14 tools, 61 errors)
+The only server to achieve a mature rating. Why it scores well:
+- Only 1 tool to validate (less surface area for issues)
+- Comprehensive tool description with workflow guidance
+- Well-documented parameters with descriptions
 
-| Tool | Errors | Key Issues |
-|------|--------|------------|
-| `read_file` | 4 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `read_text_file` | 4 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `read_media_file` | 4 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `read_multiple_files` | 5 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `write_file` | 5 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `edit_file` | 5 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `create_directory` | 4 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `list_directory` | 4 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `list_directory_with_sizes` | 4 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `directory_tree` | 4 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `move_file` | 5 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `search_files` | 5 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `get_file_info` | 4 | NAM-002, SEC-001, SEC-004, LLM-006 |
-| `list_allowed_directories` | 4 | NAM-002, SEC-001, SEC-004, LLM-006 |
+Room for improvement:
+- NAM-002: Tool name should be `sequential-thinking` (kebab-case)
+- Missing MCP annotations (title, hints)
+- Missing outputSchema
 
-**Common pattern:** All tools use snake_case naming (should be kebab-case) and have `path` parameters without descriptions or security constraints.
+### SQLite (Score: 12 - Immature)
 
-#### Memory Server (9 tools, 20 errors)
+Relatively simple server with 5 tools. Issues:
+- All tools use snake_case naming
+- String parameters lack maxLength constraints
+- Missing parameter descriptions in some tools
 
-| Tool | Errors | Key Issues |
-|------|--------|------------|
-| `create_entities` | 2 | NAM-002, SEC-001 |
-| `create_relations` | 2 | NAM-002, SEC-001 |
-| `add_observations` | 2 | NAM-002, SEC-001 |
-| `delete_entities` | 2 | NAM-002, SEC-001 |
-| `delete_observations` | 2 | NAM-002, SEC-001 |
-| `delete_relations` | 2 | NAM-002, SEC-001 |
-| `read_graph` | 2 | NAM-002, LLM-002 |
-| `search_nodes` | 3 | NAM-002, SEC-001, LLM-006 |
-| `open_nodes` | 3 | NAM-002, SEC-001, LLM-006 |
+### Official Anthropic Servers (Score: 0 - Immature)
 
-#### Everything Server (11 tools, 11 errors)
+The filesystem, memory, and everything servers share common patterns:
+- All use snake_case naming (should be kebab-case)
+- Missing parameter descriptions (especially `path` parameters)
+- No security constraints on string inputs
+- No MCP annotations
 
-Only server with some valid tools (3 valid: `add`, `zip`, `getResourceLinks`).
+### Playwright (Score: 0 - Immature)
 
-| Tool | Status | Issues |
-|------|--------|--------|
-| `echo` | Invalid | LLM-006 (missing param description) |
-| `add` | **Valid** | - |
-| `longRunningOperation` | Invalid | LLM-006 |
-| `printEnv` | Invalid | SEC-001, LLM-006 |
-| `sampleLLM` | Invalid | SEC-001, LLM-006 |
-| `getTinyImage` | Invalid | LLM-002 (short description) |
-| `annotatedMessage` | Invalid | SEC-001, LLM-006 |
-| `getResourceReference` | Invalid | SEC-001 |
-| `getResourceLinks` | **Valid** | - |
-| `structuredContent` | Invalid | LLM-006 |
-| `zip` | **Valid** | - |
-
-#### Sequential Thinking Server (1 tool, 1 error)
-
-| Tool | Error |
-|------|-------|
-| `sequentialthinking` | NAM-002 (should be `sequential-thinking`) |
-
----
-
-### Third-Party Servers
-
-#### Playwright MCP Server - Microsoft (22 tools, 55 errors)
-
-**Package:** `@playwright/mcp`
-
-| Tool | Errors | Key Issues |
-|------|--------|------------|
-| `browser_close` | 2 | NAM-002, LLM-002 |
-| `browser_resize` | 3 | NAM-002, SEC-003, LLM-006 |
-| `browser_console_messages` | 2 | NAM-002, LLM-002 |
-| `browser_handle_dialog` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_evaluate` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_file_upload` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_fill_form` | 2 | NAM-002, LLM-006 |
-| `browser_install` | 2 | NAM-002, LLM-002 |
-| `browser_press_key` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_type` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_navigate` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_navigate_back` | 2 | NAM-002, LLM-002 |
-| `browser_network_requests` | 2 | NAM-002, LLM-002 |
-| `browser_run_code` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_take_screenshot` | 2 | NAM-002, LLM-006 |
-| `browser_snapshot` | 2 | NAM-002, LLM-006 |
-| `browser_click` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_drag` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_hover` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_select_option` | 3 | NAM-002, SEC-001, LLM-006 |
-| `browser_tabs` | 2 | NAM-002, LLM-002 |
-| `browser_wait_for` | 2 | NAM-002, LLM-006 |
-
-**Common pattern:** All tools use snake_case naming with `browser_` prefix (should be `browser-*` kebab-case).
-
-#### SQLite MCP Server - Community (5 tools, 6 errors)
-
-**Package:** `mcp-server-sqlite-npx`
-
-| Tool | Errors | Key Issues |
-|------|--------|------------|
-| `read_query` | 2 | NAM-002, SEC-001 |
-| `write_query` | 2 | NAM-002, SEC-001 |
-| `create_table` | 1 | NAM-002 |
-| `list_tables` | 1 | NAM-002 |
-| `describe_table` | 0 | - |
+Microsoft's browser automation server has the most tools (22) and issues:
+- All tools use `browser_` prefix with snake_case
+- Many parameters lack descriptions
+- Missing security constraints
+- No MCP annotations
 
 ---
 
@@ -217,13 +178,15 @@ Only server with some valid tools (3 valid: `add`, `zip`, `getResourceLinks`).
    - `minimum`/`maximum` for numeric inputs
 4. **Include usage examples** in tool descriptions
 5. **Add MCP annotations** (title, readOnlyHint, destructiveHint, idempotentHint)
+6. **Provide outputSchema** for response validation
 
-### For the MCP Specification
+### Target Scores
 
-Consider updating the spec to:
-1. Recommend or require parameter descriptions
-2. Provide naming convention guidance
-3. Define security best practices for common parameter types
+| Use Case | Minimum Score | Level |
+|----------|---------------|-------|
+| Internal/prototype tools | 40+ | Moderate |
+| Production tools | 70+ | Mature |
+| Public SDK/library | 90+ | Exemplary |
 
 ---
 
@@ -255,35 +218,27 @@ node dist/cli.js --server "npx -y mcp-server-sqlite-npx /tmp/test.db" \
 
 ## Fixture Files
 
-| File | Size | Tools | Errors |
-|------|------|-------|--------|
-| `tests/fixtures/official-filesystem.json` | ~50 KB | 14 | 61 |
-| `tests/fixtures/official-memory.json` | ~45 KB | 9 | 20 |
-| `tests/fixtures/official-everything.json` | ~35 KB | 11 | 11 |
-| `tests/fixtures/official-sequential-thinking.json` | ~15 KB | 1 | 1 |
-| `tests/fixtures/thirdparty-playwright.json` | ~80 KB | 22 | 55 |
-| `tests/fixtures/thirdparty-sqlite.json` | ~12 KB | 5 | 6 |
+| File | Tools | Errors | Score | Level |
+|------|-------|--------|-------|-------|
+| `official-filesystem.json` | 14 | 61 | 0 | Immature |
+| `official-memory.json` | 9 | 20 | 0 | Immature |
+| `official-everything.json` | 11 | 11 | 0 | Immature |
+| `official-sequential-thinking.json` | 1 | 1 | 80 | Mature |
+| `thirdparty-playwright.json` | 22 | 55 | 0 | Immature |
+| `thirdparty-sqlite.json` | 5 | 6 | 12 | Immature |
 
 See `tests/fixtures/README.md` for regeneration instructions.
 
 ---
 
-## Bug Fix History
+## Changelog
 
-### Critical Bug Fixed (2026-01-08)
-
-**Problem:** All 62 tools passed validation with 0 issues.
-
-**Root Cause:** Dynamic imports (`await import('./llm-compatibility/llm-006.js')`) failed silently because tsup bundles all code into chunks - individual rule files don't exist in `dist/`.
-
-**Fix:** Replaced dynamic imports with static imports via category rule arrays.
-
-**Files Modified:**
-- `src/rules/schema/index.ts` - Added `schemaRules` array
-- `src/rules/naming/index.ts` - Added `namingRules` array
-- `src/rules/security/index.ts` - Added `securityRules` array
-- `src/rules/index.ts` - Static registry instead of dynamic imports
-- `src/core/rule-loader.ts` - Uses static registry
+### 2026-01-08 (v0.1.0)
+- Added maturity scoring (0-100) with four levels
+- Added BP-009: outputSchema validation
+- Added LLM-013: workflow guidance detection
+- Fixed critical bug: rules now load correctly (was 0 rules, now 46)
+- Total rules increased from 44 to 46
 
 ### Calibration Fixes (2025-01-07)
 
@@ -297,16 +252,20 @@ See `tests/fixtures/README.md` for regeneration instructions.
 
 ## Conclusion
 
-The validator now correctly identifies **154 errors** across **62 tools** from 6 MCP servers. The most common issues are:
+The validator now correctly identifies **154 errors** across **62 tools** from 6 MCP servers, with maturity scores ranging from **0 to 80**.
 
-1. **Naming conventions** - snake_case instead of kebab-case (NAM-002)
-2. **Missing security constraints** - No maxLength/pattern on strings (SEC-001, SEC-004)
-3. **Missing parameter descriptions** - LLMs can't understand usage (LLM-006)
-4. **Missing annotations** - No title/hints for UI display (BP-001, BP-002)
+**Key insights:**
+- Only **Sequential Thinking** achieves a "Mature" rating (80/100)
+- Most servers score 0-12 due to accumulated errors and warnings
+- The most impactful improvements would be:
+  1. Switching to kebab-case naming
+  2. Adding parameter descriptions
+  3. Adding security constraints (maxLength, patterns)
 
-These findings provide actionable feedback for MCP server authors to improve LLM compatibility.
+These findings provide actionable feedback for MCP server authors to improve LLM compatibility and achieve higher maturity scores.
 
 ---
 
 *Generated by MCP Tool Validator v0.1.0*
+*46 rules across 5 categories*
 *Fixtures from live server connections via `--server` flag*

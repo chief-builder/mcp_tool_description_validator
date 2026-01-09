@@ -243,7 +243,7 @@ npm run build
 ## Documentation
 
 - [docs/RULES.md](docs/RULES.md) - Complete rule reference with examples
-- [docs/specs/sample.md](docs/specs/sample.md) - Best practices and maturity scoring framework
+- [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) - Best practices and maturity scoring framework
 
 ## License
 

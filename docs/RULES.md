@@ -1108,13 +1108,13 @@ Tools should provide an `outputSchema` when possible to define expected output s
 
 ---
 
-## Alignment with Sample Spec
+## Alignment with Best Practices
 
-This validator was designed to align with best practices from the MCP specification and community guidelines. The sample spec (located at `docs/specs/sample.md`) emphasizes:
+This validator was designed to align with best practices from the MCP specification and community guidelines. See [BEST_PRACTICES.md](BEST_PRACTICES.md) for the complete guide. Key recommendations include:
 
-### What the Validator Covers (from Sample Spec)
+### Best Practice Coverage
 
-| Sample Spec Recommendation | Validator Rules |
+| Recommendation | Validator Rules |
 |---------------------------|-----------------|
 | Keep descriptions concise (1-2 sentences) | LLM-002 |
 | Structure as "[Verb] a [resource]" | LLM-003, NAM-005 |

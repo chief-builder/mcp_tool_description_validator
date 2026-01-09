@@ -8,13 +8,15 @@
       "security": 1,
       "llm-compatibility": 6,
       "naming": 1,
-      "best-practice": 3
+      "best-practice": 5
     },
     "issuesBySeverity": {
       "error": 1,
       "warning": 3,
-      "suggestion": 7
-    }
+      "suggestion": 9
+    },
+    "maturityScore": 80,
+    "maturityLevel": "mature"
   },
   "issues": [
     {
@@ -112,6 +114,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "sequentialthinking",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "sequentialthinking",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "sequentialthinking",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     }
   ],
   "tools": [
@@ -374,6 +396,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "sequentialthinking",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "sequentialthinking",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "sequentialthinking",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     }
@@ -381,8 +423,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-09T01:32:49.643Z",
-    "duration": 20,
+    "timestamp": "2026-01-09T02:52:34.121Z",
+    "duration": 21,
     "configUsed": "",
     "llmAnalysisUsed": false
   }

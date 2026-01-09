@@ -6,15 +6,17 @@
     "issuesByCategory": {
       "schema": 1,
       "security": 9,
-      "llm-compatibility": 20,
+      "llm-compatibility": 29,
       "naming": 9,
-      "best-practice": 40
+      "best-practice": 58
     },
     "issuesBySeverity": {
       "error": 20,
       "warning": 10,
-      "suggestion": 49
-    }
+      "suggestion": 76
+    },
+    "maturityScore": 0,
+    "maturityLevel": "immature"
   },
   "issues": [
     {
@@ -63,6 +65,15 @@
       "suggestion": "Add a description to the 'entities' parameter explaining its purpose and expected values"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "create_entities",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -102,6 +113,26 @@
       "tool": "create_entities",
       "path": "inputSchema.properties.entities",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "create_entities",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "create_entities",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -149,6 +180,15 @@
       "suggestion": "Add a description to the 'relations' parameter explaining its purpose and expected values"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "create_relations",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -190,6 +230,26 @@
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
     },
     {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "create_relations",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "create_relations",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
       "id": "NAM-002",
       "category": "naming",
       "severity": "error",
@@ -224,6 +284,15 @@
       "tool": "add_observations",
       "path": "inputSchema.properties.observations.description",
       "suggestion": "Add a description to the 'observations' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "add_observations",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
     },
     {
       "id": "BP-001",
@@ -267,6 +336,26 @@
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
     },
     {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "add_observations",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "add_observations",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
       "id": "NAM-002",
       "category": "naming",
       "severity": "error",
@@ -301,6 +390,15 @@
       "tool": "delete_entities",
       "path": "description",
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "delete_entities",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
     },
     {
       "id": "BP-001",
@@ -342,6 +440,26 @@
       "tool": "delete_entities",
       "path": "inputSchema.properties.entityNames",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "delete_entities",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "delete_entities",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -389,6 +507,15 @@
       "suggestion": "Add a description to the 'deletions' parameter explaining its purpose and expected values"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "delete_observations",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -430,6 +557,26 @@
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
     },
     {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "delete_observations",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "delete_observations",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
       "id": "NAM-002",
       "category": "naming",
       "severity": "error",
@@ -464,6 +611,15 @@
       "tool": "delete_relations",
       "path": "description",
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "delete_relations",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
     },
     {
       "id": "BP-001",
@@ -507,6 +663,26 @@
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
     },
     {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "delete_relations",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "delete_relations",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
       "id": "SCH-006",
       "category": "schema",
       "severity": "warning",
@@ -544,6 +720,15 @@
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "read_graph",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -566,6 +751,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "read_graph",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "read_graph",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "read_graph",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -604,6 +809,15 @@
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "search_nodes",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -626,6 +840,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "search_nodes",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "search_nodes",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "search_nodes",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -664,6 +898,15 @@
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "open_nodes",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -695,6 +938,26 @@
       "tool": "open_nodes",
       "path": "inputSchema.properties.names",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "open_nodes",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "open_nodes",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     }
   ],
   "tools": [
@@ -877,6 +1140,15 @@
           "suggestion": "Add a description to the 'entities' parameter explaining its purpose and expected values"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "create_entities",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -916,6 +1188,26 @@
           "tool": "create_entities",
           "path": "inputSchema.properties.entities",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "create_entities",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "create_entities",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1089,6 +1381,15 @@
           "suggestion": "Add a description to the 'relations' parameter explaining its purpose and expected values"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "create_relations",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -1128,6 +1429,26 @@
           "tool": "create_relations",
           "path": "inputSchema.properties.relations",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "create_relations",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "create_relations",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1284,6 +1605,15 @@
           "suggestion": "Add a description to the 'observations' parameter explaining its purpose and expected values"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "add_observations",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -1323,6 +1653,26 @@
           "tool": "add_observations",
           "path": "inputSchema.properties.observations",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "add_observations",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "add_observations",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1432,6 +1782,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "delete_entities",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -1471,6 +1830,26 @@
           "tool": "delete_entities",
           "path": "inputSchema.properties.entityNames",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "delete_entities",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "delete_entities",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1621,6 +2000,15 @@
           "suggestion": "Add a description to the 'deletions' parameter explaining its purpose and expected values"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "delete_observations",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -1660,6 +2048,26 @@
           "tool": "delete_observations",
           "path": "inputSchema.properties.deletions",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "delete_observations",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "delete_observations",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1807,6 +2215,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "delete_relations",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -1846,6 +2263,26 @@
           "tool": "delete_relations",
           "path": "inputSchema.properties.relations",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "delete_relations",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "delete_relations",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1983,6 +2420,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "read_graph",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2005,6 +2451,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "read_graph",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "read_graph",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "read_graph",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2157,6 +2623,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "search_nodes",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2179,6 +2654,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "search_nodes",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "search_nodes",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "search_nodes",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2337,6 +2832,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "open_nodes",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2368,6 +2872,26 @@
           "tool": "open_nodes",
           "path": "inputSchema.properties.names",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "open_nodes",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "open_nodes",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     }
@@ -2375,8 +2899,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-09T01:31:48.809Z",
-    "duration": 25,
+    "timestamp": "2026-01-09T02:51:33.162Z",
+    "duration": 27,
     "configUsed": "",
     "llmAnalysisUsed": false
   }

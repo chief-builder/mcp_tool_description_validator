@@ -6,15 +6,17 @@
     "issuesByCategory": {
       "schema": 9,
       "security": 38,
-      "llm-compatibility": 84,
+      "llm-compatibility": 105,
       "naming": 44,
-      "best-practice": 27
+      "best-practice": 49
     },
     "issuesBySeverity": {
       "error": 55,
       "warning": 76,
-      "suggestion": 71
-    }
+      "suggestion": 114
+    },
+    "maturityScore": 0,
+    "maturityLevel": "immature"
   },
   "issues": [
     {
@@ -82,12 +84,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_close",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_close",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_close",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -162,12 +183,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_resize",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_resize",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_resize",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "SCH-007",
@@ -234,12 +274,31 @@
       "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_console_messages",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_console_messages",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_console_messages",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -296,12 +355,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_handle_dialog",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_handle_dialog",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_handle_dialog",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -385,12 +463,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_evaluate",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_evaluate",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_evaluate",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "SCH-007",
@@ -466,6 +563,15 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_file_upload",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
@@ -481,6 +587,16 @@
       "tool": "browser_file_upload",
       "path": "inputSchema.properties.paths",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_file_upload",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -546,6 +662,15 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_fill_form",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
@@ -561,6 +686,16 @@
       "tool": "browser_fill_form",
       "path": "inputSchema.properties.fields",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_fill_form",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "SCH-006",
@@ -618,12 +753,31 @@
       "suggestion": "Align description style with related tools (browser_close, browser_resize, browser_console_messages) for consistency"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_install",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_install",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_install",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -689,12 +843,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_press_key",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_press_key",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_press_key",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -760,12 +933,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_type",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_type",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_type",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -849,12 +1041,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_navigate",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_navigate",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_navigate",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "SCH-006",
@@ -912,12 +1123,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_navigate_back",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_navigate_back",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_navigate_back",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "SCH-007",
@@ -975,12 +1205,31 @@
       "suggestion": "Align description style with related tools (browser_close, browser_resize, browser_console_messages) for consistency"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_network_requests",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_network_requests",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_network_requests",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -1055,12 +1304,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_run_code",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_run_code",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_run_code",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "SCH-007",
@@ -1171,6 +1439,16 @@
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
     },
     {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_take_screenshot",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
       "id": "SCH-007",
       "category": "schema",
       "severity": "warning",
@@ -1253,12 +1531,31 @@
       "suggestion": "Align description style with related tools (browser_close, browser_resize, browser_console_messages) for consistency"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_snapshot",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_snapshot",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_snapshot",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -1360,6 +1657,15 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_click",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
@@ -1375,6 +1681,16 @@
       "tool": "browser_click",
       "path": "inputSchema.properties.modifiers",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_click",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -1467,12 +1783,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_drag",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_drag",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_drag",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -1547,12 +1882,31 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_hover",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_hover",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_hover",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -1636,6 +1990,15 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_select_option",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
@@ -1651,6 +2014,16 @@
       "tool": "browser_select_option",
       "path": "inputSchema.properties.values",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_select_option",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -1725,6 +2098,15 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_tabs",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
@@ -1740,6 +2122,16 @@
       "tool": "browser_tabs",
       "path": "inputSchema.properties.action",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_tabs",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "SCH-007",
@@ -1815,12 +2207,31 @@
       "suggestion": "Align description style with related tools (browser_close, browser_resize, browser_console_messages) for consistency"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "browser_wait_for",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-004",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing idempotentHint annotation",
       "tool": "browser_wait_for",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "browser_wait_for",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     }
   ],
   "tools": [
@@ -1929,12 +2340,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_close",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_close",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_close",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2077,12 +2507,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_resize",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_resize",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_resize",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2215,12 +2664,31 @@
           "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_console_messages",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_console_messages",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_console_messages",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2343,12 +2811,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_handle_dialog",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_handle_dialog",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_handle_dialog",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2506,12 +2993,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_evaluate",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_evaluate",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_evaluate",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2645,6 +3151,15 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_file_upload",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2660,6 +3175,16 @@
           "tool": "browser_file_upload",
           "path": "inputSchema.properties.paths",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_file_upload",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2853,6 +3378,15 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_fill_form",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2868,6 +3402,16 @@
           "tool": "browser_fill_form",
           "path": "inputSchema.properties.fields",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_fill_form",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2967,12 +3511,31 @@
           "suggestion": "Align description style with related tools (browser_close, browser_resize, browser_console_messages) for consistency"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_install",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_install",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_install",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -3096,12 +3659,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_press_key",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_press_key",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_press_key",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -3261,12 +3843,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_type",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_type",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_type",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -3408,12 +4009,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_navigate",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_navigate",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_navigate",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -3513,12 +4133,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_navigate_back",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_navigate_back",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_navigate_back",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -3630,12 +4269,31 @@
           "suggestion": "Align description style with related tools (browser_close, browser_resize, browser_console_messages) for consistency"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_network_requests",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_network_requests",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_network_requests",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -3768,12 +4426,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_run_code",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_run_code",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_run_code",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -3976,6 +4653,16 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_take_screenshot",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_take_screenshot",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -4112,12 +4799,31 @@
           "suggestion": "Align description style with related tools (browser_close, browser_resize, browser_console_messages) for consistency"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_snapshot",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_snapshot",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_snapshot",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -4341,6 +5047,15 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_click",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
@@ -4356,6 +5071,16 @@
           "tool": "browser_click",
           "path": "inputSchema.properties.modifiers",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_click",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -4536,12 +5261,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_drag",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_drag",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_drag",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -4684,12 +5428,31 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_hover",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_hover",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_hover",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -4857,6 +5620,15 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_select_option",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
@@ -4872,6 +5644,16 @@
           "tool": "browser_select_option",
           "path": "inputSchema.properties.values",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_select_option",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -5024,6 +5806,15 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_tabs",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
@@ -5039,6 +5830,16 @@
           "tool": "browser_tabs",
           "path": "inputSchema.properties.action",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_tabs",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -5182,12 +5983,31 @@
           "suggestion": "Align description style with related tools (browser_close, browser_resize, browser_console_messages) for consistency"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "browser_wait_for",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-004",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing idempotentHint annotation",
           "tool": "browser_wait_for",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "browser_wait_for",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     }
@@ -5195,8 +6015,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-09T01:33:21.052Z",
-    "duration": 53,
+    "timestamp": "2026-01-09T02:53:05.690Z",
+    "duration": 52,
     "configUsed": "",
     "llmAnalysisUsed": false
   }

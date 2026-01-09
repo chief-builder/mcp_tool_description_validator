@@ -6,15 +6,17 @@
     "issuesByCategory": {
       "schema": 1,
       "security": 33,
-      "llm-compatibility": 37,
+      "llm-compatibility": 48,
       "naming": 15,
-      "best-practice": 26
+      "best-practice": 54
     },
     "issuesBySeverity": {
       "error": 61,
       "warning": 13,
-      "suggestion": 38
-    }
+      "suggestion": 77
+    },
+    "maturityScore": 0,
+    "maturityLevel": "immature"
   },
   "issues": [
     {
@@ -115,6 +117,26 @@
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
     },
     {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "read_file",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "read_file",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
       "id": "NAM-002",
       "category": "naming",
       "severity": "error",
@@ -194,6 +216,26 @@
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
     },
     {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "read_text_file",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "read_text_file",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
       "id": "NAM-002",
       "category": "naming",
       "severity": "error",
@@ -257,6 +299,15 @@
       "suggestion": "Align description style with related tools (read_file, read_text_file, read_multiple_files) for consistency"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "read_media_file",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -271,6 +322,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "read_media_file",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "read_media_file",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "read_media_file",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -300,6 +371,15 @@
       "suggestion": "Align description style with related tools (read_file, read_text_file, read_media_file) for consistency"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "read_multiple_files",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -323,6 +403,26 @@
       "tool": "read_multiple_files",
       "path": "inputSchema.properties.paths",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "read_multiple_files",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "read_multiple_files",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -397,12 +497,41 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "write_file",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing title annotation for display purposes",
       "tool": "write_file",
       "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "write_file",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "write_file",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -477,6 +606,15 @@
       "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "edit_file",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -492,6 +630,26 @@
       "tool": "edit_file",
       "path": "inputSchema.properties.edits",
       "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "edit_file",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "edit_file",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -539,12 +697,41 @@
       "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "create_directory",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing title annotation for display purposes",
       "tool": "create_directory",
       "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "create_directory",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "create_directory",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -592,6 +779,15 @@
       "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "list_directory",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -606,6 +802,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "list_directory",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "list_directory",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "list_directory",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -662,6 +878,15 @@
       "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "list_directory_with_sizes",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -676,6 +901,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "list_directory_with_sizes",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "list_directory_with_sizes",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "list_directory_with_sizes",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -741,6 +986,15 @@
       "suggestion": "Add a description to the 'excludePatterns' parameter explaining its purpose and expected values"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "directory_tree",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -755,6 +1009,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "directory_tree",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "directory_tree",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "directory_tree",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -811,12 +1085,41 @@
       "suggestion": "Clearly state what changes this tool makes (e.g., \"Creates a new record...\", \"Deletes the file permanently...\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "move_file",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
       "message": "Tool is missing title annotation for display purposes",
       "tool": "move_file",
       "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "move_file",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "move_file",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -891,6 +1194,15 @@
       "suggestion": "Add a description to the 'excludePatterns' parameter explaining its purpose and expected values"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "search_files",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -905,6 +1217,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "search_files",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "search_files",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "search_files",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -943,6 +1275,15 @@
       "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "get_file_info",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -957,6 +1298,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "get_file_info",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "get_file_info",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "get_file_info",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "SCH-006",
@@ -1001,6 +1362,26 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "list_allowed_directories",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema is missing a description",
+      "tool": "list_allowed_directories",
+      "path": "outputSchema.description",
+      "suggestion": "Add a description to outputSchema explaining the output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "outputSchema properties are missing descriptions",
+      "tool": "list_allowed_directories",
+      "path": "outputSchema.properties",
+      "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     }
   ],
   "tools": [
@@ -1179,6 +1560,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "read_file",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "read_file",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "read_file",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1339,6 +1740,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "read_text_file",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "read_text_file",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "read_text_file",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1494,6 +1915,15 @@
           "suggestion": "Align description style with related tools (read_file, read_text_file, read_multiple_files) for consistency"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "read_media_file",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -1508,6 +1938,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "read_media_file",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "read_media_file",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "read_media_file",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1612,6 +2062,15 @@
           "suggestion": "Align description style with related tools (read_file, read_text_file, read_media_file) for consistency"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "read_multiple_files",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -1635,6 +2094,26 @@
           "tool": "read_multiple_files",
           "path": "inputSchema.properties.paths",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "read_multiple_files",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "read_multiple_files",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1786,12 +2265,41 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "write_file",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing title annotation for display purposes",
           "tool": "write_file",
           "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "write_file",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "write_file",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -1987,6 +2495,15 @@
           "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "edit_file",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2002,6 +2519,26 @@
           "tool": "edit_file",
           "path": "inputSchema.properties.edits",
           "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "edit_file",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "edit_file",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2118,12 +2655,41 @@
           "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "create_directory",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing title annotation for display purposes",
           "tool": "create_directory",
           "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "create_directory",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "create_directory",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2236,6 +2802,15 @@
           "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "list_directory",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2250,6 +2825,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "list_directory",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "list_directory",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "list_directory",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2389,6 +2984,15 @@
           "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "list_directory_with_sizes",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2403,6 +3007,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "list_directory_with_sizes",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "list_directory_with_sizes",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "list_directory_with_sizes",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2547,6 +3171,15 @@
           "suggestion": "Add a description to the 'excludePatterns' parameter explaining its purpose and expected values"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "directory_tree",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2561,6 +3194,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "directory_tree",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "directory_tree",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "directory_tree",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2694,12 +3347,41 @@
           "suggestion": "Clearly state what changes this tool makes (e.g., \"Creates a new record...\", \"Deletes the file permanently...\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "move_file",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
           "message": "Tool is missing title annotation for display purposes",
           "tool": "move_file",
           "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "move_file",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "move_file",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2861,6 +3543,15 @@
           "suggestion": "Add a description to the 'excludePatterns' parameter explaining its purpose and expected values"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "search_files",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2875,6 +3566,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "search_files",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "search_files",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "search_files",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -2978,6 +3689,15 @@
           "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "get_file_info",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -2992,6 +3712,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "get_file_info",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "get_file_info",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "get_file_info",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -3087,6 +3827,26 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "list_allowed_directories",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema is missing a description",
+          "tool": "list_allowed_directories",
+          "path": "outputSchema.description",
+          "suggestion": "Add a description to outputSchema explaining the output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "outputSchema properties are missing descriptions",
+          "tool": "list_allowed_directories",
+          "path": "outputSchema.properties",
+          "suggestion": "Add descriptions to outputSchema properties for better LLM understanding",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     }
@@ -3094,8 +3854,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-09T01:31:18.378Z",
-    "duration": 29,
+    "timestamp": "2026-01-09T02:51:02.662Z",
+    "duration": 31,
     "configUsed": "",
     "llmAnalysisUsed": false
   }

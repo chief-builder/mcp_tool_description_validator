@@ -6,15 +6,17 @@
     "issuesByCategory": {
       "schema": 1,
       "security": 7,
-      "llm-compatibility": 9,
+      "llm-compatibility": 14,
       "naming": 7,
-      "best-practice": 17
+      "best-practice": 22
     },
     "issuesBySeverity": {
       "error": 6,
       "warning": 13,
-      "suggestion": 22
-    }
+      "suggestion": 32
+    },
+    "maturityScore": 12,
+    "maturityLevel": "immature"
   },
   "issues": [
     {
@@ -63,6 +65,15 @@
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "read_query",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -85,6 +96,16 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "read_query",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "read_query",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -132,6 +153,15 @@
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "write_query",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -162,6 +192,16 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "write_query",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "write_query",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -209,6 +249,15 @@
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "create_table",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -239,6 +288,16 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "create_table",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "create_table",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "SCH-006",
@@ -278,6 +337,15 @@
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "list_tables",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -300,6 +368,16 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "list_tables",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "list_tables",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     },
     {
       "id": "NAM-002",
@@ -347,6 +425,15 @@
       "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
     },
     {
+      "id": "LLM-013",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+      "tool": "describe_table",
+      "path": "description",
+      "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+    },
+    {
       "id": "BP-001",
       "category": "best-practice",
       "severity": "suggestion",
@@ -369,6 +456,16 @@
       "message": "Tool is missing idempotentHint annotation",
       "tool": "describe_table",
       "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-009",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing outputSchema for output validation and parsing",
+      "tool": "describe_table",
+      "path": "outputSchema",
+      "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+      "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
     }
   ],
   "tools": [
@@ -465,6 +562,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "read_query",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -487,6 +593,16 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "read_query",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "read_query",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -583,6 +699,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "write_query",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -613,6 +738,16 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "write_query",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "write_query",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -709,6 +844,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "create_table",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -739,6 +883,16 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "create_table",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "create_table",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -809,6 +963,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "list_tables",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -831,6 +994,16 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "list_tables",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "list_tables",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     },
@@ -927,6 +1100,15 @@
           "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
         },
         {
+          "id": "LLM-013",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)",
+          "tool": "describe_table",
+          "path": "description",
+          "suggestion": "Consider adding workflow context like \"Call X first to...\", \"Use Y instead for...\", or \"After this, use Z to...\""
+        },
+        {
           "id": "BP-001",
           "category": "best-practice",
           "severity": "suggestion",
@@ -949,6 +1131,16 @@
           "message": "Tool is missing idempotentHint annotation",
           "tool": "describe_table",
           "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-009",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing outputSchema for output validation and parsing",
+          "tool": "describe_table",
+          "path": "outputSchema",
+          "suggestion": "Add outputSchema with type, properties, and descriptions to define expected output structure",
+          "documentation": "https://modelcontextprotocol.io/specification/2025-11-25#tools"
         }
       ]
     }
@@ -956,8 +1148,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-09T01:33:51.413Z",
-    "duration": 23,
+    "timestamp": "2026-01-09T02:53:36.088Z",
+    "duration": 25,
     "configUsed": "",
     "llmAnalysisUsed": false
   }
