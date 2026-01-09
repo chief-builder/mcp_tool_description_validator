@@ -19,7 +19,7 @@ Validated **62 tools** from **6 MCP servers** (4 official Anthropic + 2 third-pa
 | Total Warnings | 138 |
 | Total Suggestions | 379 |
 
-**Key Finding:** Most MCP tools have opportunities for improvement in LLM compatibility, security constraints, and best practices. Only the Sequential Thinking server achieves a "Mature" rating.
+**Key Finding:** All MCP servers achieve "Mature" ratings when using per-tool averaged scoring, though all have opportunities for improvement in LLM compatibility, security constraints, and best practices.
 
 ---
 
@@ -27,12 +27,12 @@ Validated **62 tools** from **6 MCP servers** (4 official Anthropic + 2 third-pa
 
 | Server | Maintainer | Tools | Score | Level | Status |
 |--------|------------|-------|-------|-------|--------|
+| everything | Anthropic | 11 | **84** | Mature | Reliable for complex workflows |
+| sqlite | Community | 5 | **82** | Mature | Reliable for complex workflows |
 | sequential-thinking | Anthropic | 1 | **80** | Mature | Reliable for complex workflows |
-| sqlite | Community | 5 | **12** | Immature | High risk of misuse |
-| everything | Anthropic | 11 | **0** | Immature | High risk of misuse |
-| memory | Anthropic | 9 | **0** | Immature | High risk of misuse |
-| filesystem | Anthropic | 14 | **0** | Immature | High risk of misuse |
-| playwright | Microsoft | 22 | **0** | Immature | High risk of misuse |
+| memory | Anthropic | 9 | **78** | Mature | Reliable for complex workflows |
+| playwright | Microsoft | 22 | **75** | Mature | Reliable for complex workflows |
+| filesystem | Anthropic | 14 | **71** | Mature | Reliable for complex workflows |
 
 ### Maturity Level Guide
 
@@ -43,13 +43,18 @@ Validated **62 tools** from **6 MCP servers** (4 official Anthropic + 2 third-pa
 | 41-70 | Moderate | Usable in simple agents; some guidance |
 | 0-40 | Immature | High risk of misuse; basic functionality only |
 
-### Scoring Formula
+### Scoring Formula (Per-Tool Averaged)
 
+For each tool:
 - Start at 100 points
 - Each **error**: -5 points
 - Each **warning**: -2 points
 - Each **suggestion**: -1 point
 - Floor at 0
+
+**Server Score** = Average of all tool scores
+
+This approach normalizes scoring across servers regardless of tool count, providing fair comparison.
 
 ---
 
@@ -59,12 +64,12 @@ Validated **62 tools** from **6 MCP servers** (4 official Anthropic + 2 third-pa
 
 | Server | Package | Tools | Valid | Errors | Warnings | Suggestions | Score |
 |--------|---------|-------|-------|--------|----------|-------------|-------|
-| filesystem | `@modelcontextprotocol/server-filesystem` | 14 | 0 | 61 | 13 | 77 | 0 |
-| memory | `@modelcontextprotocol/server-memory` | 9 | 0 | 20 | 10 | 76 | 0 |
-| everything | `@modelcontextprotocol/server-everything` | 11 | 3 | 11 | 23 | 71 | 0 |
+| everything | `@modelcontextprotocol/server-everything` | 11 | 3 | 11 | 23 | 71 | 84 |
+| sqlite | `mcp-server-sqlite-npx` | 5 | 0 | 6 | 13 | 32 | 82 |
 | sequential-thinking | `@modelcontextprotocol/server-sequential-thinking` | 1 | 0 | 1 | 3 | 9 | 80 |
-| playwright | `@playwright/mcp` | 22 | 0 | 55 | 76 | 114 | 0 |
-| sqlite | `mcp-server-sqlite-npx` | 5 | 0 | 6 | 13 | 32 | 12 |
+| memory | `@modelcontextprotocol/server-memory` | 9 | 0 | 20 | 10 | 76 | 78 |
+| playwright | `@playwright/mcp` | 22 | 0 | 55 | 76 | 114 | 75 |
+| filesystem | `@modelcontextprotocol/server-filesystem` | 14 | 0 | 61 | 13 | 77 | 71 |
 | **Total** | | **62** | **3** | **154** | **138** | **379** | - |
 
 ### Issues by Category
@@ -129,39 +134,68 @@ MCP servers define tools using **TypeScript with Zod schemas**. At runtime, the 
 
 ## Server Analysis
 
+### Everything (Score: 84 - Mature)
+
+Highest scoring server. Strengths:
+- Good parameter descriptions on many tools
+- Relatively fewer issues per tool
+
+Room for improvement:
+- NAM-002: Tool names use snake_case instead of kebab-case
+- Missing MCP annotations (title, hints)
+- Missing outputSchema
+
+### SQLite (Score: 82 - Mature)
+
+Simple server with 5 well-defined tools. Strengths:
+- Focused tool set with clear purposes
+- Reasonable parameter documentation
+
+Room for improvement:
+- NAM-002: All tools use snake_case naming
+- SEC-001: String parameters lack maxLength constraints
+- Missing some parameter descriptions
+
 ### Sequential Thinking (Score: 80 - Mature)
 
-The only server to achieve a mature rating. Why it scores well:
-- Only 1 tool to validate (less surface area for issues)
-- Comprehensive tool description with workflow guidance
-- Well-documented parameters with descriptions
+Single-tool server with comprehensive documentation. Strengths:
+- Excellent tool description with workflow guidance
+- Well-documented parameters
 
 Room for improvement:
 - NAM-002: Tool name should be `sequential-thinking` (kebab-case)
 - Missing MCP annotations (title, hints)
 - Missing outputSchema
 
-### SQLite (Score: 12 - Immature)
+### Memory (Score: 78 - Mature)
 
-Relatively simple server with 5 tools. Issues:
-- All tools use snake_case naming
-- String parameters lack maxLength constraints
-- Missing parameter descriptions in some tools
+Knowledge graph server with good fundamentals. Strengths:
+- Clear tool purposes
+- Entity/relation model is well-structured
 
-### Official Anthropic Servers (Score: 0 - Immature)
-
-The filesystem, memory, and everything servers share common patterns:
-- All use snake_case naming (should be kebab-case)
-- Missing parameter descriptions (especially `path` parameters)
+Room for improvement:
+- NAM-002: All tools use snake_case naming
+- Missing parameter descriptions
 - No security constraints on string inputs
-- No MCP annotations
 
-### Playwright (Score: 0 - Immature)
+### Playwright (Score: 75 - Mature)
 
-Microsoft's browser automation server has the most tools (22) and issues:
-- All tools use `browser_` prefix with snake_case
+Microsoft's browser automation server. Despite having the most tools (22), maintains mature rating. Strengths:
+- Comprehensive browser automation coverage
+- Consistent tool structure
+
+Room for improvement:
+- NAM-002: All tools use `browser_` prefix with snake_case
 - Many parameters lack descriptions
 - Missing security constraints
+- No MCP annotations
+
+### Filesystem (Score: 71 - Mature)
+
+Core file operations server. Scores lowest due to highest error density. Issues:
+- NAM-002: All tools use snake_case naming
+- LLM-006: Missing parameter descriptions (especially `path` parameters)
+- SEC-001/SEC-004: No security constraints on string/path inputs
 - No MCP annotations
 
 ---
@@ -220,18 +254,23 @@ node dist/cli.js --server "npx -y mcp-server-sqlite-npx /tmp/test.db" \
 
 | File | Tools | Errors | Score | Level |
 |------|-------|--------|-------|-------|
-| `official-filesystem.json` | 14 | 61 | 0 | Immature |
-| `official-memory.json` | 9 | 20 | 0 | Immature |
-| `official-everything.json` | 11 | 11 | 0 | Immature |
+| `official-everything.json` | 11 | 11 | 84 | Mature |
+| `thirdparty-sqlite.json` | 5 | 6 | 82 | Mature |
 | `official-sequential-thinking.json` | 1 | 1 | 80 | Mature |
-| `thirdparty-playwright.json` | 22 | 55 | 0 | Immature |
-| `thirdparty-sqlite.json` | 5 | 6 | 12 | Immature |
+| `official-memory.json` | 9 | 20 | 78 | Mature |
+| `thirdparty-playwright.json` | 22 | 55 | 75 | Mature |
+| `official-filesystem.json` | 14 | 61 | 71 | Mature |
 
 See `tests/fixtures/README.md` for regeneration instructions.
 
 ---
 
 ## Changelog
+
+### 2026-01-09 (v0.1.1)
+- **Fixed maturity scoring**: Changed from aggregate to per-tool averaged scoring
+- Previous scoring penalized servers with more tools unfairly (all scored 0-12)
+- New scoring normalizes across tool count (all servers now 71-84, Mature tier)
 
 ### 2026-01-08 (v0.1.0)
 - Added maturity scoring (0-100) with four levels
@@ -252,20 +291,21 @@ See `tests/fixtures/README.md` for regeneration instructions.
 
 ## Conclusion
 
-The validator now correctly identifies **154 errors** across **62 tools** from 6 MCP servers, with maturity scores ranging from **0 to 80**.
+The validator identifies **154 errors** across **62 tools** from 6 MCP servers, with per-tool averaged maturity scores ranging from **71 to 84** (all in the "Mature" tier).
 
 **Key insights:**
-- Only **Sequential Thinking** achieves a "Mature" rating (80/100)
-- Most servers score 0-12 due to accumulated errors and warnings
+- All 6 servers achieve "Mature" ratings (71-90 range) with per-tool averaged scoring
+- **Everything** scores highest (84) due to good parameter documentation
+- **Filesystem** scores lowest (71) due to highest error density per tool
 - The most impactful improvements would be:
-  1. Switching to kebab-case naming
-  2. Adding parameter descriptions
-  3. Adding security constraints (maxLength, patterns)
+  1. Switching to kebab-case naming (NAM-002)
+  2. Adding parameter descriptions (LLM-006)
+  3. Adding security constraints (SEC-001, SEC-004)
 
-These findings provide actionable feedback for MCP server authors to improve LLM compatibility and achieve higher maturity scores.
+To reach "Exemplary" (91+), servers would need to address MCP annotations, outputSchema, and reduce errors to ~2 per tool.
 
 ---
 
-*Generated by MCP Tool Validator v0.1.0*
+*Generated by MCP Tool Validator v0.1.1*
 *46 rules across 5 categories*
 *Fixtures from live server connections via `--server` flag*

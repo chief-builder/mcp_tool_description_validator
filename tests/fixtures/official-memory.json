@@ -15,8 +15,8 @@
       "warning": 10,
       "suggestion": 76
     },
-    "maturityScore": 0,
-    "maturityLevel": "immature"
+    "maturityScore": 78,
+    "maturityLevel": "mature"
   },
   "issues": [
     {
@@ -2899,8 +2899,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-09T02:51:33.162Z",
-    "duration": 27,
+    "timestamp": "2026-01-09T03:08:55.614Z",
+    "duration": 25,
     "configUsed": "",
     "llmAnalysisUsed": false
   }

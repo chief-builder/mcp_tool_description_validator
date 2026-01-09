@@ -91,7 +91,21 @@ export function calculateMaturityScore(issuesBySeverity: Record<IssueSeverity, n
 }
 
 /**
+ * Calculate maturity score for a single tool's issues.
+ */
+function calculateToolScore(issues: ValidationIssue[]): number {
+  let score = 100;
+
+  for (const issue of issues) {
+    score -= SEVERITY_DEDUCTIONS[issue.severity];
+  }
+
+  return Math.max(0, score);
+}
+
+/**
  * Aggregate results into a validation summary.
+ * Uses per-tool averaged scoring for fair comparison across servers.
  */
 export function aggregateResults(results: ToolRuleResults[]): ValidationSummary {
   const issuesByCategory: Record<IssueCategory, number> = {
@@ -109,10 +123,14 @@ export function aggregateResults(results: ToolRuleResults[]): ValidationSummary 
   };
 
   let validTools = 0;
+  let totalToolScore = 0;
 
   for (const result of results) {
     const hasErrors = result.issues.some((i) => i.severity === 'error');
     if (!hasErrors) validTools++;
+
+    // Calculate per-tool score and accumulate for averaging
+    totalToolScore += calculateToolScore(result.issues);
 
     for (const issue of result.issues) {
       issuesByCategory[issue.category]++;
@@ -120,7 +138,10 @@ export function aggregateResults(results: ToolRuleResults[]): ValidationSummary 
     }
   }
 
-  const maturityScore = calculateMaturityScore(issuesBySeverity);
+  // Per-tool averaged maturity score (handles empty results)
+  const maturityScore = results.length > 0
+    ? Math.round(totalToolScore / results.length)
+    : 100;
   const maturityLevel = getMaturityLevel(maturityScore);
 
   return {

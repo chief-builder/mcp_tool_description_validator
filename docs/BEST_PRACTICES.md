@@ -45,6 +45,15 @@ Poor descriptions (vague, buried details, or overloaded with metadata) lead to o
 
 The validator calculates a maturity score (0-100) based on rule compliance. Higher scores indicate tools that are more reliable, secure, and effective for LLM agents.
 
+### Per-Tool Averaged Scoring
+
+The server maturity score is the **average of individual tool scores**. This ensures fair comparison regardless of tool count:
+
+1. Each tool starts at 100 points
+2. Deduct points per issue severity
+3. Floor each tool score at 0
+4. **Server Score** = Average of all tool scores
+
 ### Scoring Impact by Severity
 
 | Severity | Points Deducted | Examples |
