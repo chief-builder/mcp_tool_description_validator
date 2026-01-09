@@ -15,8 +15,8 @@
       "warning": 13,
       "suggestion": 32
     },
-    "maturityScore": 12,
-    "maturityLevel": "immature"
+    "maturityScore": 82,
+    "maturityLevel": "mature"
   },
   "issues": [
     {
@@ -490,8 +490,8 @@
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "source": {
-          "type": "server",
-          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "type": "file",
+          "location": "tests/fixtures/temp-sqlite-tools.json",
           "raw": {
             "name": "read_query",
             "description": "Execute a SELECT query on the SQLite database",
@@ -509,8 +509,30 @@
               "additionalProperties": false,
               "$schema": "http://json-schema.org/draft-07/schema#"
             },
-            "execution": {
-              "taskSupport": "forbidden"
+            "source": {
+              "type": "server",
+              "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+              "raw": {
+                "name": "read_query",
+                "description": "Execute a SELECT query on the SQLite database",
+                "inputSchema": {
+                  "type": "object",
+                  "properties": {
+                    "query": {
+                      "type": "string",
+                      "description": "SELECT SQL query to execute"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "additionalProperties": false,
+                  "$schema": "http://json-schema.org/draft-07/schema#"
+                },
+                "execution": {
+                  "taskSupport": "forbidden"
+                }
+              }
             }
           }
         }
@@ -627,8 +649,8 @@
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "source": {
-          "type": "server",
-          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "type": "file",
+          "location": "tests/fixtures/temp-sqlite-tools.json",
           "raw": {
             "name": "write_query",
             "description": "Execute an INSERT, UPDATE, or DELETE query on the SQLite database",
@@ -646,8 +668,30 @@
               "additionalProperties": false,
               "$schema": "http://json-schema.org/draft-07/schema#"
             },
-            "execution": {
-              "taskSupport": "forbidden"
+            "source": {
+              "type": "server",
+              "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+              "raw": {
+                "name": "write_query",
+                "description": "Execute an INSERT, UPDATE, or DELETE query on the SQLite database",
+                "inputSchema": {
+                  "type": "object",
+                  "properties": {
+                    "query": {
+                      "type": "string",
+                      "description": "INSERT, UPDATE, or DELETE SQL query to execute"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "additionalProperties": false,
+                  "$schema": "http://json-schema.org/draft-07/schema#"
+                },
+                "execution": {
+                  "taskSupport": "forbidden"
+                }
+              }
             }
           }
         }
@@ -772,8 +816,8 @@
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "source": {
-          "type": "server",
-          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "type": "file",
+          "location": "tests/fixtures/temp-sqlite-tools.json",
           "raw": {
             "name": "create_table",
             "description": "Create a new table in the SQLite database",
@@ -791,8 +835,30 @@
               "additionalProperties": false,
               "$schema": "http://json-schema.org/draft-07/schema#"
             },
-            "execution": {
-              "taskSupport": "forbidden"
+            "source": {
+              "type": "server",
+              "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+              "raw": {
+                "name": "create_table",
+                "description": "Create a new table in the SQLite database",
+                "inputSchema": {
+                  "type": "object",
+                  "properties": {
+                    "query": {
+                      "type": "string",
+                      "description": "CREATE TABLE SQL statement"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "additionalProperties": false,
+                  "$schema": "http://json-schema.org/draft-07/schema#"
+                },
+                "execution": {
+                  "taskSupport": "forbidden"
+                }
+              }
             }
           }
         }
@@ -908,8 +974,8 @@
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "source": {
-          "type": "server",
-          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "type": "file",
+          "location": "tests/fixtures/temp-sqlite-tools.json",
           "raw": {
             "name": "list_tables",
             "description": "List all tables in the SQLite database",
@@ -918,8 +984,21 @@
               "properties": {},
               "$schema": "http://json-schema.org/draft-07/schema#"
             },
-            "execution": {
-              "taskSupport": "forbidden"
+            "source": {
+              "type": "server",
+              "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+              "raw": {
+                "name": "list_tables",
+                "description": "List all tables in the SQLite database",
+                "inputSchema": {
+                  "type": "object",
+                  "properties": {},
+                  "$schema": "http://json-schema.org/draft-07/schema#"
+                },
+                "execution": {
+                  "taskSupport": "forbidden"
+                }
+              }
             }
           }
         }
@@ -1028,8 +1107,8 @@
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "source": {
-          "type": "server",
-          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "type": "file",
+          "location": "tests/fixtures/temp-sqlite-tools.json",
           "raw": {
             "name": "describe_table",
             "description": "Get the schema information for a specific table",
@@ -1047,8 +1126,30 @@
               "additionalProperties": false,
               "$schema": "http://json-schema.org/draft-07/schema#"
             },
-            "execution": {
-              "taskSupport": "forbidden"
+            "source": {
+              "type": "server",
+              "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+              "raw": {
+                "name": "describe_table",
+                "description": "Get the schema information for a specific table",
+                "inputSchema": {
+                  "type": "object",
+                  "properties": {
+                    "table_name": {
+                      "type": "string",
+                      "description": "Name of the table to describe"
+                    }
+                  },
+                  "required": [
+                    "table_name"
+                  ],
+                  "additionalProperties": false,
+                  "$schema": "http://json-schema.org/draft-07/schema#"
+                },
+                "execution": {
+                  "taskSupport": "forbidden"
+                }
+              }
             }
           }
         }
@@ -1148,8 +1249,8 @@
   "metadata": {
     "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2025-11-25",
-    "timestamp": "2026-01-09T02:53:36.088Z",
-    "duration": 25,
+    "timestamp": "2026-01-09T03:36:45.570Z",
+    "duration": 24,
     "configUsed": "",
     "llmAnalysisUsed": false
   }

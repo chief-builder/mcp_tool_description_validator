@@ -1,6 +1,6 @@
 # MCP Server Tool Validation Report
 
-**Date:** 2025-01-08 (Updated: 2026-01-08)
+**Date:** 2025-01-08 (Updated: 2026-01-09)
 **Validator Version:** 0.1.0
 **MCP Spec Version:** 2025-11-25
 **Rules:** 46 (SCH: 8, NAM: 6, SEC: 10, LLM: 13, BP: 9)
@@ -101,7 +101,7 @@ MCP servers define tools using **TypeScript with Zod schemas**. At runtime, the 
 2. Connect via STDIO    Validator connects as MCP client
 3. Request Tool List    Send: { method: "tools/list" }
 4. Validate Each Tool   Apply 46 rules across 5 categories
-5. Calculate Score      100 - (5×errors + 2×warnings + 1×suggestions)
+5. Calculate Score      Per-tool averaged (see Scoring Formula)
 6. Output Results       Save as JSON fixture
 ```
 

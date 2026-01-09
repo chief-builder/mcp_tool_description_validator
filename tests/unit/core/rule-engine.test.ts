@@ -9,7 +9,6 @@ import {
   executeRules,
   aggregateResults,
   flattenIssues,
-  calculateMaturityScore,
   getMaturityLevel,
 } from '../../../src/core/rule-engine.js';
 import { getEffectiveSeverity } from '../../../src/core/rule-loader.js';
@@ -526,40 +525,6 @@ describe('Rule Engine', () => {
 
       expect(issues).toHaveLength(3);
       expect(issues.map((i) => i.id)).toEqual(['A', 'B', 'C']);
-    });
-  });
-
-  describe('calculateMaturityScore', () => {
-    it('should return 100 for no issues', () => {
-      const issuesBySeverity = { error: 0, warning: 0, suggestion: 0 };
-      expect(calculateMaturityScore(issuesBySeverity)).toBe(100);
-    });
-
-    it('should deduct 5 points per error', () => {
-      const issuesBySeverity = { error: 2, warning: 0, suggestion: 0 };
-      expect(calculateMaturityScore(issuesBySeverity)).toBe(90); // 100 - 2*5
-    });
-
-    it('should deduct 2 points per warning', () => {
-      const issuesBySeverity = { error: 0, warning: 3, suggestion: 0 };
-      expect(calculateMaturityScore(issuesBySeverity)).toBe(94); // 100 - 3*2
-    });
-
-    it('should deduct 1 point per suggestion', () => {
-      const issuesBySeverity = { error: 0, warning: 0, suggestion: 5 };
-      expect(calculateMaturityScore(issuesBySeverity)).toBe(95); // 100 - 5*1
-    });
-
-    it('should combine deductions from all severities', () => {
-      const issuesBySeverity = { error: 2, warning: 3, suggestion: 4 };
-      // 100 - 2*5 - 3*2 - 4*1 = 100 - 10 - 6 - 4 = 80
-      expect(calculateMaturityScore(issuesBySeverity)).toBe(80);
-    });
-
-    it('should floor at 0 for many issues', () => {
-      const issuesBySeverity = { error: 25, warning: 0, suggestion: 0 };
-      // 100 - 25*5 = 100 - 125 = -25 -> floored to 0
-      expect(calculateMaturityScore(issuesBySeverity)).toBe(0);
     });
   });
 

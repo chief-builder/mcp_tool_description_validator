@@ -76,26 +76,9 @@ export function getMaturityLevel(score: number): MaturityLevel {
 }
 
 /**
- * Calculate maturity score from issue severity counts.
+ * Calculate maturity score for a single tool's issues.
  * Starts at 100 and deducts points per issue severity.
  * Floor is 0.
- *
- * @deprecated Use per-tool scoring via aggregateResults instead.
- * Kept for backwards compatibility with existing tests.
- */
-export function calculateMaturityScore(issuesBySeverity: Record<IssueSeverity, number>): number {
-  let score = 100;
-
-  score -= issuesBySeverity.error * SEVERITY_DEDUCTIONS.error;
-  score -= issuesBySeverity.warning * SEVERITY_DEDUCTIONS.warning;
-  score -= issuesBySeverity.suggestion * SEVERITY_DEDUCTIONS.suggestion;
-
-  return Math.max(0, score);
-}
-
-/**
- * Calculate maturity score for a single tool's issues.
- * Used internally for per-tool averaged scoring.
  */
 function calculateToolScore(issues: ValidationIssue[]): number {
   let score = 100;
