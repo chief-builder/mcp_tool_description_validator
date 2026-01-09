@@ -109,7 +109,7 @@ describe('Core Validator', () => {
         'NAM-001', 'NAM-002', 'NAM-003', 'NAM-004', 'NAM-005', 'NAM-006',
         'SEC-001', 'SEC-002', 'SEC-003', 'SEC-004', 'SEC-005', 'SEC-006', 'SEC-007', 'SEC-008', 'SEC-009', 'SEC-010',
         'LLM-001', 'LLM-002', 'LLM-003', 'LLM-004', 'LLM-005', 'LLM-006', 'LLM-007', 'LLM-008', 'LLM-009', 'LLM-010', 'LLM-011', 'LLM-012',
-        'BP-001', 'BP-002', 'BP-003', 'BP-004', 'BP-005', 'BP-006', 'BP-007', 'BP-008',
+        'BP-001', 'BP-002', 'BP-003', 'BP-004', 'BP-005', 'BP-006', 'BP-007', 'BP-008', 'BP-009',
       ];
       for (const id of ruleIds) {
         disabledRules[id] = false;

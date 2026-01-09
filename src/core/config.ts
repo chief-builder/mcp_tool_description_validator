@@ -78,6 +78,7 @@ const DEFAULT_RULES: RuleConfig = {
   'BP-006': true,
   'BP-007': true,
   'BP-008': true,
+  'BP-009': true,
 };
 
 /**

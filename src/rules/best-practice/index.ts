@@ -12,6 +12,7 @@ export { default as bp005 } from './bp-005.js';
 export { default as bp006 } from './bp-006.js';
 export { default as bp007 } from './bp-007.js';
 export { default as bp008 } from './bp-008.js';
+export { default as bp009 } from './bp-009.js';
 
 import bp001 from './bp-001.js';
 import bp002 from './bp-002.js';
@@ -21,6 +22,7 @@ import bp005 from './bp-005.js';
 import bp006 from './bp-006.js';
 import bp007 from './bp-007.js';
 import bp008 from './bp-008.js';
+import bp009 from './bp-009.js';
 import type { Rule } from '../types.js';
 
 /**
@@ -35,6 +37,7 @@ export const bestPracticeRules: Rule[] = [
   bp006,
   bp007,
   bp008,
+  bp009,
 ];
 
 export default bestPracticeRules;
