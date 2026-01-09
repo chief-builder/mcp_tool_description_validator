@@ -68,6 +68,7 @@ const DEFAULT_RULES: RuleConfig = {
   'LLM-010': true,
   'LLM-011': true,
   'LLM-012': true,
+  'LLM-013': true,
 
   // Best practice rules (BP-xxx)
   'BP-001': true,

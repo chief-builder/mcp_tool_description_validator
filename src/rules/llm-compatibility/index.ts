@@ -17,6 +17,7 @@ import llm009 from './llm-009.js';
 import llm010 from './llm-010.js';
 import llm011 from './llm-011.js';
 import llm012 from './llm-012.js';
+import llm013 from './llm-013.js';
 
 export {
   llm001,
@@ -31,6 +32,7 @@ export {
   llm010,
   llm011,
   llm012,
+  llm013,
 };
 
 /**
@@ -49,6 +51,7 @@ export const llmRules = [
   llm010,
   llm011,
   llm012,
+  llm013,
 ];
 
 export default llmRules;
