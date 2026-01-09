@@ -84,7 +84,7 @@ See [docs/RULES.md](docs/RULES.md) for the complete rule reference with examples
 
 ## Maturity Scoring
 
-The validator calculates a maturity score based on rule compliance:
+The validator calculates a **per-tool averaged** maturity score (0-100) based on rule compliance. Each tool starts at 100 points, deductions are applied per issue, and the server score is the average across all tools.
 
 | Score | Level | Description |
 |-------|-------|-------------|
@@ -95,13 +95,13 @@ The validator calculates a maturity score based on rule compliance:
 
 ### Severity Impact
 
-Each rule has a severity level that affects scoring:
+Each rule has a severity level that affects per-tool scoring:
 
-| Severity | Impact | Examples |
-|----------|--------|----------|
-| `error` | High deduction | Missing required fields, security vulnerabilities |
-| `warning` | Moderate deduction | Suboptimal descriptions, missing constraints |
-| `suggestion` | Low deduction | Missing annotations, style recommendations |
+| Severity | Deduction | Examples |
+|----------|-----------|----------|
+| `error` | -5 points | Missing required fields, security vulnerabilities |
+| `warning` | -2 points | Suboptimal descriptions, missing constraints |
+| `suggestion` | -1 point | Missing annotations, style recommendations |
 
 ## Validation Philosophy
 

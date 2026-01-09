@@ -392,6 +392,88 @@ describe('Rule Engine', () => {
       expect(summary.issuesBySeverity.warning).toBe(1);
       expect(summary.issuesBySeverity.suggestion).toBe(3);
     });
+
+    it('should calculate per-tool averaged maturity score', () => {
+      // Tool 1: 1 error (score: 100 - 5 = 95)
+      // Tool 2: 2 errors + 1 warning (score: 100 - 10 - 2 = 88)
+      // Average: (95 + 88) / 2 = 91.5, rounded to 92
+      const results: ToolRuleResults[] = [
+        {
+          tool: createMockTool('tool-1'),
+          issues: [
+            {
+              id: 'E1',
+              category: 'schema',
+              severity: 'error',
+              message: 'Error 1',
+              tool: 'tool-1',
+            },
+          ],
+        },
+        {
+          tool: createMockTool('tool-2'),
+          issues: [
+            {
+              id: 'E2',
+              category: 'schema',
+              severity: 'error',
+              message: 'Error 2',
+              tool: 'tool-2',
+            },
+            {
+              id: 'E3',
+              category: 'schema',
+              severity: 'error',
+              message: 'Error 3',
+              tool: 'tool-2',
+            },
+            {
+              id: 'W1',
+              category: 'naming',
+              severity: 'warning',
+              message: 'Warning 1',
+              tool: 'tool-2',
+            },
+          ],
+        },
+      ];
+
+      const summary = aggregateResults(results);
+
+      // Per-tool averaged: (95 + 88) / 2 = 91.5 -> 92
+      expect(summary.maturityScore).toBe(92);
+      expect(summary.maturityLevel).toBe('exemplary');
+    });
+
+    it('should handle tools with many issues flooring at 0', () => {
+      // Tool 1: 0 issues (score: 100)
+      // Tool 2: 25 errors (score: 100 - 125 = 0, floored)
+      // Average: (100 + 0) / 2 = 50
+      const manyErrors = Array.from({ length: 25 }, (_, i) => ({
+        id: `E${i}`,
+        category: 'schema' as const,
+        severity: 'error' as const,
+        message: `Error ${i}`,
+        tool: 'tool-2',
+      }));
+
+      const results: ToolRuleResults[] = [
+        {
+          tool: createMockTool('tool-1'),
+          issues: [],
+        },
+        {
+          tool: createMockTool('tool-2'),
+          issues: manyErrors,
+        },
+      ];
+
+      const summary = aggregateResults(results);
+
+      // Per-tool averaged: (100 + 0) / 2 = 50
+      expect(summary.maturityScore).toBe(50);
+      expect(summary.maturityLevel).toBe('moderate');
+    });
   });
 
   describe('flattenIssues', () => {

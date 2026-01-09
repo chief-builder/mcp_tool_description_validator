@@ -113,10 +113,10 @@ export interface ValidationSummary {
   /** Count of issues grouped by severity */
   issuesBySeverity: Record<IssueSeverity, number>;
 
-  /** Maturity score (0-100) based on issues found */
+  /** Maturity score (0-100), per-tool averaged */
   maturityScore: number;
 
-  /** Maturity level based on score */
+  /** Maturity level derived from score */
   maturityLevel: MaturityLevel;
 }
 
