@@ -112,6 +112,12 @@ export interface ValidationSummary {
 
   /** Count of issues grouped by severity */
   issuesBySeverity: Record<IssueSeverity, number>;
+
+  /** Maturity score (0-100) based on issues found */
+  maturityScore: number;
+
+  /** Maturity level based on score */
+  maturityLevel: MaturityLevel;
 }
 
 /**
@@ -157,6 +163,16 @@ export type IssueCategory =
  * Severity levels for validation issues.
  */
 export type IssueSeverity = 'error' | 'warning' | 'suggestion';
+
+/**
+ * Maturity levels for tool definitions based on validation score.
+ *
+ * - Immature (0-40): High risk of misuse; basic functionality only
+ * - Moderate (41-70): Usable in simple agents; some guidance
+ * - Mature (71-90): Reliable for complex workflows
+ * - Exemplary (91-100): Optimized for advanced multi-tool agents
+ */
+export type MaturityLevel = 'immature' | 'moderate' | 'mature' | 'exemplary';
 
 /**
  * Validation result for a single tool.

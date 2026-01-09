@@ -9,6 +9,8 @@ import {
   executeRules,
   aggregateResults,
   flattenIssues,
+  calculateMaturityScore,
+  getMaturityLevel,
 } from '../../../src/core/rule-engine.js';
 import { getEffectiveSeverity } from '../../../src/core/rule-loader.js';
 import type { Rule, RuleContext, ToolRuleResults } from '../../../src/rules/types.js';
@@ -235,6 +237,8 @@ describe('Rule Engine', () => {
       expect(summary.validTools).toBe(0);
       expect(summary.issuesByCategory.schema).toBe(0);
       expect(summary.issuesBySeverity.error).toBe(0);
+      expect(summary.maturityScore).toBe(100);
+      expect(summary.maturityLevel).toBe('exemplary');
     });
 
     it('should count valid tools (no errors)', () => {
@@ -440,6 +444,119 @@ describe('Rule Engine', () => {
 
       expect(issues).toHaveLength(3);
       expect(issues.map((i) => i.id)).toEqual(['A', 'B', 'C']);
+    });
+  });
+
+  describe('calculateMaturityScore', () => {
+    it('should return 100 for no issues', () => {
+      const issuesBySeverity = { error: 0, warning: 0, suggestion: 0 };
+      expect(calculateMaturityScore(issuesBySeverity)).toBe(100);
+    });
+
+    it('should deduct 5 points per error', () => {
+      const issuesBySeverity = { error: 2, warning: 0, suggestion: 0 };
+      expect(calculateMaturityScore(issuesBySeverity)).toBe(90); // 100 - 2*5
+    });
+
+    it('should deduct 2 points per warning', () => {
+      const issuesBySeverity = { error: 0, warning: 3, suggestion: 0 };
+      expect(calculateMaturityScore(issuesBySeverity)).toBe(94); // 100 - 3*2
+    });
+
+    it('should deduct 1 point per suggestion', () => {
+      const issuesBySeverity = { error: 0, warning: 0, suggestion: 5 };
+      expect(calculateMaturityScore(issuesBySeverity)).toBe(95); // 100 - 5*1
+    });
+
+    it('should combine deductions from all severities', () => {
+      const issuesBySeverity = { error: 2, warning: 3, suggestion: 4 };
+      // 100 - 2*5 - 3*2 - 4*1 = 100 - 10 - 6 - 4 = 80
+      expect(calculateMaturityScore(issuesBySeverity)).toBe(80);
+    });
+
+    it('should floor at 0 for many issues', () => {
+      const issuesBySeverity = { error: 25, warning: 0, suggestion: 0 };
+      // 100 - 25*5 = 100 - 125 = -25 -> floored to 0
+      expect(calculateMaturityScore(issuesBySeverity)).toBe(0);
+    });
+  });
+
+  describe('getMaturityLevel', () => {
+    it('should return exemplary for scores 91-100', () => {
+      expect(getMaturityLevel(100)).toBe('exemplary');
+      expect(getMaturityLevel(95)).toBe('exemplary');
+      expect(getMaturityLevel(91)).toBe('exemplary');
+    });
+
+    it('should return mature for scores 71-90', () => {
+      expect(getMaturityLevel(90)).toBe('mature');
+      expect(getMaturityLevel(80)).toBe('mature');
+      expect(getMaturityLevel(71)).toBe('mature');
+    });
+
+    it('should return moderate for scores 41-70', () => {
+      expect(getMaturityLevel(70)).toBe('moderate');
+      expect(getMaturityLevel(55)).toBe('moderate');
+      expect(getMaturityLevel(41)).toBe('moderate');
+    });
+
+    it('should return immature for scores 0-40', () => {
+      expect(getMaturityLevel(40)).toBe('immature');
+      expect(getMaturityLevel(20)).toBe('immature');
+      expect(getMaturityLevel(0)).toBe('immature');
+    });
+  });
+
+  describe('aggregateResults maturity', () => {
+    it('should include maturity score and level in summary', () => {
+      const results: ToolRuleResults[] = [
+        {
+          tool: createMockTool(),
+          issues: [
+            {
+              id: 'E1',
+              category: 'schema',
+              severity: 'error',
+              message: 'Error 1',
+              tool: 'test',
+            },
+            {
+              id: 'W1',
+              category: 'security',
+              severity: 'warning',
+              message: 'Warning 1',
+              tool: 'test',
+            },
+          ],
+        },
+      ];
+
+      const summary = aggregateResults(results);
+
+      // 100 - 1*5 - 1*2 = 93
+      expect(summary.maturityScore).toBe(93);
+      expect(summary.maturityLevel).toBe('exemplary');
+    });
+
+    it('should compute immature level for many errors', () => {
+      const results: ToolRuleResults[] = [
+        {
+          tool: createMockTool(),
+          issues: Array(15).fill(null).map((_, i) => ({
+            id: `E${i}`,
+            category: 'schema' as const,
+            severity: 'error' as const,
+            message: `Error ${i}`,
+            tool: 'test',
+          })),
+        },
+      ];
+
+      const summary = aggregateResults(results);
+
+      // 100 - 15*5 = 25
+      expect(summary.maturityScore).toBe(25);
+      expect(summary.maturityLevel).toBe('immature');
     });
   });
 });

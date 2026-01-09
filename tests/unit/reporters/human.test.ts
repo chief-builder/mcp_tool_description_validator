@@ -13,6 +13,8 @@ const mockResult: ValidationResult = {
     validTools: 1,
     issuesByCategory: { schema: 1, security: 0, 'llm-compatibility': 1, naming: 0, 'best-practice': 0 },
     issuesBySeverity: { error: 1, warning: 1, suggestion: 0 },
+    maturityScore: 93,
+    maturityLevel: 'exemplary',
   },
   issues: [
     { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool' },
@@ -108,6 +110,8 @@ describe('Human Reporter', () => {
         summary: {
           ...mockResult.summary,
           issuesBySeverity: { error: 0, warning: 0, suggestion: 0 },
+          maturityScore: 100,
+          maturityLevel: 'exemplary',
         },
       };
 
@@ -175,6 +179,71 @@ describe('Human Reporter', () => {
       const output = formatHumanOutput(mockResult, { color: false });
 
       expect(output).toContain('MCP Tool Validator v0.1.0');
+    });
+
+    it('should display maturity score and level', () => {
+      const output = formatHumanOutput(mockResult, { color: false });
+
+      expect(output).toContain('Maturity:');
+      expect(output).toContain('EXEMPLARY');
+      expect(output).toContain('93/100');
+    });
+
+    it('should display maturity description', () => {
+      const output = formatHumanOutput(mockResult, { color: false });
+
+      expect(output).toContain('Optimized for advanced multi-tool agents');
+    });
+
+    it('should display immature level with appropriate description', () => {
+      const immatureResult: ValidationResult = {
+        ...mockResult,
+        summary: {
+          ...mockResult.summary,
+          maturityScore: 25,
+          maturityLevel: 'immature',
+        },
+      };
+
+      const output = formatHumanOutput(immatureResult, { color: false });
+
+      expect(output).toContain('IMMATURE');
+      expect(output).toContain('25/100');
+      expect(output).toContain('High risk of misuse');
+    });
+
+    it('should display moderate level with appropriate description', () => {
+      const moderateResult: ValidationResult = {
+        ...mockResult,
+        summary: {
+          ...mockResult.summary,
+          maturityScore: 55,
+          maturityLevel: 'moderate',
+        },
+      };
+
+      const output = formatHumanOutput(moderateResult, { color: false });
+
+      expect(output).toContain('MODERATE');
+      expect(output).toContain('55/100');
+      expect(output).toContain('Usable in simple agents');
+    });
+
+    it('should display mature level with appropriate description', () => {
+      const matureResult: ValidationResult = {
+        ...mockResult,
+        summary: {
+          ...mockResult.summary,
+          maturityScore: 80,
+          maturityLevel: 'mature',
+        },
+      };
+
+      const output = formatHumanOutput(matureResult, { color: false });
+
+      expect(output).toContain('MATURE');
+      expect(output).toContain('80/100');
+      expect(output).toContain('Reliable for complex workflows');
     });
   });
 });

@@ -1,9 +1,41 @@
 import chalk, { Chalk } from 'chalk';
-import type { ValidationResult } from '../types/index.js';
+import type { ValidationResult, MaturityLevel } from '../types/index.js';
 
 export interface HumanOutputOptions {
   color?: boolean;
   verbose?: boolean;
+}
+
+/**
+ * Get the appropriate color function for a maturity level.
+ */
+function getMaturityColor(level: MaturityLevel, c: typeof chalk): (text: string) => string {
+  switch (level) {
+    case 'exemplary':
+      return c.green;
+    case 'mature':
+      return c.cyan;
+    case 'moderate':
+      return c.yellow;
+    case 'immature':
+      return c.red;
+  }
+}
+
+/**
+ * Get a human-readable description for a maturity level.
+ */
+function getMaturityDescription(level: MaturityLevel): string {
+  switch (level) {
+    case 'exemplary':
+      return 'Optimized for advanced multi-tool agents';
+    case 'mature':
+      return 'Reliable for complex workflows';
+    case 'moderate':
+      return 'Usable in simple agents; some guidance';
+    case 'immature':
+      return 'High risk of misuse; basic functionality only';
+  }
 }
 
 /**
@@ -65,6 +97,13 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
       lines.push(`    ${category}: ${count}`);
     }
   }
+  lines.push('');
+
+  // Maturity assessment
+  const maturityColor = getMaturityColor(result.summary.maturityLevel, c);
+  const maturityDescription = getMaturityDescription(result.summary.maturityLevel);
+  lines.push(`Maturity: ${maturityColor(result.summary.maturityLevel.toUpperCase())} (${result.summary.maturityScore}/100)`);
+  lines.push(`  ${c.gray(maturityDescription)}`);
   lines.push('');
 
   // Final status

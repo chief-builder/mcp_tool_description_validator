@@ -12,6 +12,7 @@ import type {
   ValidationSummary,
   IssueCategory,
   IssueSeverity,
+  MaturityLevel,
 } from '../types/index.js';
 import { getEffectiveSeverity } from './rule-loader.js';
 
@@ -56,6 +57,40 @@ export function executeRules(
 }
 
 /**
+ * Point deductions per issue severity for maturity scoring.
+ */
+const SEVERITY_DEDUCTIONS: Record<IssueSeverity, number> = {
+  error: 5,
+  warning: 2,
+  suggestion: 1,
+};
+
+/**
+ * Determine maturity level from score.
+ */
+export function getMaturityLevel(score: number): MaturityLevel {
+  if (score >= 91) return 'exemplary';
+  if (score >= 71) return 'mature';
+  if (score >= 41) return 'moderate';
+  return 'immature';
+}
+
+/**
+ * Calculate maturity score from issue severity counts.
+ * Starts at 100 and deducts points per issue severity.
+ * Floor is 0.
+ */
+export function calculateMaturityScore(issuesBySeverity: Record<IssueSeverity, number>): number {
+  let score = 100;
+
+  score -= issuesBySeverity.error * SEVERITY_DEDUCTIONS.error;
+  score -= issuesBySeverity.warning * SEVERITY_DEDUCTIONS.warning;
+  score -= issuesBySeverity.suggestion * SEVERITY_DEDUCTIONS.suggestion;
+
+  return Math.max(0, score);
+}
+
+/**
  * Aggregate results into a validation summary.
  */
 export function aggregateResults(results: ToolRuleResults[]): ValidationSummary {
@@ -85,11 +120,16 @@ export function aggregateResults(results: ToolRuleResults[]): ValidationSummary 
     }
   }
 
+  const maturityScore = calculateMaturityScore(issuesBySeverity);
+  const maturityLevel = getMaturityLevel(maturityScore);
+
   return {
     totalTools: results.length,
     validTools,
     issuesByCategory,
     issuesBySeverity,
+    maturityScore,
+    maturityLevel,
   };
 }
 
