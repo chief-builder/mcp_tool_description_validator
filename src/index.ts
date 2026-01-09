@@ -74,6 +74,18 @@ export {
 } from './parsers/mcp-client.js';
 
 // ============================================================================
+// LLM Analyzer
+// ============================================================================
+
+export {
+  analyzeTool,
+  analyzeTools,
+  createDefaultLLMConfig,
+  type LLMAnalysisResult,
+  type AnalyzeOptions,
+} from './llm/analyzer.js';
+
+// ============================================================================
 // Rule types (for custom rules in future)
 // ============================================================================
 
