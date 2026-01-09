@@ -1,0 +1,964 @@
+{
+  "valid": false,
+  "summary": {
+    "totalTools": 5,
+    "validTools": 0,
+    "issuesByCategory": {
+      "schema": 1,
+      "security": 7,
+      "llm-compatibility": 9,
+      "naming": 7,
+      "best-practice": 17
+    },
+    "issuesBySeverity": {
+      "error": 6,
+      "warning": 13,
+      "suggestion": 22
+    }
+  },
+  "issues": [
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"read_query\" must use kebab-case format",
+      "tool": "read_query",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"read-query\""
+    },
+    {
+      "id": "SEC-006",
+      "category": "security",
+      "severity": "warning",
+      "message": "Parameter 'query' appears to be a command/action but is missing an enum constraint",
+      "tool": "read_query",
+      "path": "inputSchema.properties.query",
+      "suggestion": "If the valid values are known, add an \"enum\" array to restrict input to allowed values"
+    },
+    {
+      "id": "SEC-010",
+      "category": "security",
+      "severity": "warning",
+      "message": "Parameter 'query' appears to accept code/scripts but lacks security documentation",
+      "tool": "read_query",
+      "path": "inputSchema.properties.query",
+      "suggestion": "Add a description that clearly documents the security implications of accepting code/script input"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "read_query",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "read_query",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "read_query",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "read_query",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "read_query",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"write_query\" must use kebab-case format",
+      "tool": "write_query",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"write-query\""
+    },
+    {
+      "id": "SEC-006",
+      "category": "security",
+      "severity": "warning",
+      "message": "Parameter 'query' appears to be a command/action but is missing an enum constraint",
+      "tool": "write_query",
+      "path": "inputSchema.properties.query",
+      "suggestion": "If the valid values are known, add an \"enum\" array to restrict input to allowed values"
+    },
+    {
+      "id": "SEC-010",
+      "category": "security",
+      "severity": "warning",
+      "message": "Parameter 'query' appears to accept code/scripts but lacks security documentation",
+      "tool": "write_query",
+      "path": "inputSchema.properties.query",
+      "suggestion": "Add a description that clearly documents the security implications of accepting code/script input"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "write_query",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "write_query",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "write_query",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "write_query",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-003",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool name \"write_query\" suggests data modification but is missing destructiveHint annotation",
+      "tool": "write_query",
+      "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "write_query",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"create_table\" must use kebab-case format",
+      "tool": "create_table",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"create-table\""
+    },
+    {
+      "id": "SEC-006",
+      "category": "security",
+      "severity": "warning",
+      "message": "Parameter 'query' appears to be a command/action but is missing an enum constraint",
+      "tool": "create_table",
+      "path": "inputSchema.properties.query",
+      "suggestion": "If the valid values are known, add an \"enum\" array to restrict input to allowed values"
+    },
+    {
+      "id": "SEC-010",
+      "category": "security",
+      "severity": "warning",
+      "message": "Parameter 'query' appears to accept code/scripts but lacks security documentation",
+      "tool": "create_table",
+      "path": "inputSchema.properties.query",
+      "suggestion": "Add a description that clearly documents the security implications of accepting code/script input"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "create_table",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "create_table",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "create_table",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "create_table",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-003",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool name \"create_table\" suggests data modification but is missing destructiveHint annotation",
+      "tool": "create_table",
+      "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "create_table",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "SCH-006",
+      "category": "schema",
+      "severity": "warning",
+      "message": "inputSchema.properties is empty - tool takes no parameters",
+      "tool": "list_tables",
+      "path": "inputSchema.properties",
+      "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+      "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"list_tables\" must use kebab-case format",
+      "tool": "list_tables",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"list-tables\""
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "list_tables",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "list_tables",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "list_tables",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "list_tables",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "list_tables",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"describe_table\" must use kebab-case format",
+      "tool": "describe_table",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"describe-table\""
+    },
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"describe_table\" should start with a descriptive verb",
+      "tool": "describe_table",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "NAM-006",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Parameter names should use camelCase (current: snake_case)",
+      "tool": "describe_table",
+      "path": "inputSchema.properties",
+      "suggestion": "Consider renaming: table_name -> tableName"
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'table_name' is missing maxLength constraint",
+      "tool": "describe_table",
+      "path": "inputSchema.properties.table_name",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "describe_table",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "describe_table",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "describe_table",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "describe_table",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    }
+  ],
+  "tools": [
+    {
+      "name": "read_query",
+      "valid": false,
+      "tool": {
+        "name": "read_query",
+        "description": "Execute a SELECT query on the SQLite database",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "SELECT SQL query to execute"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "raw": {
+            "name": "read_query",
+            "description": "Execute a SELECT query on the SQLite database",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "SELECT SQL query to execute"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"read_query\" must use kebab-case format",
+          "tool": "read_query",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"read-query\""
+        },
+        {
+          "id": "SEC-006",
+          "category": "security",
+          "severity": "warning",
+          "message": "Parameter 'query' appears to be a command/action but is missing an enum constraint",
+          "tool": "read_query",
+          "path": "inputSchema.properties.query",
+          "suggestion": "If the valid values are known, add an \"enum\" array to restrict input to allowed values"
+        },
+        {
+          "id": "SEC-010",
+          "category": "security",
+          "severity": "warning",
+          "message": "Parameter 'query' appears to accept code/scripts but lacks security documentation",
+          "tool": "read_query",
+          "path": "inputSchema.properties.query",
+          "suggestion": "Add a description that clearly documents the security implications of accepting code/script input"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "read_query",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "read_query",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "read_query",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "read_query",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "read_query",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "write_query",
+      "valid": false,
+      "tool": {
+        "name": "write_query",
+        "description": "Execute an INSERT, UPDATE, or DELETE query on the SQLite database",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "INSERT, UPDATE, or DELETE SQL query to execute"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "raw": {
+            "name": "write_query",
+            "description": "Execute an INSERT, UPDATE, or DELETE query on the SQLite database",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "INSERT, UPDATE, or DELETE SQL query to execute"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"write_query\" must use kebab-case format",
+          "tool": "write_query",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"write-query\""
+        },
+        {
+          "id": "SEC-006",
+          "category": "security",
+          "severity": "warning",
+          "message": "Parameter 'query' appears to be a command/action but is missing an enum constraint",
+          "tool": "write_query",
+          "path": "inputSchema.properties.query",
+          "suggestion": "If the valid values are known, add an \"enum\" array to restrict input to allowed values"
+        },
+        {
+          "id": "SEC-010",
+          "category": "security",
+          "severity": "warning",
+          "message": "Parameter 'query' appears to accept code/scripts but lacks security documentation",
+          "tool": "write_query",
+          "path": "inputSchema.properties.query",
+          "suggestion": "Add a description that clearly documents the security implications of accepting code/script input"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "write_query",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "write_query",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "write_query",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "write_query",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-003",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool name \"write_query\" suggests data modification but is missing destructiveHint annotation",
+          "tool": "write_query",
+          "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "write_query",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "create_table",
+      "valid": false,
+      "tool": {
+        "name": "create_table",
+        "description": "Create a new table in the SQLite database",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "CREATE TABLE SQL statement"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "raw": {
+            "name": "create_table",
+            "description": "Create a new table in the SQLite database",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "CREATE TABLE SQL statement"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"create_table\" must use kebab-case format",
+          "tool": "create_table",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"create-table\""
+        },
+        {
+          "id": "SEC-006",
+          "category": "security",
+          "severity": "warning",
+          "message": "Parameter 'query' appears to be a command/action but is missing an enum constraint",
+          "tool": "create_table",
+          "path": "inputSchema.properties.query",
+          "suggestion": "If the valid values are known, add an \"enum\" array to restrict input to allowed values"
+        },
+        {
+          "id": "SEC-010",
+          "category": "security",
+          "severity": "warning",
+          "message": "Parameter 'query' appears to accept code/scripts but lacks security documentation",
+          "tool": "create_table",
+          "path": "inputSchema.properties.query",
+          "suggestion": "Add a description that clearly documents the security implications of accepting code/script input"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "create_table",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "create_table",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "create_table",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "create_table",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-003",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool name \"create_table\" suggests data modification but is missing destructiveHint annotation",
+          "tool": "create_table",
+          "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "create_table",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "list_tables",
+      "valid": false,
+      "tool": {
+        "name": "list_tables",
+        "description": "List all tables in the SQLite database",
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "raw": {
+            "name": "list_tables",
+            "description": "List all tables in the SQLite database",
+            "inputSchema": {
+              "type": "object",
+              "properties": {},
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "SCH-006",
+          "category": "schema",
+          "severity": "warning",
+          "message": "inputSchema.properties is empty - tool takes no parameters",
+          "tool": "list_tables",
+          "path": "inputSchema.properties",
+          "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+          "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+        },
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"list_tables\" must use kebab-case format",
+          "tool": "list_tables",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"list-tables\""
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "list_tables",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "list_tables",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "list_tables",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "list_tables",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "list_tables",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "describe_table",
+      "valid": false,
+      "tool": {
+        "name": "describe_table",
+        "description": "Get the schema information for a specific table",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "table_name": {
+              "type": "string",
+              "description": "Name of the table to describe"
+            }
+          },
+          "required": [
+            "table_name"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y mcp-server-sqlite-npx /tmp/test.db",
+          "raw": {
+            "name": "describe_table",
+            "description": "Get the schema information for a specific table",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "table_name": {
+                  "type": "string",
+                  "description": "Name of the table to describe"
+                }
+              },
+              "required": [
+                "table_name"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"describe_table\" must use kebab-case format",
+          "tool": "describe_table",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"describe-table\""
+        },
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"describe_table\" should start with a descriptive verb",
+          "tool": "describe_table",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "NAM-006",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Parameter names should use camelCase (current: snake_case)",
+          "tool": "describe_table",
+          "path": "inputSchema.properties",
+          "suggestion": "Consider renaming: table_name -> tableName"
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'table_name' is missing maxLength constraint",
+          "tool": "describe_table",
+          "path": "inputSchema.properties.table_name",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "describe_table",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "describe_table",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "describe_table",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "describe_table",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "validatorVersion": "0.1.0",
+    "mcpSpecVersion": "2025-11-25",
+    "timestamp": "2026-01-09T01:33:51.413Z",
+    "duration": 23,
+    "configUsed": "",
+    "llmAnalysisUsed": false
+  }
+}

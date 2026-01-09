@@ -1,0 +1,2383 @@
+{
+  "valid": false,
+  "summary": {
+    "totalTools": 9,
+    "validTools": 0,
+    "issuesByCategory": {
+      "schema": 1,
+      "security": 9,
+      "llm-compatibility": 20,
+      "naming": 9,
+      "best-practice": 40
+    },
+    "issuesBySeverity": {
+      "error": 20,
+      "warning": 10,
+      "suggestion": 49
+    }
+  },
+  "issues": [
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"create_entities\" must use kebab-case format",
+      "tool": "create_entities",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"create-entities\""
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'entities' is missing maxItems constraint",
+      "tool": "create_entities",
+      "path": "inputSchema.properties.entities",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "create_entities",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "create_entities",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'entities' is missing a description",
+      "tool": "create_entities",
+      "path": "inputSchema.properties.entities.description",
+      "suggestion": "Add a description to the 'entities' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "create_entities",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "create_entities",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-003",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool name \"create_entities\" suggests data modification but is missing destructiveHint annotation",
+      "tool": "create_entities",
+      "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "create_entities",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"entities\" is missing examples",
+      "tool": "create_entities",
+      "path": "inputSchema.properties.entities",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"create_relations\" must use kebab-case format",
+      "tool": "create_relations",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"create-relations\""
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'relations' is missing maxItems constraint",
+      "tool": "create_relations",
+      "path": "inputSchema.properties.relations",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "create_relations",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "create_relations",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'relations' is missing a description",
+      "tool": "create_relations",
+      "path": "inputSchema.properties.relations.description",
+      "suggestion": "Add a description to the 'relations' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "create_relations",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "create_relations",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-003",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool name \"create_relations\" suggests data modification but is missing destructiveHint annotation",
+      "tool": "create_relations",
+      "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "create_relations",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"relations\" is missing examples",
+      "tool": "create_relations",
+      "path": "inputSchema.properties.relations",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"add_observations\" must use kebab-case format",
+      "tool": "add_observations",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"add-observations\""
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'observations' is missing maxItems constraint",
+      "tool": "add_observations",
+      "path": "inputSchema.properties.observations",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "add_observations",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'observations' is missing a description",
+      "tool": "add_observations",
+      "path": "inputSchema.properties.observations.description",
+      "suggestion": "Add a description to the 'observations' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "add_observations",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "add_observations",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-003",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool name \"add_observations\" suggests data modification but is missing destructiveHint annotation",
+      "tool": "add_observations",
+      "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "add_observations",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"observations\" is missing examples",
+      "tool": "add_observations",
+      "path": "inputSchema.properties.observations",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"delete_entities\" must use kebab-case format",
+      "tool": "delete_entities",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"delete-entities\""
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'entityNames' is missing maxItems constraint",
+      "tool": "delete_entities",
+      "path": "inputSchema.properties.entityNames",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "delete_entities",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "delete_entities",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "delete_entities",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "delete_entities",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-003",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool name \"delete_entities\" suggests data modification but is missing destructiveHint annotation",
+      "tool": "delete_entities",
+      "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "delete_entities",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"entityNames\" is missing examples",
+      "tool": "delete_entities",
+      "path": "inputSchema.properties.entityNames",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"delete_observations\" must use kebab-case format",
+      "tool": "delete_observations",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"delete-observations\""
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'deletions' is missing maxItems constraint",
+      "tool": "delete_observations",
+      "path": "inputSchema.properties.deletions",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "delete_observations",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "delete_observations",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'deletions' is missing a description",
+      "tool": "delete_observations",
+      "path": "inputSchema.properties.deletions.description",
+      "suggestion": "Add a description to the 'deletions' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "delete_observations",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "delete_observations",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-003",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool name \"delete_observations\" suggests data modification but is missing destructiveHint annotation",
+      "tool": "delete_observations",
+      "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "delete_observations",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"deletions\" is missing examples",
+      "tool": "delete_observations",
+      "path": "inputSchema.properties.deletions",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"delete_relations\" must use kebab-case format",
+      "tool": "delete_relations",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"delete-relations\""
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'relations' is missing maxItems constraint",
+      "tool": "delete_relations",
+      "path": "inputSchema.properties.relations",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "delete_relations",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "delete_relations",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "delete_relations",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "delete_relations",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-003",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool name \"delete_relations\" suggests data modification but is missing destructiveHint annotation",
+      "tool": "delete_relations",
+      "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "delete_relations",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"relations\" is missing examples",
+      "tool": "delete_relations",
+      "path": "inputSchema.properties.relations",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "SCH-006",
+      "category": "schema",
+      "severity": "warning",
+      "message": "inputSchema.properties is empty - tool takes no parameters",
+      "tool": "read_graph",
+      "path": "inputSchema.properties",
+      "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+      "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"read_graph\" must use kebab-case format",
+      "tool": "read_graph",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"read-graph\""
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "read_graph",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "read_graph",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "read_graph",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "read_graph",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "read_graph",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"search_nodes\" must use kebab-case format",
+      "tool": "search_nodes",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"search-nodes\""
+    },
+    {
+      "id": "SEC-006",
+      "category": "security",
+      "severity": "warning",
+      "message": "Parameter 'query' appears to be a command/action but is missing an enum constraint",
+      "tool": "search_nodes",
+      "path": "inputSchema.properties.query",
+      "suggestion": "If the valid values are known, add an \"enum\" array to restrict input to allowed values"
+    },
+    {
+      "id": "SEC-010",
+      "category": "security",
+      "severity": "warning",
+      "message": "Parameter 'query' appears to accept code/scripts but lacks security documentation",
+      "tool": "search_nodes",
+      "path": "inputSchema.properties.query",
+      "suggestion": "Add a description that clearly documents the security implications of accepting code/script input"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "search_nodes",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "search_nodes",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "search_nodes",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "search_nodes",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"open_nodes\" must use kebab-case format",
+      "tool": "open_nodes",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"open-nodes\""
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'names' is missing maxItems constraint",
+      "tool": "open_nodes",
+      "path": "inputSchema.properties.names",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "open_nodes",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "open_nodes",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "open_nodes",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "open_nodes",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "open_nodes",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"names\" is missing examples",
+      "tool": "open_nodes",
+      "path": "inputSchema.properties.names",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    }
+  ],
+  "tools": [
+    {
+      "name": "create_entities",
+      "valid": false,
+      "tool": {
+        "name": "create_entities",
+        "description": "Create multiple new entities in the knowledge graph",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "entities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the entity"
+                  },
+                  "entityType": {
+                    "type": "string",
+                    "description": "The type of the entity"
+                  },
+                  "observations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of observation contents associated with the entity"
+                  }
+                },
+                "required": [
+                  "name",
+                  "entityType",
+                  "observations"
+                ]
+              }
+            }
+          },
+          "required": [
+            "entities"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-memory",
+          "raw": {
+            "name": "create_entities",
+            "title": "Create Entities",
+            "description": "Create multiple new entities in the knowledge graph",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the entity"
+                      },
+                      "entityType": {
+                        "type": "string",
+                        "description": "The type of the entity"
+                      },
+                      "observations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "An array of observation contents associated with the entity"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "entityType",
+                      "observations"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "entities"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the entity"
+                      },
+                      "entityType": {
+                        "type": "string",
+                        "description": "The type of the entity"
+                      },
+                      "observations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "An array of observation contents associated with the entity"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "entityType",
+                      "observations"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "entities"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"create_entities\" must use kebab-case format",
+          "tool": "create_entities",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"create-entities\""
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'entities' is missing maxItems constraint",
+          "tool": "create_entities",
+          "path": "inputSchema.properties.entities",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "create_entities",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "create_entities",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'entities' is missing a description",
+          "tool": "create_entities",
+          "path": "inputSchema.properties.entities.description",
+          "suggestion": "Add a description to the 'entities' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "create_entities",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "create_entities",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-003",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool name \"create_entities\" suggests data modification but is missing destructiveHint annotation",
+          "tool": "create_entities",
+          "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "create_entities",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"entities\" is missing examples",
+          "tool": "create_entities",
+          "path": "inputSchema.properties.entities",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    },
+    {
+      "name": "create_relations",
+      "valid": false,
+      "tool": {
+        "name": "create_relations",
+        "description": "Create multiple new relations between entities in the knowledge graph. Relations should be in active voice",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "relations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "description": "The name of the entity where the relation starts"
+                  },
+                  "to": {
+                    "type": "string",
+                    "description": "The name of the entity where the relation ends"
+                  },
+                  "relationType": {
+                    "type": "string",
+                    "description": "The type of the relation"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "relationType"
+                ]
+              }
+            }
+          },
+          "required": [
+            "relations"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-memory",
+          "raw": {
+            "name": "create_relations",
+            "title": "Create Relations",
+            "description": "Create multiple new relations between entities in the knowledge graph. Relations should be in active voice",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "relations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "from": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation starts"
+                      },
+                      "to": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation ends"
+                      },
+                      "relationType": {
+                        "type": "string",
+                        "description": "The type of the relation"
+                      }
+                    },
+                    "required": [
+                      "from",
+                      "to",
+                      "relationType"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "relations"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "relations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "from": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation starts"
+                      },
+                      "to": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation ends"
+                      },
+                      "relationType": {
+                        "type": "string",
+                        "description": "The type of the relation"
+                      }
+                    },
+                    "required": [
+                      "from",
+                      "to",
+                      "relationType"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "relations"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"create_relations\" must use kebab-case format",
+          "tool": "create_relations",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"create-relations\""
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'relations' is missing maxItems constraint",
+          "tool": "create_relations",
+          "path": "inputSchema.properties.relations",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "create_relations",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "create_relations",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'relations' is missing a description",
+          "tool": "create_relations",
+          "path": "inputSchema.properties.relations.description",
+          "suggestion": "Add a description to the 'relations' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "create_relations",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "create_relations",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-003",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool name \"create_relations\" suggests data modification but is missing destructiveHint annotation",
+          "tool": "create_relations",
+          "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "create_relations",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"relations\" is missing examples",
+          "tool": "create_relations",
+          "path": "inputSchema.properties.relations",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    },
+    {
+      "name": "add_observations",
+      "valid": false,
+      "tool": {
+        "name": "add_observations",
+        "description": "Add new observations to existing entities in the knowledge graph",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entityName": {
+                    "type": "string",
+                    "description": "The name of the entity to add the observations to"
+                  },
+                  "contents": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of observation contents to add"
+                  }
+                },
+                "required": [
+                  "entityName",
+                  "contents"
+                ]
+              }
+            }
+          },
+          "required": [
+            "observations"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-memory",
+          "raw": {
+            "name": "add_observations",
+            "title": "Add Observations",
+            "description": "Add new observations to existing entities in the knowledge graph",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "observations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "entityName": {
+                        "type": "string",
+                        "description": "The name of the entity to add the observations to"
+                      },
+                      "contents": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "An array of observation contents to add"
+                      }
+                    },
+                    "required": [
+                      "entityName",
+                      "contents"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "observations"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "entityName": {
+                        "type": "string"
+                      },
+                      "addedObservations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "entityName",
+                      "addedObservations"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "results"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"add_observations\" must use kebab-case format",
+          "tool": "add_observations",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"add-observations\""
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'observations' is missing maxItems constraint",
+          "tool": "add_observations",
+          "path": "inputSchema.properties.observations",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "add_observations",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'observations' is missing a description",
+          "tool": "add_observations",
+          "path": "inputSchema.properties.observations.description",
+          "suggestion": "Add a description to the 'observations' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "add_observations",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "add_observations",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-003",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool name \"add_observations\" suggests data modification but is missing destructiveHint annotation",
+          "tool": "add_observations",
+          "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "add_observations",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"observations\" is missing examples",
+          "tool": "add_observations",
+          "path": "inputSchema.properties.observations",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    },
+    {
+      "name": "delete_entities",
+      "valid": false,
+      "tool": {
+        "name": "delete_entities",
+        "description": "Delete multiple entities and their associated relations from the knowledge graph",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "entityNames": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "An array of entity names to delete"
+            }
+          },
+          "required": [
+            "entityNames"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-memory",
+          "raw": {
+            "name": "delete_entities",
+            "title": "Delete Entities",
+            "description": "Delete multiple entities and their associated relations from the knowledge graph",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "entityNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "An array of entity names to delete"
+                }
+              },
+              "required": [
+                "entityNames"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "success",
+                "message"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"delete_entities\" must use kebab-case format",
+          "tool": "delete_entities",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"delete-entities\""
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'entityNames' is missing maxItems constraint",
+          "tool": "delete_entities",
+          "path": "inputSchema.properties.entityNames",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "delete_entities",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "delete_entities",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "delete_entities",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "delete_entities",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-003",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool name \"delete_entities\" suggests data modification but is missing destructiveHint annotation",
+          "tool": "delete_entities",
+          "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "delete_entities",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"entityNames\" is missing examples",
+          "tool": "delete_entities",
+          "path": "inputSchema.properties.entityNames",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    },
+    {
+      "name": "delete_observations",
+      "valid": false,
+      "tool": {
+        "name": "delete_observations",
+        "description": "Delete specific observations from entities in the knowledge graph",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "deletions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entityName": {
+                    "type": "string",
+                    "description": "The name of the entity containing the observations"
+                  },
+                  "observations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of observations to delete"
+                  }
+                },
+                "required": [
+                  "entityName",
+                  "observations"
+                ]
+              }
+            }
+          },
+          "required": [
+            "deletions"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-memory",
+          "raw": {
+            "name": "delete_observations",
+            "title": "Delete Observations",
+            "description": "Delete specific observations from entities in the knowledge graph",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "deletions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "entityName": {
+                        "type": "string",
+                        "description": "The name of the entity containing the observations"
+                      },
+                      "observations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "An array of observations to delete"
+                      }
+                    },
+                    "required": [
+                      "entityName",
+                      "observations"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "deletions"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "success",
+                "message"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"delete_observations\" must use kebab-case format",
+          "tool": "delete_observations",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"delete-observations\""
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'deletions' is missing maxItems constraint",
+          "tool": "delete_observations",
+          "path": "inputSchema.properties.deletions",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "delete_observations",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "delete_observations",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'deletions' is missing a description",
+          "tool": "delete_observations",
+          "path": "inputSchema.properties.deletions.description",
+          "suggestion": "Add a description to the 'deletions' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "delete_observations",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "delete_observations",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-003",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool name \"delete_observations\" suggests data modification but is missing destructiveHint annotation",
+          "tool": "delete_observations",
+          "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "delete_observations",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"deletions\" is missing examples",
+          "tool": "delete_observations",
+          "path": "inputSchema.properties.deletions",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    },
+    {
+      "name": "delete_relations",
+      "valid": false,
+      "tool": {
+        "name": "delete_relations",
+        "description": "Delete multiple relations from the knowledge graph",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "relations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "description": "The name of the entity where the relation starts"
+                  },
+                  "to": {
+                    "type": "string",
+                    "description": "The name of the entity where the relation ends"
+                  },
+                  "relationType": {
+                    "type": "string",
+                    "description": "The type of the relation"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "relationType"
+                ]
+              },
+              "description": "An array of relations to delete"
+            }
+          },
+          "required": [
+            "relations"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-memory",
+          "raw": {
+            "name": "delete_relations",
+            "title": "Delete Relations",
+            "description": "Delete multiple relations from the knowledge graph",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "relations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "from": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation starts"
+                      },
+                      "to": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation ends"
+                      },
+                      "relationType": {
+                        "type": "string",
+                        "description": "The type of the relation"
+                      }
+                    },
+                    "required": [
+                      "from",
+                      "to",
+                      "relationType"
+                    ]
+                  },
+                  "description": "An array of relations to delete"
+                }
+              },
+              "required": [
+                "relations"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "success",
+                "message"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"delete_relations\" must use kebab-case format",
+          "tool": "delete_relations",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"delete-relations\""
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'relations' is missing maxItems constraint",
+          "tool": "delete_relations",
+          "path": "inputSchema.properties.relations",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "delete_relations",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "delete_relations",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "delete_relations",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "delete_relations",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-003",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool name \"delete_relations\" suggests data modification but is missing destructiveHint annotation",
+          "tool": "delete_relations",
+          "suggestion": "Add annotations.destructiveHint to indicate whether the operation is destructive"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "delete_relations",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"relations\" is missing examples",
+          "tool": "delete_relations",
+          "path": "inputSchema.properties.relations",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    },
+    {
+      "name": "read_graph",
+      "valid": false,
+      "tool": {
+        "name": "read_graph",
+        "description": "Read the entire knowledge graph",
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-memory",
+          "raw": {
+            "name": "read_graph",
+            "title": "Read Graph",
+            "description": "Read the entire knowledge graph",
+            "inputSchema": {
+              "type": "object",
+              "properties": {},
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the entity"
+                      },
+                      "entityType": {
+                        "type": "string",
+                        "description": "The type of the entity"
+                      },
+                      "observations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "An array of observation contents associated with the entity"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "entityType",
+                      "observations"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "relations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "from": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation starts"
+                      },
+                      "to": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation ends"
+                      },
+                      "relationType": {
+                        "type": "string",
+                        "description": "The type of the relation"
+                      }
+                    },
+                    "required": [
+                      "from",
+                      "to",
+                      "relationType"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "entities",
+                "relations"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "SCH-006",
+          "category": "schema",
+          "severity": "warning",
+          "message": "inputSchema.properties is empty - tool takes no parameters",
+          "tool": "read_graph",
+          "path": "inputSchema.properties",
+          "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+          "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+        },
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"read_graph\" must use kebab-case format",
+          "tool": "read_graph",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"read-graph\""
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "read_graph",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "read_graph",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "read_graph",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "read_graph",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "read_graph",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "search_nodes",
+      "valid": false,
+      "tool": {
+        "name": "search_nodes",
+        "description": "Search for nodes in the knowledge graph based on a query",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The search query to match against entity names, types, and observation content"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-memory",
+          "raw": {
+            "name": "search_nodes",
+            "title": "Search Nodes",
+            "description": "Search for nodes in the knowledge graph based on a query",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "The search query to match against entity names, types, and observation content"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the entity"
+                      },
+                      "entityType": {
+                        "type": "string",
+                        "description": "The type of the entity"
+                      },
+                      "observations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "An array of observation contents associated with the entity"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "entityType",
+                      "observations"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "relations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "from": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation starts"
+                      },
+                      "to": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation ends"
+                      },
+                      "relationType": {
+                        "type": "string",
+                        "description": "The type of the relation"
+                      }
+                    },
+                    "required": [
+                      "from",
+                      "to",
+                      "relationType"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "entities",
+                "relations"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"search_nodes\" must use kebab-case format",
+          "tool": "search_nodes",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"search-nodes\""
+        },
+        {
+          "id": "SEC-006",
+          "category": "security",
+          "severity": "warning",
+          "message": "Parameter 'query' appears to be a command/action but is missing an enum constraint",
+          "tool": "search_nodes",
+          "path": "inputSchema.properties.query",
+          "suggestion": "If the valid values are known, add an \"enum\" array to restrict input to allowed values"
+        },
+        {
+          "id": "SEC-010",
+          "category": "security",
+          "severity": "warning",
+          "message": "Parameter 'query' appears to accept code/scripts but lacks security documentation",
+          "tool": "search_nodes",
+          "path": "inputSchema.properties.query",
+          "suggestion": "Add a description that clearly documents the security implications of accepting code/script input"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "search_nodes",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "search_nodes",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "search_nodes",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "search_nodes",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "open_nodes",
+      "valid": false,
+      "tool": {
+        "name": "open_nodes",
+        "description": "Open specific nodes in the knowledge graph by their names",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "An array of entity names to retrieve"
+            }
+          },
+          "required": [
+            "names"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-memory",
+          "raw": {
+            "name": "open_nodes",
+            "title": "Open Nodes",
+            "description": "Open specific nodes in the knowledge graph by their names",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "names": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "An array of entity names to retrieve"
+                }
+              },
+              "required": [
+                "names"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the entity"
+                      },
+                      "entityType": {
+                        "type": "string",
+                        "description": "The type of the entity"
+                      },
+                      "observations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "An array of observation contents associated with the entity"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "entityType",
+                      "observations"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "relations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "from": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation starts"
+                      },
+                      "to": {
+                        "type": "string",
+                        "description": "The name of the entity where the relation ends"
+                      },
+                      "relationType": {
+                        "type": "string",
+                        "description": "The type of the relation"
+                      }
+                    },
+                    "required": [
+                      "from",
+                      "to",
+                      "relationType"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "entities",
+                "relations"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"open_nodes\" must use kebab-case format",
+          "tool": "open_nodes",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"open-nodes\""
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'names' is missing maxItems constraint",
+          "tool": "open_nodes",
+          "path": "inputSchema.properties.names",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "open_nodes",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "open_nodes",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "open_nodes",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "open_nodes",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "open_nodes",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"names\" is missing examples",
+          "tool": "open_nodes",
+          "path": "inputSchema.properties.names",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "validatorVersion": "0.1.0",
+    "mcpSpecVersion": "2025-11-25",
+    "timestamp": "2026-01-09T01:31:48.809Z",
+    "duration": 25,
+    "configUsed": "",
+    "llmAnalysisUsed": false
+  }
+}

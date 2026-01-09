@@ -1,0 +1,3102 @@
+{
+  "valid": false,
+  "summary": {
+    "totalTools": 14,
+    "validTools": 0,
+    "issuesByCategory": {
+      "schema": 1,
+      "security": 33,
+      "llm-compatibility": 37,
+      "naming": 15,
+      "best-practice": 26
+    },
+    "issuesBySeverity": {
+      "error": 61,
+      "warning": 13,
+      "suggestion": 38
+    }
+  },
+  "issues": [
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"read_file\" must use kebab-case format",
+      "tool": "read_file",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"read-file\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "read_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "severity": "warning",
+      "message": "Number parameter 'tail' is missing minimum/maximum constraints",
+      "tool": "read_file",
+      "path": "inputSchema.properties.tail",
+      "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "severity": "warning",
+      "message": "Number parameter 'head' is missing minimum/maximum constraints",
+      "tool": "read_file",
+      "path": "inputSchema.properties.head",
+      "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "read_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "read_file",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "read_file",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "read_file",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-012",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description is inconsistent with related 'read-*' tools: has medium length description while related tools have longer descriptions; lacks \"when to use\" context that related tools have",
+      "tool": "read_file",
+      "path": "description",
+      "suggestion": "Align description style with related tools (read_text_file, read_media_file, read_multiple_files) for consistency"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "read_file",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "read_file",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"read_text_file\" must use kebab-case format",
+      "tool": "read_text_file",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"read-text-file\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "read_text_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "severity": "warning",
+      "message": "Number parameter 'tail' is missing minimum/maximum constraints",
+      "tool": "read_text_file",
+      "path": "inputSchema.properties.tail",
+      "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "severity": "warning",
+      "message": "Number parameter 'head' is missing minimum/maximum constraints",
+      "tool": "read_text_file",
+      "path": "inputSchema.properties.head",
+      "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "read_text_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "read_text_file",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-012",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description is inconsistent with related 'read-*' tools: has longer description while related tools have medium length descriptions",
+      "tool": "read_text_file",
+      "path": "description",
+      "suggestion": "Align description style with related tools (read_file, read_media_file, read_multiple_files) for consistency"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "read_text_file",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "read_text_file",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"read_media_file\" must use kebab-case format",
+      "tool": "read_media_file",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"read-media-file\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "read_media_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "read_media_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "read_media_file",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "read_media_file",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "read_media_file",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-012",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description is inconsistent with related 'read-*' tools: has medium length description while related tools have longer descriptions; lacks \"when to use\" context that related tools have",
+      "tool": "read_media_file",
+      "path": "description",
+      "suggestion": "Align description style with related tools (read_file, read_text_file, read_multiple_files) for consistency"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "read_media_file",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "read_media_file",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"read_multiple_files\" must use kebab-case format",
+      "tool": "read_multiple_files",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"read-multiple-files\""
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'paths' is missing maxItems constraint",
+      "tool": "read_multiple_files",
+      "path": "inputSchema.properties.paths",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-012",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description is inconsistent with related 'read-*' tools: has longer description while related tools have medium length descriptions",
+      "tool": "read_multiple_files",
+      "path": "description",
+      "suggestion": "Align description style with related tools (read_file, read_text_file, read_media_file) for consistency"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "read_multiple_files",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "read_multiple_files",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"paths\" is missing examples",
+      "tool": "read_multiple_files",
+      "path": "inputSchema.properties.paths",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"write_file\" must use kebab-case format",
+      "tool": "write_file",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"write-file\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "write_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "write_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-004",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description does not explain when to use this tool",
+      "tool": "write_file",
+      "path": "description",
+      "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "write_file",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "write_file",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'content' is missing a description",
+      "tool": "write_file",
+      "path": "inputSchema.properties.content.description",
+      "suggestion": "Add a description to the 'content' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-011",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool 'write_file' is marked as destructive but description does not warn about this",
+      "tool": "write_file",
+      "path": "description",
+      "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "write_file",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"edit_file\" must use kebab-case format",
+      "tool": "edit_file",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"edit-file\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "edit_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'edits' is missing maxItems constraint",
+      "tool": "edit_file",
+      "path": "inputSchema.properties.edits",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "edit_file",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "edit_file",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "edit_file",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'edits' is missing a description",
+      "tool": "edit_file",
+      "path": "inputSchema.properties.edits.description",
+      "suggestion": "Add a description to the 'edits' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-011",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool 'edit_file' is marked as destructive but description does not warn about this",
+      "tool": "edit_file",
+      "path": "description",
+      "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "edit_file",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-008",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Complex parameter \"edits\" is missing examples",
+      "tool": "edit_file",
+      "path": "inputSchema.properties.edits",
+      "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"create_directory\" must use kebab-case format",
+      "tool": "create_directory",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"create-directory\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "create_directory",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "create_directory",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "create_directory",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "create_directory",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "create_directory",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"list_directory\" must use kebab-case format",
+      "tool": "list_directory",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"list-directory\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "list_directory",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "list_directory",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "list_directory",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "list_directory",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "list_directory",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "list_directory",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"list_directory_with_sizes\" must use kebab-case format",
+      "tool": "list_directory_with_sizes",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"list-directory-with-sizes\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "list_directory_with_sizes",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'sortBy' is missing maxLength constraint",
+      "tool": "list_directory_with_sizes",
+      "path": "inputSchema.properties.sortBy",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "list_directory_with_sizes",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "list_directory_with_sizes",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-009",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Parameter 'sortBy' has schema constraints not mentioned in description: allowed values",
+      "tool": "list_directory_with_sizes",
+      "path": "inputSchema.properties.sortBy.description",
+      "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "list_directory_with_sizes",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "list_directory_with_sizes",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"directory_tree\" must use kebab-case format",
+      "tool": "directory_tree",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"directory-tree\""
+    },
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"directory_tree\" should start with a descriptive verb",
+      "tool": "directory_tree",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "directory_tree",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'excludePatterns' is missing maxItems constraint",
+      "tool": "directory_tree",
+      "path": "inputSchema.properties.excludePatterns",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "directory_tree",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "directory_tree",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'excludePatterns' is missing a description",
+      "tool": "directory_tree",
+      "path": "inputSchema.properties.excludePatterns.description",
+      "suggestion": "Add a description to the 'excludePatterns' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "directory_tree",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "directory_tree",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"move_file\" must use kebab-case format",
+      "tool": "move_file",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"move-file\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'destination' is missing maxLength constraint",
+      "tool": "move_file",
+      "path": "inputSchema.properties.destination",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "move_file",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'source' is missing a description",
+      "tool": "move_file",
+      "path": "inputSchema.properties.source.description",
+      "suggestion": "Add a description to the 'source' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'destination' is missing a description",
+      "tool": "move_file",
+      "path": "inputSchema.properties.destination.description",
+      "suggestion": "Add a description to the 'destination' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-011",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool 'move_file' appears to have side effects but description does not mention them",
+      "tool": "move_file",
+      "path": "description",
+      "suggestion": "Clearly state what changes this tool makes (e.g., \"Creates a new record...\", \"Deletes the file permanently...\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "move_file",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"search_files\" must use kebab-case format",
+      "tool": "search_files",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"search-files\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "search_files",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'pattern' is missing maxLength constraint",
+      "tool": "search_files",
+      "path": "inputSchema.properties.pattern",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "severity": "error",
+      "message": "Array parameter 'excludePatterns' is missing maxItems constraint",
+      "tool": "search_files",
+      "path": "inputSchema.properties.excludePatterns",
+      "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "search_files",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "search_files",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'pattern' is missing a description",
+      "tool": "search_files",
+      "path": "inputSchema.properties.pattern.description",
+      "suggestion": "Add a description to the 'pattern' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'excludePatterns' is missing a description",
+      "tool": "search_files",
+      "path": "inputSchema.properties.excludePatterns.description",
+      "suggestion": "Add a description to the 'excludePatterns' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "search_files",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "search_files",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"get_file_info\" must use kebab-case format",
+      "tool": "get_file_info",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"get-file-info\""
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'path' is missing maxLength constraint",
+      "tool": "get_file_info",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "severity": "error",
+      "message": "File path parameter 'path' is missing pattern constraint for path validation",
+      "tool": "get_file_info",
+      "path": "inputSchema.properties.path",
+      "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+    },
+    {
+      "id": "LLM-006",
+      "category": "llm-compatibility",
+      "severity": "error",
+      "message": "Parameter 'path' is missing a description",
+      "tool": "get_file_info",
+      "path": "inputSchema.properties.path.description",
+      "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "get_file_info",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "get_file_info",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    },
+    {
+      "id": "SCH-006",
+      "category": "schema",
+      "severity": "warning",
+      "message": "inputSchema.properties is empty - tool takes no parameters",
+      "tool": "list_allowed_directories",
+      "path": "inputSchema.properties",
+      "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+      "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "severity": "error",
+      "message": "Tool name \"list_allowed_directories\" must use kebab-case format",
+      "tool": "list_allowed_directories",
+      "path": "name",
+      "suggestion": "Use kebab-case format: \"list-allowed-directories\""
+    },
+    {
+      "id": "LLM-005",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Tool description does not include usage examples",
+      "tool": "list_allowed_directories",
+      "path": "description",
+      "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "list_allowed_directories",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "list_allowed_directories",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    }
+  ],
+  "tools": [
+    {
+      "name": "read_file",
+      "valid": false,
+      "tool": {
+        "name": "read_file",
+        "description": "Read the complete contents of a file as text. DEPRECATED: Use read_text_file instead.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "tail": {
+              "description": "If provided, returns only the last N lines of the file",
+              "type": "number"
+            },
+            "head": {
+              "description": "If provided, returns only the first N lines of the file",
+              "type": "number"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "read_file",
+            "title": "Read File (Deprecated)",
+            "description": "Read the complete contents of a file as text. DEPRECATED: Use read_text_file instead.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "tail": {
+                  "description": "If provided, returns only the last N lines of the file",
+                  "type": "number"
+                },
+                "head": {
+                  "description": "If provided, returns only the first N lines of the file",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"read_file\" must use kebab-case format",
+          "tool": "read_file",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"read-file\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "read_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-003",
+          "category": "security",
+          "severity": "warning",
+          "message": "Number parameter 'tail' is missing minimum/maximum constraints",
+          "tool": "read_file",
+          "path": "inputSchema.properties.tail",
+          "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+        },
+        {
+          "id": "SEC-003",
+          "category": "security",
+          "severity": "warning",
+          "message": "Number parameter 'head' is missing minimum/maximum constraints",
+          "tool": "read_file",
+          "path": "inputSchema.properties.head",
+          "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "read_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "read_file",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "read_file",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "read_file",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-012",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description is inconsistent with related 'read-*' tools: has medium length description while related tools have longer descriptions; lacks \"when to use\" context that related tools have",
+          "tool": "read_file",
+          "path": "description",
+          "suggestion": "Align description style with related tools (read_text_file, read_media_file, read_multiple_files) for consistency"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "read_file",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "read_file",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "read_text_file",
+      "valid": false,
+      "tool": {
+        "name": "read_text_file",
+        "description": "Read the complete contents of a file from the file system as text. Handles various text encodings and provides detailed error messages if the file cannot be read. Use this tool when you need to examine the contents of a single file. Use the 'head' parameter to read only the first N lines of a file, or the 'tail' parameter to read only the last N lines of a file. Operates on the file as text regardless of extension. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "tail": {
+              "description": "If provided, returns only the last N lines of the file",
+              "type": "number"
+            },
+            "head": {
+              "description": "If provided, returns only the first N lines of the file",
+              "type": "number"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "read_text_file",
+            "title": "Read Text File",
+            "description": "Read the complete contents of a file from the file system as text. Handles various text encodings and provides detailed error messages if the file cannot be read. Use this tool when you need to examine the contents of a single file. Use the 'head' parameter to read only the first N lines of a file, or the 'tail' parameter to read only the last N lines of a file. Operates on the file as text regardless of extension. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "tail": {
+                  "description": "If provided, returns only the last N lines of the file",
+                  "type": "number"
+                },
+                "head": {
+                  "description": "If provided, returns only the first N lines of the file",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"read_text_file\" must use kebab-case format",
+          "tool": "read_text_file",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"read-text-file\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "read_text_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-003",
+          "category": "security",
+          "severity": "warning",
+          "message": "Number parameter 'tail' is missing minimum/maximum constraints",
+          "tool": "read_text_file",
+          "path": "inputSchema.properties.tail",
+          "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+        },
+        {
+          "id": "SEC-003",
+          "category": "security",
+          "severity": "warning",
+          "message": "Number parameter 'head' is missing minimum/maximum constraints",
+          "tool": "read_text_file",
+          "path": "inputSchema.properties.head",
+          "suggestion": "Add \"minimum\" and/or \"maximum\" constraints to bound the value"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "read_text_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "read_text_file",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-012",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description is inconsistent with related 'read-*' tools: has longer description while related tools have medium length descriptions",
+          "tool": "read_text_file",
+          "path": "description",
+          "suggestion": "Align description style with related tools (read_file, read_media_file, read_multiple_files) for consistency"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "read_text_file",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "read_text_file",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "read_media_file",
+      "valid": false,
+      "tool": {
+        "name": "read_media_file",
+        "description": "Read an image or audio file. Returns the base64 encoded data and MIME type. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "read_media_file",
+            "title": "Read Media File",
+            "description": "Read an image or audio file. Returns the base64 encoded data and MIME type. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "image",
+                          "audio",
+                          "blob"
+                        ]
+                      },
+                      "data": {
+                        "type": "string"
+                      },
+                      "mimeType": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "data",
+                      "mimeType"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"read_media_file\" must use kebab-case format",
+          "tool": "read_media_file",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"read-media-file\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "read_media_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "read_media_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "read_media_file",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "read_media_file",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "read_media_file",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-012",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description is inconsistent with related 'read-*' tools: has medium length description while related tools have longer descriptions; lacks \"when to use\" context that related tools have",
+          "tool": "read_media_file",
+          "path": "description",
+          "suggestion": "Align description style with related tools (read_file, read_text_file, read_multiple_files) for consistency"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "read_media_file",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "read_media_file",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "read_multiple_files",
+      "valid": false,
+      "tool": {
+        "name": "read_multiple_files",
+        "description": "Read the contents of multiple files simultaneously. This is more efficient than reading files one by one when you need to analyze or compare multiple files. Each file's content is returned with its path as a reference. Failed reads for individual files won't stop the entire operation. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "paths": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Array of file paths to read. Each path must be a string pointing to a valid file within allowed directories."
+            }
+          },
+          "required": [
+            "paths"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "read_multiple_files",
+            "title": "Read Multiple Files",
+            "description": "Read the contents of multiple files simultaneously. This is more efficient than reading files one by one when you need to analyze or compare multiple files. Each file's content is returned with its path as a reference. Failed reads for individual files won't stop the entire operation. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "paths": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Array of file paths to read. Each path must be a string pointing to a valid file within allowed directories."
+                }
+              },
+              "required": [
+                "paths"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"read_multiple_files\" must use kebab-case format",
+          "tool": "read_multiple_files",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"read-multiple-files\""
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'paths' is missing maxItems constraint",
+          "tool": "read_multiple_files",
+          "path": "inputSchema.properties.paths",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-012",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description is inconsistent with related 'read-*' tools: has longer description while related tools have medium length descriptions",
+          "tool": "read_multiple_files",
+          "path": "description",
+          "suggestion": "Align description style with related tools (read_file, read_text_file, read_media_file) for consistency"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "read_multiple_files",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "read_multiple_files",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"paths\" is missing examples",
+          "tool": "read_multiple_files",
+          "path": "inputSchema.properties.paths",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    },
+    {
+      "name": "write_file",
+      "valid": false,
+      "tool": {
+        "name": "write_file",
+        "description": "Create a new file or completely overwrite an existing file with new content. Use with caution as it will overwrite existing files without warning. Handles text content with proper encoding. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "path",
+            "content"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "write_file",
+            "title": "Write File",
+            "description": "Create a new file or completely overwrite an existing file with new content. Use with caution as it will overwrite existing files without warning. Handles text content with proper encoding. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": false,
+              "destructiveHint": true,
+              "idempotentHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"write_file\" must use kebab-case format",
+          "tool": "write_file",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"write-file\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "write_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "write_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-004",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description does not explain when to use this tool",
+          "tool": "write_file",
+          "path": "description",
+          "suggestion": "Add context about when to use this tool (e.g., \"Use this when...\", \"Useful for...\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "write_file",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "write_file",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'content' is missing a description",
+          "tool": "write_file",
+          "path": "inputSchema.properties.content.description",
+          "suggestion": "Add a description to the 'content' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-011",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool 'write_file' is marked as destructive but description does not warn about this",
+          "tool": "write_file",
+          "path": "description",
+          "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "write_file",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        }
+      ]
+    },
+    {
+      "name": "edit_file",
+      "valid": false,
+      "tool": {
+        "name": "edit_file",
+        "description": "Make line-based edits to a text file. Each edit replaces exact line sequences with new content. Returns a git-style diff showing the changes made. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "edits": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "oldText": {
+                    "type": "string",
+                    "description": "Text to search for - must match exactly"
+                  },
+                  "newText": {
+                    "type": "string",
+                    "description": "Text to replace with"
+                  }
+                },
+                "required": [
+                  "oldText",
+                  "newText"
+                ]
+              }
+            },
+            "dryRun": {
+              "default": false,
+              "description": "Preview changes using git-style diff format",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "path",
+            "edits"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "edit_file",
+            "title": "Edit File",
+            "description": "Make line-based edits to a text file. Each edit replaces exact line sequences with new content. Returns a git-style diff showing the changes made. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "edits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "oldText": {
+                        "type": "string",
+                        "description": "Text to search for - must match exactly"
+                      },
+                      "newText": {
+                        "type": "string",
+                        "description": "Text to replace with"
+                      }
+                    },
+                    "required": [
+                      "oldText",
+                      "newText"
+                    ]
+                  }
+                },
+                "dryRun": {
+                  "default": false,
+                  "description": "Preview changes using git-style diff format",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "path",
+                "edits"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": false,
+              "destructiveHint": true,
+              "idempotentHint": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"edit_file\" must use kebab-case format",
+          "tool": "edit_file",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"edit-file\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "edit_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'edits' is missing maxItems constraint",
+          "tool": "edit_file",
+          "path": "inputSchema.properties.edits",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "edit_file",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "edit_file",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "edit_file",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'edits' is missing a description",
+          "tool": "edit_file",
+          "path": "inputSchema.properties.edits.description",
+          "suggestion": "Add a description to the 'edits' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-011",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool 'edit_file' is marked as destructive but description does not warn about this",
+          "tool": "edit_file",
+          "path": "description",
+          "suggestion": "Add a warning about the destructive nature (e.g., \"Warning: This permanently deletes...\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "edit_file",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-008",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Complex parameter \"edits\" is missing examples",
+          "tool": "edit_file",
+          "path": "inputSchema.properties.edits",
+          "suggestion": "Add an 'examples' array to help LLMs understand expected values"
+        }
+      ]
+    },
+    {
+      "name": "create_directory",
+      "valid": false,
+      "tool": {
+        "name": "create_directory",
+        "description": "Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. If the directory already exists, this operation will succeed silently. Perfect for setting up directory structures for projects or ensuring required paths exist. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "create_directory",
+            "title": "Create Directory",
+            "description": "Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. If the directory already exists, this operation will succeed silently. Perfect for setting up directory structures for projects or ensuring required paths exist. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": false,
+              "destructiveHint": false,
+              "idempotentHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"create_directory\" must use kebab-case format",
+          "tool": "create_directory",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"create-directory\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "create_directory",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "create_directory",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "create_directory",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "create_directory",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "create_directory",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        }
+      ]
+    },
+    {
+      "name": "list_directory",
+      "valid": false,
+      "tool": {
+        "name": "list_directory",
+        "description": "Get a detailed listing of all files and directories in a specified path. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes. This tool is essential for understanding directory structure and finding specific files within a directory. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "list_directory",
+            "title": "List Directory",
+            "description": "Get a detailed listing of all files and directories in a specified path. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes. This tool is essential for understanding directory structure and finding specific files within a directory. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"list_directory\" must use kebab-case format",
+          "tool": "list_directory",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"list-directory\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "list_directory",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "list_directory",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "list_directory",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "list_directory",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "list_directory",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "list_directory",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "list_directory_with_sizes",
+      "valid": false,
+      "tool": {
+        "name": "list_directory_with_sizes",
+        "description": "Get a detailed listing of all files and directories in a specified path, including sizes. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes. This tool is useful for understanding directory structure and finding specific files within a directory. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "sortBy": {
+              "default": "name",
+              "description": "Sort entries by name or size",
+              "type": "string",
+              "enum": [
+                "name",
+                "size"
+              ]
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "list_directory_with_sizes",
+            "title": "List Directory with Sizes",
+            "description": "Get a detailed listing of all files and directories in a specified path, including sizes. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes. This tool is useful for understanding directory structure and finding specific files within a directory. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "sortBy": {
+                  "default": "name",
+                  "description": "Sort entries by name or size",
+                  "type": "string",
+                  "enum": [
+                    "name",
+                    "size"
+                  ]
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"list_directory_with_sizes\" must use kebab-case format",
+          "tool": "list_directory_with_sizes",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"list-directory-with-sizes\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "list_directory_with_sizes",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'sortBy' is missing maxLength constraint",
+          "tool": "list_directory_with_sizes",
+          "path": "inputSchema.properties.sortBy",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "list_directory_with_sizes",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "list_directory_with_sizes",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-009",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Parameter 'sortBy' has schema constraints not mentioned in description: allowed values",
+          "tool": "list_directory_with_sizes",
+          "path": "inputSchema.properties.sortBy.description",
+          "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "list_directory_with_sizes",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "list_directory_with_sizes",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "directory_tree",
+      "valid": false,
+      "tool": {
+        "name": "directory_tree",
+        "description": "Get a recursive tree view of files and directories as a JSON structure. Each entry includes 'name', 'type' (file/directory), and 'children' for directories. Files have no children array, while directories always have a children array (which may be empty). The output is formatted with 2-space indentation for readability. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "excludePatterns": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "directory_tree",
+            "title": "Directory Tree",
+            "description": "Get a recursive tree view of files and directories as a JSON structure. Each entry includes 'name', 'type' (file/directory), and 'children' for directories. Files have no children array, while directories always have a children array (which may be empty). The output is formatted with 2-space indentation for readability. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "excludePatterns": {
+                  "default": [],
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"directory_tree\" must use kebab-case format",
+          "tool": "directory_tree",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"directory-tree\""
+        },
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"directory_tree\" should start with a descriptive verb",
+          "tool": "directory_tree",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "directory_tree",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'excludePatterns' is missing maxItems constraint",
+          "tool": "directory_tree",
+          "path": "inputSchema.properties.excludePatterns",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "directory_tree",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "directory_tree",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'excludePatterns' is missing a description",
+          "tool": "directory_tree",
+          "path": "inputSchema.properties.excludePatterns.description",
+          "suggestion": "Add a description to the 'excludePatterns' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "directory_tree",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "directory_tree",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "move_file",
+      "valid": false,
+      "tool": {
+        "name": "move_file",
+        "description": "Move or rename files and directories. Can move files between directories and rename them in a single operation. If the destination exists, the operation will fail. Works across different directories and can be used for simple renaming within the same directory. Both source and destination must be within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            },
+            "destination": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "source",
+            "destination"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "move_file",
+            "title": "Move File",
+            "description": "Move or rename files and directories. Can move files between directories and rename them in a single operation. If the destination exists, the operation will fail. Works across different directories and can be used for simple renaming within the same directory. Both source and destination must be within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "destination": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source",
+                "destination"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": false,
+              "destructiveHint": false,
+              "idempotentHint": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"move_file\" must use kebab-case format",
+          "tool": "move_file",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"move-file\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'destination' is missing maxLength constraint",
+          "tool": "move_file",
+          "path": "inputSchema.properties.destination",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "move_file",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'source' is missing a description",
+          "tool": "move_file",
+          "path": "inputSchema.properties.source.description",
+          "suggestion": "Add a description to the 'source' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'destination' is missing a description",
+          "tool": "move_file",
+          "path": "inputSchema.properties.destination.description",
+          "suggestion": "Add a description to the 'destination' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-011",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool 'move_file' appears to have side effects but description does not mention them",
+          "tool": "move_file",
+          "path": "description",
+          "suggestion": "Clearly state what changes this tool makes (e.g., \"Creates a new record...\", \"Deletes the file permanently...\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "move_file",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        }
+      ]
+    },
+    {
+      "name": "search_files",
+      "valid": false,
+      "tool": {
+        "name": "search_files",
+        "description": "Recursively search for files and directories matching a pattern. The patterns should be glob-style patterns that match paths relative to the working directory. Use pattern like '*.ext' to match files in current directory, and '**/*.ext' to match files in all subdirectories. Returns full paths to all matching items. Great for finding files when you don't know their exact location. Only searches within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "pattern": {
+              "type": "string"
+            },
+            "excludePatterns": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "path",
+            "pattern"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "search_files",
+            "title": "Search Files",
+            "description": "Recursively search for files and directories matching a pattern. The patterns should be glob-style patterns that match paths relative to the working directory. Use pattern like '*.ext' to match files in current directory, and '**/*.ext' to match files in all subdirectories. Returns full paths to all matching items. Great for finding files when you don't know their exact location. Only searches within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "pattern": {
+                  "type": "string"
+                },
+                "excludePatterns": {
+                  "default": [],
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "path",
+                "pattern"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"search_files\" must use kebab-case format",
+          "tool": "search_files",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"search-files\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "search_files",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'pattern' is missing maxLength constraint",
+          "tool": "search_files",
+          "path": "inputSchema.properties.pattern",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-002",
+          "category": "security",
+          "severity": "error",
+          "message": "Array parameter 'excludePatterns' is missing maxItems constraint",
+          "tool": "search_files",
+          "path": "inputSchema.properties.excludePatterns",
+          "suggestion": "Add \"maxItems\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "search_files",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "search_files",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'pattern' is missing a description",
+          "tool": "search_files",
+          "path": "inputSchema.properties.pattern.description",
+          "suggestion": "Add a description to the 'pattern' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'excludePatterns' is missing a description",
+          "tool": "search_files",
+          "path": "inputSchema.properties.excludePatterns.description",
+          "suggestion": "Add a description to the 'excludePatterns' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "search_files",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "search_files",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "get_file_info",
+      "valid": false,
+      "tool": {
+        "name": "get_file_info",
+        "description": "Retrieve detailed metadata about a file or directory. Returns comprehensive information including size, creation time, last modified time, permissions, and type. This tool is perfect for understanding file characteristics without reading the actual content. Only works within allowed directories.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "get_file_info",
+            "title": "Get File Info",
+            "description": "Retrieve detailed metadata about a file or directory. Returns comprehensive information including size, creation time, last modified time, permissions, and type. This tool is perfect for understanding file characteristics without reading the actual content. Only works within allowed directories.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"get_file_info\" must use kebab-case format",
+          "tool": "get_file_info",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"get-file-info\""
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'path' is missing maxLength constraint",
+          "tool": "get_file_info",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "SEC-004",
+          "category": "security",
+          "severity": "error",
+          "message": "File path parameter 'path' is missing pattern constraint for path validation",
+          "tool": "get_file_info",
+          "path": "inputSchema.properties.path",
+          "suggestion": "Add a \"pattern\" constraint to validate path format and prevent path traversal attacks (e.g., \"^[a-zA-Z0-9_\\-./]+$\")"
+        },
+        {
+          "id": "LLM-006",
+          "category": "llm-compatibility",
+          "severity": "error",
+          "message": "Parameter 'path' is missing a description",
+          "tool": "get_file_info",
+          "path": "inputSchema.properties.path.description",
+          "suggestion": "Add a description to the 'path' parameter explaining its purpose and expected values"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "get_file_info",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "get_file_info",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    },
+    {
+      "name": "list_allowed_directories",
+      "valid": false,
+      "tool": {
+        "name": "list_allowed_directories",
+        "description": "Returns the list of directories that this server is allowed to access. Subdirectories within these allowed directories are also accessible. Use this to understand which directories and their nested paths are available before trying to access files.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-filesystem /tmp",
+          "raw": {
+            "name": "list_allowed_directories",
+            "title": "List Allowed Directories",
+            "description": "Returns the list of directories that this server is allowed to access. Subdirectories within these allowed directories are also accessible. Use this to understand which directories and their nested paths are available before trying to access files.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {},
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "content"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "SCH-006",
+          "category": "schema",
+          "severity": "warning",
+          "message": "inputSchema.properties is empty - tool takes no parameters",
+          "tool": "list_allowed_directories",
+          "path": "inputSchema.properties",
+          "suggestion": "If this tool intentionally takes no parameters, consider documenting this clearly. Otherwise, define the expected input parameters.",
+          "documentation": "https://json-schema.org/understanding-json-schema/reference/object#properties"
+        },
+        {
+          "id": "NAM-002",
+          "category": "naming",
+          "severity": "error",
+          "message": "Tool name \"list_allowed_directories\" must use kebab-case format",
+          "tool": "list_allowed_directories",
+          "path": "name",
+          "suggestion": "Use kebab-case format: \"list-allowed-directories\""
+        },
+        {
+          "id": "LLM-005",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Tool description does not include usage examples",
+          "tool": "list_allowed_directories",
+          "path": "description",
+          "suggestion": "Add examples to illustrate usage (e.g., \"Example: search-users query='john'\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "list_allowed_directories",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "list_allowed_directories",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "validatorVersion": "0.1.0",
+    "mcpSpecVersion": "2025-11-25",
+    "timestamp": "2026-01-09T01:31:18.378Z",
+    "duration": 29,
+    "configUsed": "",
+    "llmAnalysisUsed": false
+  }
+}

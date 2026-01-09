@@ -7,39 +7,24 @@
 
 import type { Rule } from '../rules/types.js';
 import type { RuleConfig, IssueSeverity } from '../types/index.js';
-import {
-  RULE_PATHS,
-  isRuleRegistered,
-  loadRuleModule,
-} from '../rules/index.js';
+import { RULES } from '../rules/index.js';
 
 /**
  * Load rules based on configuration.
  * Only loads rules that are enabled (not set to false).
  */
 export async function loadRules(config: RuleConfig): Promise<Rule[]> {
-  const rulesToLoad = new Set<string>();
+  const rules: Rule[] = [];
 
-  // Determine which rules to load from config
-  for (const [ruleId, setting] of Object.entries(config)) {
-    if (setting !== false && isRuleRegistered(ruleId)) {
-      rulesToLoad.add(ruleId);
+  for (const [ruleId, rule] of Object.entries(RULES)) {
+    // Skip rules explicitly disabled in config
+    if (config[ruleId] === false) {
+      continue;
     }
+    rules.push(rule);
   }
 
-  // Also load any rules that aren't explicitly configured (use defaults)
-  for (const ruleId of Object.keys(RULE_PATHS)) {
-    if (!(ruleId in config)) {
-      rulesToLoad.add(ruleId);
-    }
-  }
-
-  // Load rules in parallel
-  const loadedRules = await Promise.all(
-    Array.from(rulesToLoad).map((ruleId) => loadRuleModule(ruleId))
-  );
-
-  return loadedRules.filter((rule): rule is Rule => rule !== null);
+  return rules;
 }
 
 /**

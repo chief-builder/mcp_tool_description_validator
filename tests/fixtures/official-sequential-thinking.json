@@ -1,0 +1,389 @@
+{
+  "valid": false,
+  "summary": {
+    "totalTools": 1,
+    "validTools": 0,
+    "issuesByCategory": {
+      "schema": 0,
+      "security": 1,
+      "llm-compatibility": 6,
+      "naming": 1,
+      "best-practice": 3
+    },
+    "issuesBySeverity": {
+      "error": 1,
+      "warning": 3,
+      "suggestion": 7
+    }
+  },
+  "issues": [
+    {
+      "id": "NAM-005",
+      "category": "naming",
+      "severity": "warning",
+      "message": "Tool name \"sequentialthinking\" should start with a descriptive verb",
+      "tool": "sequentialthinking",
+      "path": "name",
+      "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "severity": "error",
+      "message": "String parameter 'branchId' is missing maxLength constraint",
+      "tool": "sequentialthinking",
+      "path": "inputSchema.properties.branchId",
+      "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+    },
+    {
+      "id": "LLM-002",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Tool description is too long (2781 characters, maximum 500)",
+      "tool": "sequentialthinking",
+      "path": "description",
+      "suggestion": "Shorten the description to under 500 characters while keeping essential information"
+    },
+    {
+      "id": "LLM-008",
+      "category": "llm-compatibility",
+      "severity": "warning",
+      "message": "Parameter 'totalThoughts' description uses ambiguous term(s) without context: value",
+      "tool": "sequentialthinking",
+      "path": "inputSchema.properties.totalThoughts.description",
+      "suggestion": "Clarify what kind of value is expected (e.g., \"user data\", \"configuration value\")"
+    },
+    {
+      "id": "LLM-009",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Parameter 'thoughtNumber' has schema constraints not mentioned in description: minimum value, maximum value",
+      "tool": "sequentialthinking",
+      "path": "inputSchema.properties.thoughtNumber.description",
+      "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+    },
+    {
+      "id": "LLM-009",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Parameter 'totalThoughts' has schema constraints not mentioned in description: minimum value, maximum value",
+      "tool": "sequentialthinking",
+      "path": "inputSchema.properties.totalThoughts.description",
+      "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+    },
+    {
+      "id": "LLM-009",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Parameter 'revisesThought' has schema constraints not mentioned in description: minimum value, maximum value",
+      "tool": "sequentialthinking",
+      "path": "inputSchema.properties.revisesThought.description",
+      "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+    },
+    {
+      "id": "LLM-009",
+      "category": "llm-compatibility",
+      "severity": "suggestion",
+      "message": "Parameter 'branchFromThought' has schema constraints not mentioned in description: minimum value, maximum value",
+      "tool": "sequentialthinking",
+      "path": "inputSchema.properties.branchFromThought.description",
+      "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+    },
+    {
+      "id": "BP-001",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing title annotation for display purposes",
+      "tool": "sequentialthinking",
+      "suggestion": "Add annotations.title with a human-friendly name"
+    },
+    {
+      "id": "BP-002",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing readOnlyHint annotation",
+      "tool": "sequentialthinking",
+      "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+    },
+    {
+      "id": "BP-004",
+      "category": "best-practice",
+      "severity": "suggestion",
+      "message": "Tool is missing idempotentHint annotation",
+      "tool": "sequentialthinking",
+      "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+    }
+  ],
+  "tools": [
+    {
+      "name": "sequentialthinking",
+      "valid": false,
+      "tool": {
+        "name": "sequentialthinking",
+        "description": "A detailed tool for dynamic and reflective problem-solving through thoughts.\nThis tool helps analyze problems through a flexible thinking process that can adapt and evolve.\nEach thought can build on, question, or revise previous insights as understanding deepens.\n\nWhen to use this tool:\n- Breaking down complex problems into steps\n- Planning and design with room for revision\n- Analysis that might need course correction\n- Problems where the full scope might not be clear initially\n- Problems that require a multi-step solution\n- Tasks that need to maintain context over multiple steps\n- Situations where irrelevant information needs to be filtered out\n\nKey features:\n- You can adjust total_thoughts up or down as you progress\n- You can question or revise previous thoughts\n- You can add more thoughts even after reaching what seemed like the end\n- You can express uncertainty and explore alternative approaches\n- Not every thought needs to build linearly - you can branch or backtrack\n- Generates a solution hypothesis\n- Verifies the hypothesis based on the Chain of Thought steps\n- Repeats the process until satisfied\n- Provides a correct answer\n\nParameters explained:\n- thought: Your current thinking step, which can include:\n  * Regular analytical steps\n  * Revisions of previous thoughts\n  * Questions about previous decisions\n  * Realizations about needing more analysis\n  * Changes in approach\n  * Hypothesis generation\n  * Hypothesis verification\n- nextThoughtNeeded: True if you need more thinking, even if at what seemed like the end\n- thoughtNumber: Current number in sequence (can go beyond initial total if needed)\n- totalThoughts: Current estimate of thoughts needed (can be adjusted up/down)\n- isRevision: A boolean indicating if this thought revises previous thinking\n- revisesThought: If is_revision is true, which thought number is being reconsidered\n- branchFromThought: If branching, which thought number is the branching point\n- branchId: Identifier for the current branch (if any)\n- needsMoreThoughts: If reaching end but realizing more thoughts needed\n\nYou should:\n1. Start with an initial estimate of needed thoughts, but be ready to adjust\n2. Feel free to question or revise previous thoughts\n3. Don't hesitate to add more thoughts if needed, even at the \"end\"\n4. Express uncertainty when present\n5. Mark thoughts that revise previous thinking or branch into new paths\n6. Ignore information that is irrelevant to the current step\n7. Generate a solution hypothesis when appropriate\n8. Verify the hypothesis based on the Chain of Thought steps\n9. Repeat the process until satisfied with the solution\n10. Provide a single, ideally correct answer as the final output\n11. Only set nextThoughtNeeded to false when truly done and a satisfactory answer is reached",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "thought": {
+              "type": "string",
+              "description": "Your current thinking step"
+            },
+            "nextThoughtNeeded": {
+              "type": "boolean",
+              "description": "Whether another thought step is needed"
+            },
+            "thoughtNumber": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "description": "Current thought number (numeric value, e.g., 1, 2, 3)"
+            },
+            "totalThoughts": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "description": "Estimated total thoughts needed (numeric value, e.g., 5, 10)"
+            },
+            "isRevision": {
+              "description": "Whether this revises previous thinking",
+              "type": "boolean"
+            },
+            "revisesThought": {
+              "description": "Which thought is being reconsidered",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "branchFromThought": {
+              "description": "Branching point thought number",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "branchId": {
+              "description": "Branch identifier",
+              "type": "string"
+            },
+            "needsMoreThoughts": {
+              "description": "If more thoughts are needed",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "thought",
+            "nextThoughtNeeded",
+            "thoughtNumber",
+            "totalThoughts"
+          ],
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "source": {
+          "type": "server",
+          "location": "npx -y @modelcontextprotocol/server-sequential-thinking",
+          "raw": {
+            "name": "sequentialthinking",
+            "title": "Sequential Thinking",
+            "description": "A detailed tool for dynamic and reflective problem-solving through thoughts.\nThis tool helps analyze problems through a flexible thinking process that can adapt and evolve.\nEach thought can build on, question, or revise previous insights as understanding deepens.\n\nWhen to use this tool:\n- Breaking down complex problems into steps\n- Planning and design with room for revision\n- Analysis that might need course correction\n- Problems where the full scope might not be clear initially\n- Problems that require a multi-step solution\n- Tasks that need to maintain context over multiple steps\n- Situations where irrelevant information needs to be filtered out\n\nKey features:\n- You can adjust total_thoughts up or down as you progress\n- You can question or revise previous thoughts\n- You can add more thoughts even after reaching what seemed like the end\n- You can express uncertainty and explore alternative approaches\n- Not every thought needs to build linearly - you can branch or backtrack\n- Generates a solution hypothesis\n- Verifies the hypothesis based on the Chain of Thought steps\n- Repeats the process until satisfied\n- Provides a correct answer\n\nParameters explained:\n- thought: Your current thinking step, which can include:\n  * Regular analytical steps\n  * Revisions of previous thoughts\n  * Questions about previous decisions\n  * Realizations about needing more analysis\n  * Changes in approach\n  * Hypothesis generation\n  * Hypothesis verification\n- nextThoughtNeeded: True if you need more thinking, even if at what seemed like the end\n- thoughtNumber: Current number in sequence (can go beyond initial total if needed)\n- totalThoughts: Current estimate of thoughts needed (can be adjusted up/down)\n- isRevision: A boolean indicating if this thought revises previous thinking\n- revisesThought: If is_revision is true, which thought number is being reconsidered\n- branchFromThought: If branching, which thought number is the branching point\n- branchId: Identifier for the current branch (if any)\n- needsMoreThoughts: If reaching end but realizing more thoughts needed\n\nYou should:\n1. Start with an initial estimate of needed thoughts, but be ready to adjust\n2. Feel free to question or revise previous thoughts\n3. Don't hesitate to add more thoughts if needed, even at the \"end\"\n4. Express uncertainty when present\n5. Mark thoughts that revise previous thinking or branch into new paths\n6. Ignore information that is irrelevant to the current step\n7. Generate a solution hypothesis when appropriate\n8. Verify the hypothesis based on the Chain of Thought steps\n9. Repeat the process until satisfied with the solution\n10. Provide a single, ideally correct answer as the final output\n11. Only set nextThoughtNeeded to false when truly done and a satisfactory answer is reached",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "thought": {
+                  "type": "string",
+                  "description": "Your current thinking step"
+                },
+                "nextThoughtNeeded": {
+                  "type": "boolean",
+                  "description": "Whether another thought step is needed"
+                },
+                "thoughtNumber": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991,
+                  "description": "Current thought number (numeric value, e.g., 1, 2, 3)"
+                },
+                "totalThoughts": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991,
+                  "description": "Estimated total thoughts needed (numeric value, e.g., 5, 10)"
+                },
+                "isRevision": {
+                  "description": "Whether this revises previous thinking",
+                  "type": "boolean"
+                },
+                "revisesThought": {
+                  "description": "Which thought is being reconsidered",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "branchFromThought": {
+                  "description": "Branching point thought number",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "branchId": {
+                  "description": "Branch identifier",
+                  "type": "string"
+                },
+                "needsMoreThoughts": {
+                  "description": "If more thoughts are needed",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "thought",
+                "nextThoughtNeeded",
+                "thoughtNumber",
+                "totalThoughts"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "thoughtNumber": {
+                  "type": "number"
+                },
+                "totalThoughts": {
+                  "type": "number"
+                },
+                "nextThoughtNeeded": {
+                  "type": "boolean"
+                },
+                "branches": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "thoughtHistoryLength": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "thoughtNumber",
+                "totalThoughts",
+                "nextThoughtNeeded",
+                "branches",
+                "thoughtHistoryLength"
+              ],
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "additionalProperties": false
+            },
+            "execution": {
+              "taskSupport": "forbidden"
+            }
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "NAM-005",
+          "category": "naming",
+          "severity": "warning",
+          "message": "Tool name \"sequentialthinking\" should start with a descriptive verb",
+          "tool": "sequentialthinking",
+          "path": "name",
+          "suggestion": "Consider using a verb prefix like: get-, create-, update-, delete-, list-, search-, find-, fetch-, add-, remove-, set-, check-, validate-"
+        },
+        {
+          "id": "SEC-001",
+          "category": "security",
+          "severity": "error",
+          "message": "String parameter 'branchId' is missing maxLength constraint",
+          "tool": "sequentialthinking",
+          "path": "inputSchema.properties.branchId",
+          "suggestion": "Add \"maxLength\": 100 or an appropriate limit"
+        },
+        {
+          "id": "LLM-002",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Tool description is too long (2781 characters, maximum 500)",
+          "tool": "sequentialthinking",
+          "path": "description",
+          "suggestion": "Shorten the description to under 500 characters while keeping essential information"
+        },
+        {
+          "id": "LLM-008",
+          "category": "llm-compatibility",
+          "severity": "warning",
+          "message": "Parameter 'totalThoughts' description uses ambiguous term(s) without context: value",
+          "tool": "sequentialthinking",
+          "path": "inputSchema.properties.totalThoughts.description",
+          "suggestion": "Clarify what kind of value is expected (e.g., \"user data\", \"configuration value\")"
+        },
+        {
+          "id": "LLM-009",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Parameter 'thoughtNumber' has schema constraints not mentioned in description: minimum value, maximum value",
+          "tool": "sequentialthinking",
+          "path": "inputSchema.properties.thoughtNumber.description",
+          "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+        },
+        {
+          "id": "LLM-009",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Parameter 'totalThoughts' has schema constraints not mentioned in description: minimum value, maximum value",
+          "tool": "sequentialthinking",
+          "path": "inputSchema.properties.totalThoughts.description",
+          "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+        },
+        {
+          "id": "LLM-009",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Parameter 'revisesThought' has schema constraints not mentioned in description: minimum value, maximum value",
+          "tool": "sequentialthinking",
+          "path": "inputSchema.properties.revisesThought.description",
+          "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+        },
+        {
+          "id": "LLM-009",
+          "category": "llm-compatibility",
+          "severity": "suggestion",
+          "message": "Parameter 'branchFromThought' has schema constraints not mentioned in description: minimum value, maximum value",
+          "tool": "sequentialthinking",
+          "path": "inputSchema.properties.branchFromThought.description",
+          "suggestion": "Document the constraints in the description (e.g., \"max 100 characters\", \"must be one of: a, b, c\")"
+        },
+        {
+          "id": "BP-001",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing title annotation for display purposes",
+          "tool": "sequentialthinking",
+          "suggestion": "Add annotations.title with a human-friendly name"
+        },
+        {
+          "id": "BP-002",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing readOnlyHint annotation",
+          "tool": "sequentialthinking",
+          "suggestion": "Add annotations.readOnlyHint to indicate whether the tool only reads data"
+        },
+        {
+          "id": "BP-004",
+          "category": "best-practice",
+          "severity": "suggestion",
+          "message": "Tool is missing idempotentHint annotation",
+          "tool": "sequentialthinking",
+          "suggestion": "Add annotations.idempotentHint to indicate whether the tool is safe to call multiple times"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "validatorVersion": "0.1.0",
+    "mcpSpecVersion": "2025-11-25",
+    "timestamp": "2026-01-09T01:32:49.643Z",
+    "duration": 20,
+    "configUsed": "",
+    "llmAnalysisUsed": false
+  }
+}
