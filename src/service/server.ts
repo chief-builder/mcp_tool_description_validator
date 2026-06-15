@@ -8,6 +8,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { serve, type ServerType } from '@hono/node-server';
 import { validate } from '../core/validator.js';
 import type { ToolDefinition, ValidatorConfig } from '../types/index.js';
 
@@ -85,24 +86,35 @@ export function createApp() {
 }
 
 /**
- * Start the HTTP server on the specified port.
- *
- * Note: For production deployment, use @hono/node-server with serve().
- * This function returns the app for testing purposes.
- *
- * @param port - Port number to listen on (default: 8080)
- * @returns The configured Hono application
+ * Options for starting the HTTP service.
  */
-export function startServer(port: number = 8080) {
+export interface StartServerOptions {
+  /** Port number to listen on */
+  port?: number;
+  /** Hostname to bind to */
+  host?: string;
+}
+
+/**
+ * Start the HTTP server.
+ *
+ * @param options - Optional host and port settings
+ * @returns The underlying Node server
+ */
+export function startServer(options: StartServerOptions = {}): ServerType {
+  const { port = 8080, host = 'localhost' } = options;
   const app = createApp();
 
-  console.log(`Starting MCP Tool Validator service on port ${port}`);
-
-  // For Node.js deployment, use @hono/node-server:
-  // import { serve } from '@hono/node-server';
-  // serve({ fetch: app.fetch, port });
-
-  return app;
+  return serve(
+    {
+      fetch: app.fetch,
+      port,
+      hostname: host,
+    },
+    () => {
+      console.log(`MCP Tool Validator service listening on http://${host}:${port}`);
+    }
+  );
 }
 
 // Export app instance for testing

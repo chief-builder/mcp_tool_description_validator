@@ -8,6 +8,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { validateFile, validateServer } from './core/validator.js';
+import { startServer } from './service/server.js';
 import {
   formatHumanOutput,
   formatJsonOutput,
@@ -214,11 +215,34 @@ program
   .description('Start HTTP validation service')
   .option('-p, --port <port>', 'Port to listen on', '8080')
   .option('-h, --host <host>', 'Host to bind to', 'localhost')
-  .action(async (options: { port: string; host: string }) => {
-    // Placeholder - actual server implementation in CHUNK-14
-    console.log(`Starting validation server on ${options.host}:${options.port}...`);
-    console.log(chalk.yellow('HTTP service not yet implemented'));
-    console.log('This will be available in a future release.');
+  .option('--dry-run', 'Validate serve options without binding a port')
+  .action(async (options: { port: string; host: string; dryRun?: boolean }) => {
+    const port = Number.parseInt(options.port, 10);
+    if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+      console.error(chalk.red('Error:'), `Invalid port "${options.port}"`);
+      process.exit(2);
+    }
+
+    if (options.dryRun) {
+      console.log(`MCP Tool Validator service would listen on http://${options.host}:${port}`);
+      return;
+    }
+
+    const server = startServer({ host: options.host, port });
+    server.on('error', (error: NodeJS.ErrnoException) => {
+      console.error(chalk.red('Error:'), error.message);
+      process.exit(2);
+    });
+
+    const shutdown = (signal: NodeJS.Signals) => {
+      console.log(`\nReceived ${signal}; shutting down validation service...`);
+      server.close(() => {
+        process.exit(0);
+      });
+    };
+
+    process.once('SIGINT', shutdown);
+    process.once('SIGTERM', shutdown);
   });
 
 // Export the program for testing

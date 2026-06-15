@@ -256,19 +256,22 @@ describe('CLI', () => {
       expect(nam002Issues).toHaveLength(0);
     });
 
-    it('should handle serve subcommand', async () => {
-      const { stdout, exitCode } = await runCLI(['serve']);
+    it('should handle serve dry run', async () => {
+      const { stdout, exitCode } = await runCLI([
+        'serve',
+        '--port', '9000',
+        '--dry-run',
+      ]);
 
       expect(exitCode).toBe(0);
-      expect(stdout).toContain('Starting validation server');
-      expect(stdout).toContain('not yet implemented');
+      expect(stdout).toContain('http://localhost:9000');
     });
 
-    it('should handle serve with custom port', async () => {
-      const { stdout, exitCode } = await runCLI(['serve', '--port', '9000']);
+    it('should reject an invalid serve port', async () => {
+      const { stderr, exitCode } = await runCLI(['serve', '--port', 'nope']);
 
-      expect(exitCode).toBe(0);
-      expect(stdout).toContain('9000');
+      expect(exitCode).toBe(2);
+      expect(stderr).toContain('Invalid port');
     });
 
     it('should handle non-existent file gracefully', async () => {

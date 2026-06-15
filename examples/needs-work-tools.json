@@ -1,0 +1,41 @@
+[
+  {
+    "name": "getData",
+    "description": "Gets data",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string",
+          "description": "File path"
+        },
+        "debug": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  {
+    "name": "delete",
+    "description": "Deletes records.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "recordIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "authToken": {
+          "type": "string",
+          "description": "Secret token",
+          "default": "example"
+        }
+      }
+    }
+  }
+]

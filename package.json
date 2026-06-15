@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "description": "A governance validator for Model Context Protocol (MCP) tool definitions that ensures quality, security, and LLM-compatibility",
   "type": "module",
+  "homepage": "https://chief-builder.github.io/mcp_tool_description_validator/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chief-builder/mcp_tool_description_validator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chief-builder/mcp_tool_description_validator/issues"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -14,10 +22,21 @@
   "bin": {
     "mcp-validate": "./bin/mcp-validate.js"
   },
+  "files": [
+    "bin",
+    "dist",
+    "docs",
+    "examples",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest",
-    "typecheck": "tsc --noEmit"
+    "test:run": "vitest --run",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run build && npm run test:run",
+    "validate:examples": "npm run build && node ./dist/cli.js examples/polished-tools.json && node ./dist/cli.js examples/needs-work-tools.json --format json",
+    "serve": "node ./dist/cli.js serve"
   },
   "keywords": [
     "mcp",
@@ -33,6 +52,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
+    "@hono/node-server": "^2.0.5",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "ai": "^6.0.0",
     "ajv": "^8.17.0",
@@ -47,7 +67,6 @@
   "devDependencies": {
     "@modelcontextprotocol/server-everything": "^2025.12.18",
     "@modelcontextprotocol/server-filesystem": "^2025.12.18",
-    "@modelcontextprotocol/server-github": "^2025.4.8",
     "@modelcontextprotocol/server-memory": "^2025.11.25",
     "@modelcontextprotocol/server-sequential-thinking": "^2025.12.18",
     "@types/node": "^20.0.0",

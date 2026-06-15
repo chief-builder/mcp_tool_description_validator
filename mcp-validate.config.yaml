@@ -1,5 +1,5 @@
 # MCP Tool Validator Configuration
-# See https://github.com/your-org/mcp-tool-validator for full documentation
+# See https://github.com/chief-builder/mcp_tool_description_validator for full documentation
 
 # Rule configuration
 # Set to false to disable a rule, or set to 'error', 'warning', or 'suggestion' to override severity

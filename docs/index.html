@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MCP Tool Validator</title>
+    <meta
+      name="description"
+      content="A governance validator for MCP tool definitions, with rules for schema quality, security, LLM compatibility, and best practices."
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #18212f;
+        --muted: #5d6778;
+        --line: #d8dee8;
+        --panel: #ffffff;
+        --paper: #f6f8fb;
+        --accent: #0f766e;
+        --accent-strong: #0b5f59;
+        --gold: #b45309;
+        --blue: #2563eb;
+        --rose: #be123c;
+        --terminal: #111827;
+        --terminal-ink: #d1fae5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+        line-height: 1.5;
+      }
+
+      a {
+        color: var(--accent-strong);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+
+      .shell {
+        min-height: 100vh;
+      }
+
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--line);
+        background: rgba(246, 248, 251, 0.92);
+        backdrop-filter: blur(16px);
+      }
+
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 14px 0;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        font-weight: 700;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 8px;
+        color: #ffffff;
+        background: var(--accent);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 16px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 14px;
+      }
+
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      .hero {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 58px 0 32px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
+        gap: 38px;
+        align-items: center;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--accent-strong);
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 720px;
+        font-size: clamp(42px, 7vw, 74px);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .lede {
+        max-width: 650px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: 19px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 10px 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        color: var(--ink);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .button.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #ffffff;
+      }
+
+      .terminal {
+        overflow: hidden;
+        border: 1px solid #243043;
+        border-radius: 8px;
+        background: var(--terminal);
+        box-shadow: 0 20px 60px rgba(24, 33, 47, 0.18);
+      }
+
+      .terminal-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid #243043;
+        padding: 12px 14px;
+        color: #aeb8c8;
+        font-size: 13px;
+      }
+
+      .terminal-dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .terminal-dots span {
+        display: block;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+      }
+
+      .terminal-dots span:nth-child(1) {
+        background: #ef4444;
+      }
+
+      .terminal-dots span:nth-child(2) {
+        background: #f59e0b;
+      }
+
+      .terminal-dots span:nth-child(3) {
+        background: #10b981;
+      }
+
+      .terminal-body {
+        margin: 0;
+        padding: 20px;
+        color: var(--terminal-ink);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+
+      .muted-code {
+        color: #9ca3af;
+      }
+
+      .ok {
+        color: #86efac;
+      }
+
+      .warn {
+        color: #fde68a;
+      }
+
+      .fail {
+        color: #fda4af;
+      }
+
+      .section {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 44px 0;
+      }
+
+      .section h2 {
+        margin: 0 0 10px;
+        font-size: 30px;
+        line-height: 1.1;
+      }
+
+      .section-intro {
+        max-width: 760px;
+        margin: 0 0 24px;
+        color: var(--muted);
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      .metric {
+        min-height: 124px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 18px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .rules {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .rule {
+        min-height: 170px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 18px;
+      }
+
+      .rule code {
+        display: inline-flex;
+        min-width: 48px;
+        min-height: 32px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        background: #eef2ff;
+        color: var(--blue);
+        font-weight: 800;
+      }
+
+      .rule h3 {
+        margin: 16px 0 8px;
+        font-size: 17px;
+      }
+
+      .rule p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .step {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 20px;
+      }
+
+      .step-number {
+        display: inline-flex;
+        width: 34px;
+        height: 34px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: #fff7ed;
+        color: var(--gold);
+        font-weight: 800;
+      }
+
+      .step h3 {
+        margin: 18px 0 8px;
+        font-size: 18px;
+      }
+
+      .step p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .code-panel {
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #0f172a;
+      }
+
+      .code-panel pre {
+        margin: 0;
+        min-width: 760px;
+        padding: 20px;
+        color: #dbeafe;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 14px;
+      }
+
+      .footer {
+        border-top: 1px solid var(--line);
+        margin-top: 42px;
+        padding: 28px 0 42px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid,
+        .flow {
+          grid-template-columns: 1fr;
+        }
+
+        .metrics {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .rules {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        .nav-inner {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+        }
+
+        .hero {
+          padding-top: 38px;
+        }
+
+        h1 {
+          font-size: 42px;
+        }
+
+        .lede {
+          font-size: 17px;
+        }
+
+        .metrics,
+        .rules {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="nav">
+        <div class="nav-inner">
+          <div class="brand">
+            <span class="brand-mark">M</span>
+            <span>MCP Tool Validator</span>
+          </div>
+          <nav class="nav-links" aria-label="Project links">
+            <a href="https://github.com/chief-builder/mcp_tool_description_validator">GitHub</a>
+            <a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/RULES.md">Rules</a>
+            <a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/BEST_PRACTICES.md">Best Practices</a>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-grid">
+            <div>
+              <p class="eyebrow">MCP governance for agent tool surfaces</p>
+              <h1>Validate tool definitions before agents rely on them.</h1>
+              <p class="lede">
+                Check MCP tools for schema correctness, secure input bounds,
+                naming consistency, LLM-friendly descriptions, annotations, and
+                maturity score.
+              </p>
+              <div class="actions">
+                <a class="button primary" href="https://github.com/chief-builder/mcp_tool_description_validator">View Source</a>
+                <a class="button" href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/RULES.md">Browse Rules</a>
+              </div>
+              <div class="metrics" aria-label="Project metrics">
+                <div class="metric">
+                  <strong>46</strong>
+                  <span>validation rules</span>
+                </div>
+                <div class="metric">
+                  <strong>5</strong>
+                  <span>rule categories</span>
+                </div>
+                <div class="metric">
+                  <strong>3</strong>
+                  <span>report formats</span>
+                </div>
+                <div class="metric">
+                  <strong>798</strong>
+                  <span>tests in the current suite</span>
+                </div>
+              </div>
+            </div>
+
+            <figure class="terminal" aria-label="CLI preview">
+              <div class="terminal-bar">
+                <div class="terminal-dots" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+                <span>examples/needs-work-tools.json</span>
+              </div>
+              <pre class="terminal-body"><span class="muted-code">$ mcp-validate examples/needs-work-tools.json --verbose</span>
+MCP Tool Validator v0.1.0
+
+<span class="fail">x getData</span>
+  <span class="warn">WARNING</span> [NAM-002] Tool name must use kebab-case
+  <span class="warn">WARNING</span> [LLM-002] Description too short
+  <span class="warn">WARNING</span> [SEC-001] String parameter is missing maxLength
+
+Summary: 0/2 tools valid
+Maturity: <span class="warn">MODERATE</span> (59/100)</pre>
+            </figure>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Rule Coverage</h2>
+          <p class="section-intro">
+            The validator treats MCP tool quality as a cross-functional problem:
+            protocol shape, security boundaries, naming, model comprehension, and
+            runtime behavior hints all matter.
+          </p>
+          <div class="rules">
+            <article class="rule">
+              <code>SCH</code>
+              <h3>Schema</h3>
+              <p>Required fields, JSON Schema validity, object-shaped inputs, and explicit required arrays.</p>
+            </article>
+            <article class="rule">
+              <code>NAM</code>
+              <h3>Naming</h3>
+              <p>Kebab-case tools, camelCase parameters, descriptive verbs, and predictable identifiers.</p>
+            </article>
+            <article class="rule">
+              <code>SEC</code>
+              <h3>Security</h3>
+              <p>Bounded strings, bounded arrays, URL and file path constraints, and sensitive defaults.</p>
+            </article>
+            <article class="rule">
+              <code>LLM</code>
+              <h3>LLM Fit</h3>
+              <p>Actionable descriptions, parameter guidance, workflow cues, and ambiguity checks.</p>
+            </article>
+            <article class="rule">
+              <code>BP</code>
+              <h3>Practice</h3>
+              <p>Annotations, output schemas, parameter count, nesting depth, and usability guidance.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Use It Three Ways</h2>
+          <p class="section-intro">
+            Run it locally as a CLI, embed it in another TypeScript tool, or start
+            a small HTTP service for internal validation workflows.
+          </p>
+          <div class="flow">
+            <article class="step">
+              <span class="step-number">1</span>
+              <h3>CLI Gate</h3>
+              <p>Validate JSON or YAML files and fail CI with `--ci` when errors are present.</p>
+            </article>
+            <article class="step">
+              <span class="step-number">2</span>
+              <h3>Library API</h3>
+              <p>Call `validate`, `validateFile`, or `validateServer` from a custom release workflow.</p>
+            </article>
+            <article class="step">
+              <span class="step-number">3</span>
+              <h3>HTTP Service</h3>
+              <p>Run `mcp-validate serve` and post tool definitions to `/validate`.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Quick Commands</h2>
+          <div class="code-panel">
+            <pre>npm install
+npm run build
+node ./dist/cli.js examples/polished-tools.json
+node ./dist/cli.js examples/needs-work-tools.json --verbose
+node ./dist/cli.js serve --port 8080</pre>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="section">
+          Built for maintainers who want MCP tool surfaces that are easier for
+          agents to choose, safer to call, and simpler to govern.
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

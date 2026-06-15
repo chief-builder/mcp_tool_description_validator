@@ -1,0 +1,129 @@
+{
+  "name": "customer-support-tools",
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "search-knowledge-base",
+      "description": "Searches approved support articles by keyword. Use this when answering product or troubleshooting questions. Example: search for password reset.",
+      "annotations": {
+        "title": "Search Knowledge Base",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "searchText": {
+            "type": "string",
+            "description": "Customer question or troubleshooting phrase to search for, minimum length 3 characters and maximum length 200 characters.",
+            "minLength": 3,
+            "maxLength": 200
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of matching articles to return, minimum 1 and maximum 10.",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 5
+          }
+        },
+        "required": ["searchText"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "description": "Ranked support articles relevant to the query.",
+        "properties": {
+          "articles": {
+            "type": "array",
+            "description": "Matching support articles ordered by relevance.",
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Article title."
+                },
+                "url": {
+                  "type": "string",
+                  "description": "Canonical internal article URL.",
+                  "format": "uri"
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "Short answer-ready article summary."
+                }
+              },
+              "required": ["title", "url", "summary"]
+            }
+          }
+        },
+        "required": ["articles"]
+      }
+    },
+    {
+      "name": "create-support-ticket",
+      "description": "Creates a support ticket after troubleshooting fails. Use this when the user needs human follow-up. Example: create a ticket for an urgent outage. Call search-knowledge-base first.",
+      "annotations": {
+        "title": "Create Support Ticket",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "Internal customer identifier from the CRM, maximum 64 characters, valid format pattern uses letters, numbers, underscore, or hyphen.",
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "priority": {
+            "type": "string",
+            "description": "Support urgency level, max 10 characters. Must be one of: low, normal, high, urgent.",
+            "enum": ["low", "normal", "high", "urgent"],
+            "maxLength": 10,
+            "examples": ["normal", "urgent"]
+          },
+          "summary": {
+            "type": "string",
+            "description": "One-sentence issue summary for the support queue, minimum length 10 characters and maximum length 160 characters.",
+            "minLength": 10,
+            "maxLength": 160
+          },
+          "troubleshootingNotes": {
+            "type": "string",
+            "description": "Troubleshooting message and relevant article links, minimum length 20 characters and maximum length 2000 characters.",
+            "minLength": 20,
+            "maxLength": 2000
+          }
+        },
+        "required": ["customerId", "priority", "summary", "troubleshootingNotes"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "description": "Created support ticket metadata.",
+        "properties": {
+          "ticketId": {
+            "type": "string",
+            "description": "New support ticket identifier."
+          },
+          "status": {
+            "type": "string",
+            "description": "Initial ticket workflow status."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Ticket creation timestamp in ISO 8601 format.",
+            "format": "date-time"
+          }
+        },
+        "required": ["ticketId", "status", "createdAt"]
+      }
+    }
+  ]
+}
