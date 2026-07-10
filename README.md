@@ -22,6 +22,26 @@ The MCP Tool Description Validator analyzes MCP tool definitions and provides ac
 - **Multiple output formats**: human, JSON, SARIF 2.1.0
 - **Programmatic API** for build-pipeline integration
 
+## How Validation Flows
+
+```mermaid
+flowchart LR
+  F[JSON/YAML file] --> P[Parse and normalize]
+  S[Live MCP server] --> P
+  C[CLI, library, or HTTP API] --> V[Core validator]
+  P --> V
+  CFG[Validated configuration] --> V
+  V --> R[Enabled rule categories]
+  R --> A[Aggregate issues and maturity score]
+  A --> O[Human, JSON, or SARIF report]
+  V -. optional .-> L[LLM-assisted analysis]
+  L -. enriches .-> A
+```
+
+Every input is normalized into a common tool shape before rules run. Static
+rules always produce a result; optional LLM analysis enriches it but cannot
+discard static findings if a provider is unavailable.
+
 ## Installation
 
 ```bash
@@ -109,6 +129,30 @@ const direct = await validate(tools, {
 - `GET /health` — service health and version
 - `POST /validate` — body `{ "tools": [...], "config": { ... } }`, returns a full validation result
 
+Request configuration is validated exactly like file-based configuration.
+`on`/`off` rule aliases are normalized to booleans; unsupported keys and
+invalid severity values return `400 Invalid request configuration`.
+
+```mermaid
+sequenceDiagram
+  participant Client
+  participant API as POST /validate
+  participant Config as Config schema
+  participant Validator
+
+  Client->>API: tools + optional config
+  API->>Config: validate and normalize config
+  alt invalid configuration
+    Config-->>API: validation error
+    API-->>Client: 400 with error details
+  else valid configuration
+    Config-->>API: normalized overrides
+    API->>Validator: validate(normalized tools, config)
+    Validator-->>API: validation result
+    API-->>Client: 200 JSON result
+  end
+```
+
 ## Validation Rules
 
 56 rules across 5 categories:
@@ -168,6 +212,21 @@ llm:                     # optional LLM-assisted analysis
 ```
 
 Configs are validated on load — unknown keys and invalid rule settings fail with a descriptive error instead of being silently ignored.
+
+### Configuration precedence
+
+```mermaid
+flowchart TD
+  D[Built-in defaults] --> M[Merge]
+  F[Discovered or --config file] --> M
+  I[Explicit CLI flags or validated HTTP overrides] --> M
+  M --> E[Effective configuration]
+  E --> R[Rule loading and report formatting]
+```
+
+Only explicitly supplied CLI flags replace file values. HTTP overrides are
+validated and normalized before the same merge, so API callers receive the
+same rule semantics as CLI and configuration-file users.
 
 ## LLM-Assisted Analysis
 

@@ -52,6 +52,40 @@
 
 ## Components
 
+### Runtime flow
+
+```mermaid
+flowchart TB
+  subgraph Entry points
+    CLI[CLI]
+    LIB[Library API]
+    HTTP[HTTP service]
+  end
+  subgraph Boundary checks
+    INPUT[Parse / normalize tools]
+    CONFIG[Validate / normalize configuration]
+  end
+  subgraph Validation engine
+    LOAD[Load enabled rules]
+    EXEC[Execute rules per tool]
+    SCORE[Aggregate findings and score]
+  end
+  OUTPUT[Human / JSON / SARIF result]
+
+  CLI --> INPUT
+  LIB --> INPUT
+  HTTP --> INPUT
+  CLI --> CONFIG
+  LIB --> CONFIG
+  HTTP --> CONFIG
+  INPUT --> EXEC
+  CONFIG --> LOAD --> EXEC --> SCORE --> OUTPUT
+```
+
+The boundary-check layer is deliberately shared: configuration files and HTTP
+request overrides use the same schema and alias normalization. This keeps rule
+execution limited to `true`, `false`, or a supported severity override.
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        Entry Points                              │

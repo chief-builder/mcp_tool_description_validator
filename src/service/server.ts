@@ -10,8 +10,9 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { serve } from '@hono/node-server';
 import { validate } from '../core/validator.js';
+import { validateUserConfig, type ConfigOverrides } from '../core/config.js';
 import { VERSION } from '../version.js';
-import type { ToolDefinition, ValidatorConfig } from '../types/index.js';
+import type { ToolDefinition } from '../types/index.js';
 
 /**
  * Request body for the /validate endpoint.
@@ -19,8 +20,8 @@ import type { ToolDefinition, ValidatorConfig } from '../types/index.js';
 export interface ValidateRequest {
   /** Array of tool definitions to validate */
   tools: ToolDefinition[];
-  /** Optional configuration overrides */
-  config?: Partial<ValidatorConfig>;
+  /** Optional, untrusted configuration overrides supplied in the request. */
+  config?: unknown;
 }
 
 /**
@@ -55,6 +56,24 @@ export function createApp() {
         return c.json({ error: 'Invalid request: tools array required' }, 400);
       }
 
+      // HTTP request bodies are untrusted. Reuse the same schema that
+      // validates config files so aliases such as "off" normalize to false
+      // and invalid severity values cannot corrupt result aggregation.
+      let config: ConfigOverrides | undefined;
+      try {
+        config = body.config === undefined
+          ? undefined
+          : (validateUserConfig(body.config, 'HTTP request') as ConfigOverrides);
+      } catch (error) {
+        return c.json(
+          {
+            error: 'Invalid request configuration',
+            message: error instanceof Error ? error.message : 'Unknown error',
+          },
+          400
+        );
+      }
+
       // Add source to tools if missing
       const toolsWithSource = body.tools.map((tool, index) => ({
         ...tool,
@@ -66,7 +85,7 @@ export function createApp() {
       }));
 
       const result = await validate(toolsWithSource, {
-        config: body.config,
+        config,
       });
 
       return c.json(result);

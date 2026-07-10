@@ -108,6 +108,45 @@ describe('HTTP Service', () => {
       expect(body).toHaveProperty('valid');
     });
 
+    it('should normalize on/off rule aliases in request configuration', async () => {
+      const res = await app.request('/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tools: [
+            {
+              name: 'check-records',
+              description: 'Use this tool when checking records.',
+              inputSchema: { type: 'object', properties: {} },
+            },
+          ],
+          config: { rules: { 'LLM-005': 'off' } },
+        }),
+      });
+
+      expect(res.status).toBe(200);
+      const body = (await res.json()) as Record<string, any>;
+      expect(body.issues.some((issue: { id: string }) => issue.id === 'LLM-005')).toBe(false);
+      expect(body.summary.issuesBySeverity).not.toHaveProperty('off');
+      expect(body.summary.maturityScore).toEqual(expect.any(Number));
+    });
+
+    it('should reject invalid request configuration', async () => {
+      const res = await app.request('/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tools: [],
+          config: { rules: { 'LLM-005': 'invalid-severity' } },
+        }),
+      });
+
+      expect(res.status).toBe(400);
+      const body = (await res.json()) as Record<string, any>;
+      expect(body.error).toBe('Invalid request configuration');
+      expect(body.message).toContain('Invalid configuration in HTTP request');
+    });
+
     it('should add source to tools missing source', async () => {
       const res = await app.request('/validate', {
         method: 'POST',
