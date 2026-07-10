@@ -20,6 +20,7 @@
     --mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Consolas, monospace;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 20px; }
   html, body { height: 100%; }
   body {
     background: var(--bg);
@@ -33,9 +34,10 @@
     display: none;
     flex-direction: column;
     justify-content: center;
-    padding: 4rem 7vw 6rem;
-    max-width: 1200px;
+    padding: 3rem 6vw 5rem;
+    max-width: 1350px;
     margin: 0 auto;
+    overflow-y: auto;
   }
   .slide.active { display: flex; animation: fadein .35s ease; }
   @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -48,10 +50,10 @@
     text-transform: uppercase;
     margin-bottom: 1rem;
   }
-  h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 700; line-height: 1.15; }
-  h2 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; margin-bottom: 1.8rem; }
-  h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: .5rem; }
-  p.lead { font-size: 1.25rem; color: var(--muted); margin-top: 1.2rem; max-width: 46rem; line-height: 1.6; }
+  h1 { font-size: clamp(2.4rem, 5.5vw, 4rem); font-weight: 700; line-height: 1.15; }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; margin-bottom: 1.6rem; }
+  h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: .5rem; }
+  p.lead { font-size: 1.3rem; color: var(--muted); margin-top: 1.2rem; max-width: 48rem; line-height: 1.6; }
   .muted { color: var(--muted); }
 
   .grid { display: grid; gap: 1rem; }
@@ -63,12 +65,12 @@
     border-radius: 10px;
     padding: 1.25rem 1.4rem;
   }
-  .card p { color: var(--muted); font-size: .92rem; line-height: 1.55; margin-top: .3rem; }
+  .card p { color: var(--muted); font-size: 1rem; line-height: 1.55; margin-top: .3rem; }
   .card .big { font-size: 2rem; font-weight: 700; }
 
   code, pre {
     font-family: var(--mono);
-    font-size: .85rem;
+    font-size: .92rem;
   }
   code.inline { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: .12em .4em; color: var(--accent); }
   pre {
@@ -102,8 +104,8 @@
   .pill.bp  { background: #4a3a12; color: #e3b341; }
 
   table { border-collapse: collapse; width: 100%; }
-  th, td { text-align: left; padding: .6rem .9rem; border-bottom: 1px solid var(--border); font-size: .95rem; }
-  th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+  th, td { text-align: left; padding: .6rem .9rem; border-bottom: 1px solid var(--border); font-size: 1rem; }
+  th { color: var(--muted); font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
   td .score { font-family: var(--mono); font-weight: 700; }
 
   .flow {
@@ -115,15 +117,15 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: .7rem 1rem;
-    font-size: .9rem;
+    font-size: 1rem;
     text-align: center;
   }
-  .flow .node small { display: block; color: var(--muted); font-size: .75rem; margin-top: .15rem; }
+  .flow .node small { display: block; color: var(--muted); font-size: .82rem; margin-top: .15rem; }
   .flow .arrow { color: var(--muted); font-size: 1.1rem; }
   .flow .node.hl { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
 
   .bar-row { display: flex; align-items: center; gap: 1rem; margin-bottom: .8rem; }
-  .bar-label { width: 11rem; font-size: .9rem; flex-shrink: 0; }
+  .bar-label { width: 12rem; font-size: 1rem; flex-shrink: 0; }
   .bar-track { flex: 1; height: 22px; background: var(--surface2); border-radius: 6px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: .5rem; font-family: var(--mono); font-size: .75rem; font-weight: 700; color: #0d1117; }
 
@@ -198,7 +200,7 @@
   <section class="slide">
     <h2>How validation flows</h2>
     <div class="flow">
-      <div class="node">JSON / YAML file<small>single, array, or manifest</small></div>
+      <div class="node">JSON / YAML file<small>path passed by you</small></div>
       <div class="arrow">→</div>
       <div class="node">Parse &amp; normalize<small>common tool shape</small></div>
       <div class="arrow">→</div>
@@ -208,14 +210,36 @@
       <div class="arrow">→</div>
       <div class="node">Report<small>human · JSON · SARIF</small></div>
     </div>
-    <div class="flow">
-      <div class="node">Live MCP server<small>STDIO or Streamable HTTP</small></div>
-      <div class="arrow">↗</div>
-      <span class="muted" style="font-size:.85rem">servers feed the same pipeline as files</span>
+    <div class="grid cols-2" style="margin-top:.6rem;">
+      <div class="card">
+        <h3>How the file gets in</h3>
+        <p>The tool never searches for your file — <strong style="color:var(--text)">you hand it a path</strong>, through any of three doors:</p>
+<pre style="margin-top:.7rem;"><span class="c"># 1 · CLI argument</span>
+mcp-validate <span class="g">./tools.json</span>
+
+<span class="c"># 2 · Library call</span>
+<span class="p">await</span> validateFile(<span class="g">'./tools.yaml'</span>)
+
+<span class="c"># 3 · HTTP API (tools sent inline as JSON)</span>
+POST /validate  { <span class="b">"tools"</span>: [...] }</pre>
+        <p style="margin-top:.7rem;">The file is read from disk and the <strong style="color:var(--text)">extension picks the parser</strong>: <code class="inline">.json</code> → JSON, <code class="inline">.yaml</code>/<code class="inline">.yml</code> → YAML. Anything else is rejected up front with a clear error.</p>
+      </div>
+      <div class="card">
+        <h3>Three accepted file shapes</h3>
+        <p>The parsed content is auto-detected as one of:</p>
+<pre style="margin-top:.7rem;"><span class="c">// Single tool</span>
+{ <span class="b">"name"</span>: ..., <span class="b">"description"</span>: ..., <span class="b">"inputSchema"</span>: ... }
+
+<span class="c">// Array — bare or wrapped</span>
+[ {tool}, {tool} ]   <span class="c">or</span>   { <span class="b">"tools"</span>: [...] }
+
+<span class="c">// Manifest with server metadata</span>
+{ <span class="b">"name"</span>: <span class="g">"my-server"</span>, <span class="b">"version"</span>: <span class="g">"1.0"</span>, <span class="b">"tools"</span>: [...] }</pre>
+        <p style="margin-top:.7rem;">Every tool is normalized into one common shape and tagged with its source, so the 56 rules run identically no matter where it came from. A <strong style="color:var(--text)">live MCP server</strong> (<code class="inline">--server</code>, STDIO or HTTP) feeds this same pipeline — its <code class="inline">tools/list</code> response replaces the file.</p>
+      </div>
     </div>
-    <ul class="clean" style="margin-top:1rem;">
+    <ul class="clean" style="margin-top:1.2rem;">
       <li><strong>Crash-proof rule engine</strong> — a rule that throws on a pathological tool becomes a finding on that tool; the other 55 rules still run.</li>
-      <li><strong>LLM analysis is additive</strong> — a provider failure is recorded in <code class="inline">metadata.llmAnalysisError</code> and never discards static results.</li>
       <li><strong>Every entry point converges</strong> — CLI, library, and HTTP API all call the same <code class="inline">validate()</code> with identically validated config.</li>
     </ul>
   </section>
@@ -306,7 +330,7 @@ mcp-validate -s <span class="g">"http://localhost:3000/mcp"</span></pre>
   <!-- 7. Sample output -->
   <section class="slide">
     <h2>What a run looks like</h2>
-<pre style="font-size:.82rem;">MCP Tool Validator v0.1.0
+<pre style="font-size:.9rem;">MCP Tool Validator v0.1.0
 ──────────────────────────────────────────────────
 Validating: 1 tool(s)
 
