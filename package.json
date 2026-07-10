@@ -18,11 +18,13 @@
     "build": "tsup",
     "pretest": "npm run build",
     "test": "vitest run",
+    "test:run": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json",
     "prepublishOnly": "npm run typecheck && npm run build",
     "analyze:servers": "tsx scripts/test-official-servers.ts",
-    "llm:analyze": "node scripts/llm-analyze.mjs"
+    "llm:analyze": "node scripts/llm-analyze.mjs",
+    "validate:examples": "npm run build && node ./dist/cli.js examples/polished-tools.json && node ./dist/cli.js examples/needs-work-tools.json --format json"
   },
   "keywords": [
     "mcp",
@@ -81,7 +83,10 @@
   },
   "files": [
     "dist",
-    "bin"
+    "bin",
+    "docs",
+    "examples",
+    "README.md"
   ],
   "repository": {
     "type": "git",
