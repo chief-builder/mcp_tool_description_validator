@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Tool Description Validator — Overview</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #2d3548;
+    --text: #e6edf3;
+    --muted: #8b96a8;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+  .deck { height: 100vh; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 7vw 6rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .slide.active { display: flex; animation: fadein .35s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .eyebrow {
+    color: var(--accent);
+    font-size: .85rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 700; line-height: 1.15; }
+  h2 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; margin-bottom: 1.8rem; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: .5rem; }
+  p.lead { font-size: 1.25rem; color: var(--muted); margin-top: 1.2rem; max-width: 46rem; line-height: 1.6; }
+  .muted { color: var(--muted); }
+
+  .grid { display: grid; gap: 1rem; }
+  .cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.4rem;
+  }
+  .card p { color: var(--muted); font-size: .92rem; line-height: 1.55; margin-top: .3rem; }
+  .card .big { font-size: 2rem; font-weight: 700; }
+
+  code, pre {
+    font-family: var(--mono);
+    font-size: .85rem;
+  }
+  code.inline { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: .12em .4em; color: var(--accent); }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.3rem;
+    overflow-x: auto;
+    line-height: 1.6;
+  }
+  pre .c  { color: var(--muted); }
+  pre .g  { color: var(--green); }
+  pre .y  { color: var(--yellow); }
+  pre .r  { color: var(--red); }
+  pre .b  { color: var(--accent); }
+  pre .p  { color: var(--purple); }
+
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: .75rem;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: .18em .7em;
+    margin-right: .4rem;
+  }
+  .pill.sch { background: #1f3a5f; color: #79b8ff; }
+  .pill.nam { background: #3d2e58; color: var(--purple); }
+  .pill.sec { background: #4a1e1e; color: #ff9492; }
+  .pill.llm { background: #1e4029; color: #7ee787; }
+  .pill.bp  { background: #4a3a12; color: #e3b341; }
+
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: .6rem .9rem; border-bottom: 1px solid var(--border); font-size: .95rem; }
+  th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+  td .score { font-family: var(--mono); font-weight: 700; }
+
+  .flow {
+    display: flex; align-items: center; gap: .6rem;
+    flex-wrap: wrap; margin: 1.4rem 0;
+  }
+  .flow .node {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .7rem 1rem;
+    font-size: .9rem;
+    text-align: center;
+  }
+  .flow .node small { display: block; color: var(--muted); font-size: .75rem; margin-top: .15rem; }
+  .flow .arrow { color: var(--muted); font-size: 1.1rem; }
+  .flow .node.hl { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+
+  .bar-row { display: flex; align-items: center; gap: 1rem; margin-bottom: .8rem; }
+  .bar-label { width: 11rem; font-size: .9rem; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 22px; background: var(--surface2); border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: .5rem; font-family: var(--mono); font-size: .75rem; font-weight: 700; color: #0d1117; }
+
+  .nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem;
+    background: linear-gradient(transparent, var(--bg) 40%);
+    z-index: 10;
+  }
+  .dots { display: flex; gap: .5rem; }
+  .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--border); cursor: pointer; border: none; padding: 0;
+    transition: background .2s, transform .2s;
+  }
+  .dot.active { background: var(--accent); transform: scale(1.3); }
+  .nav button.arrow-btn {
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: .45rem .9rem; cursor: pointer; font-size: .9rem;
+  }
+  .nav button.arrow-btn:hover { border-color: var(--accent); }
+  .slide-num { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+  .hint { color: var(--muted); font-size: .8rem; }
+
+  ul.clean { list-style: none; }
+  ul.clean li { padding-left: 1.5rem; position: relative; margin-bottom: .7rem; line-height: 1.55; color: var(--muted); }
+  ul.clean li::before { content: "→"; position: absolute; left: 0; color: var(--accent); }
+  ul.clean li strong { color: var(--text); }
+  ul.check li::before { content: "✓"; color: var(--green); }
+
+  @media (max-width: 760px) {
+    .cols-2, .cols-3 { grid-template-columns: 1fr; }
+    .slide { padding: 2.5rem 6vw 6rem; overflow-y: auto; justify-content: flex-start; }
+    .bar-label { width: 7.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- 1. Title -->
+  <section class="slide active">
+    <div class="eyebrow">mcp-tool-validator · v0.1.0</div>
+    <h1>MCP Tool Description Validator</h1>
+    <p class="lead">A governance validator for Model Context Protocol tool definitions — catching the schema violations, security gaps, and ambiguous descriptions that make LLM agents misuse tools.</p>
+    <p class="lead" style="font-size:1rem; margin-top:2rem;">56 rules · 5 categories · CLI + HTTP API + library · live-server validation · optional LLM-assisted analysis</p>
+  </section>
+
+  <!-- 2. The problem -->
+  <section class="slide">
+    <h2>Why it exists</h2>
+    <div class="grid cols-3">
+      <div class="card">
+        <h3 style="color:var(--red)">LLMs read descriptions, not code</h3>
+        <p>An agent picks and calls a tool based purely on its name, description, and schema. Vague or contradictory definitions cause wrong tool choices, malformed arguments, and silent failures.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--yellow)">Schemas are attack surface</h3>
+        <p>Unbounded strings, unconstrained numbers, and header-exposed secrets in tool schemas create injection and denial-of-service risks that ordinary code review rarely inspects.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent)">The spec keeps moving</h3>
+        <p>MCP has an official grammar for tool names, JSON Schema 2020-12 requirements, and a draft revision adding icons and <code class="inline">x-mcp-header</code>. Compliance is easy to drift from.</p>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:2rem; font-size:1.05rem;">The validator turns all of this into a repeatable, CI-friendly quality gate with a single maturity score per server.</p>
+  </section>
+
+  <!-- 3. How it flows -->
+  <section class="slide">
+    <h2>How validation flows</h2>
+    <div class="flow">
+      <div class="node">JSON / YAML file<small>single, array, or manifest</small></div>
+      <div class="arrow">→</div>
+      <div class="node">Parse &amp; normalize<small>common tool shape</small></div>
+      <div class="arrow">→</div>
+      <div class="node hl">Core validator<small>rule engine</small></div>
+      <div class="arrow">→</div>
+      <div class="node">Aggregate<small>issues + maturity score</small></div>
+      <div class="arrow">→</div>
+      <div class="node">Report<small>human · JSON · SARIF</small></div>
+    </div>
+    <div class="flow">
+      <div class="node">Live MCP server<small>STDIO or Streamable HTTP</small></div>
+      <div class="arrow">↗</div>
+      <span class="muted" style="font-size:.85rem">servers feed the same pipeline as files</span>
+    </div>
+    <ul class="clean" style="margin-top:1rem;">
+      <li><strong>Crash-proof rule engine</strong> — a rule that throws on a pathological tool becomes a finding on that tool; the other 55 rules still run.</li>
+      <li><strong>LLM analysis is additive</strong> — a provider failure is recorded in <code class="inline">metadata.llmAnalysisError</code> and never discards static results.</li>
+      <li><strong>Every entry point converges</strong> — CLI, library, and HTTP API all call the same <code class="inline">validate()</code> with identically validated config.</li>
+    </ul>
+  </section>
+
+  <!-- 4. Rule categories -->
+  <section class="slide">
+    <h2>56 rules, 5 categories</h2>
+    <div style="margin-bottom:1.6rem;">
+      <div class="bar-row"><div class="bar-label"><span class="pill bp">BP</span>Best Practices</div><div class="bar-track"><div class="bar-fill" style="width:100%; background:#e3b341;">15</div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="pill llm">LLM</span>LLM Compatibility</div><div class="bar-track"><div class="bar-fill" style="width:87%; background:#7ee787;">13</div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="pill sec">SEC</span>Security</div><div class="bar-track"><div class="bar-fill" style="width:73%; background:#ff9492;">11</div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="pill sch">SCH</span>Schema</div><div class="bar-track"><div class="bar-fill" style="width:67%; background:#79b8ff;">10</div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="pill nam">NAM</span>Naming</div><div class="bar-track"><div class="bar-fill" style="width:47%; background:#bc8cff;">7</div></div></div>
+    </div>
+    <div class="grid cols-2">
+      <div class="card"><h3>Examples of what gets caught</h3>
+        <p><span class="pill sec">SEC-001</span> string parameter missing <code class="inline">maxLength</code> (content fields like <code class="inline">query</code>, <code class="inline">body</code> are exempt)<br>
+        <span class="pill nam">NAM-002</span> tool name violates the MCP spec grammar<br>
+        <span class="pill llm">LLM-004</span> description never says <em>when</em> to use the tool<br>
+        <span class="pill bp">BP-003</span> "delete" tool missing <code class="inline">destructiveHint</code></p>
+      </div>
+      <div class="card"><h3>Draft-spec rules</h3>
+        <p>Three rules activate only with <code class="inline">--spec-version draft</code>:<br>
+        <span class="pill sch">SCH-009</span> network <code class="inline">$ref</code> ban ·
+        <span class="pill sch">SCH-010</span> <code class="inline">x-mcp-header</code> constraints ·
+        <span class="pill sec">SEC-011</span> sensitive params exposed as headers</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Maturity scoring -->
+  <section class="slide">
+    <h2>Maturity scoring</h2>
+    <p class="muted" style="margin-bottom:1.4rem;">Each tool starts at 100. Deductions apply per issue — <span style="color:var(--red)">error −5</span>, <span style="color:var(--yellow)">warning −2</span>, <span style="color:var(--accent)">suggestion −1</span> — and the server score is the <strong style="color:var(--text)">average across tools</strong>, so one bad tool can't be hidden by fifty good ones.</p>
+    <table>
+      <thead><tr><th>Score</th><th>Level</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><span class="score" style="color:var(--green)">91–100</span></td><td>Exemplary</td><td class="muted">Optimized for advanced multi-tool agents</td></tr>
+        <tr><td><span class="score" style="color:var(--accent)">71–90</span></td><td>Mature</td><td class="muted">Reliable for complex workflows</td></tr>
+        <tr><td><span class="score" style="color:var(--yellow)">41–70</span></td><td>Moderate</td><td class="muted">Usable in simple agents; some guidance</td></tr>
+        <tr><td><span class="score" style="color:var(--red)">0–40</span></td><td>Immature</td><td class="muted">High risk of misuse</td></tr>
+      </tbody>
+    </table>
+    <div class="grid cols-3" style="margin-top:1.6rem;">
+      <div class="card"><div class="big" style="color:var(--green)">99</div><p><code class="inline">examples/polished-tools.json</code> — 2 tools, 2 suggestions</p></div>
+      <div class="card"><div class="big" style="color:var(--accent)">75</div><p>Official MCP <strong>memory server</strong>, validated live over STDIO</p></div>
+      <div class="card"><div class="big" style="color:var(--yellow)">60</div><p><code class="inline">examples/needs-work-tools.json</code> — 9 errors, 10 warnings, 16 suggestions</p></div>
+    </div>
+  </section>
+
+  <!-- 6. Interfaces -->
+  <section class="slide">
+    <h2>Four ways to use it</h2>
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>1 · CLI</h3>
+<pre><span class="c"># files, live servers, CI gates</span>
+mcp-validate tools.json
+mcp-validate --server <span class="g">"node ./my-server.js"</span>
+mcp-validate tools.json <span class="b">--format sarif --ci</span>
+mcp-validate tools.json <span class="b">--rule</span> SEC-001=off</pre>
+      </div>
+      <div class="card">
+        <h3>2 · Library</h3>
+<pre><span class="p">import</span> { validate, validateFile,
+  validateServer } <span class="p">from</span> <span class="g">'mcp-tool-validator'</span>;
+
+<span class="p">const</span> r = <span class="p">await</span> validateFile(<span class="g">'./tools.json'</span>);
+r.valid; r.summary.maturityScore; r.issues;</pre>
+      </div>
+      <div class="card">
+        <h3>3 · HTTP service</h3>
+<pre>mcp-validate serve --port 8080
+<span class="c"># GET  /health   → {status, version}</span>
+<span class="c"># POST /validate → full result</span>
+<span class="c"># bad config     → 400 with details</span></pre>
+      </div>
+      <div class="card">
+        <h3>4 · Live MCP servers</h3>
+<pre><span class="c"># STDIO command or Streamable HTTP URL</span>
+mcp-validate -s <span class="g">"npx -y @mcp/server-memory"</span>
+mcp-validate -s <span class="g">"http://localhost:3000/mcp"</span></pre>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:1.2rem; font-size:.9rem;">Exit codes: <code class="inline">0</code> success · <code class="inline">1</code> errors found with <code class="inline">--ci</code> · <code class="inline">2</code> input/usage failure. SARIF 2.1.0 output plugs into GitHub code scanning.</p>
+  </section>
+
+  <!-- 7. Sample output -->
+  <section class="slide">
+    <h2>What a run looks like</h2>
+<pre style="font-size:.82rem;">MCP Tool Validator v0.1.0
+──────────────────────────────────────────────────
+Validating: 1 tool(s)
+
+<span class="r">✗ BadName!!</span>
+  <span class="r">ERROR</span>   [NAM-002] Tool name "BadName!!" contains illegal character(s): "!".
+                     The MCP spec allows only letters, digits, underscores, dots, and hyphens
+  <span class="y">WARNING</span> [LLM-002] Tool description is too short (1 characters, minimum 20)
+  <span class="y">WARNING</span> [LLM-004] Tool description does not explain when to use this tool
+  <span class="b">SUGGESTION</span> [LLM-005] Tool description does not include usage examples
+
+──────────────────────────────────────────────────
+Summary: 0/1 tools valid   Errors: 1   Warnings: 4   Suggestions: 2
+
+Maturity: <span class="y">MODERATE</span> (85/100)</pre>
+    <ul class="clean" style="margin-top:1.2rem;">
+      <li>Every issue carries a rule ID, severity, the offending <strong>schema path</strong>, and a concrete <strong>fix suggestion</strong>.</li>
+      <li>Rules can be tuned per project: <code class="inline">--rule SEC-001=off</code>, <code class="inline">--rule LLM-005=error</code>, or the same in config.</li>
+    </ul>
+  </section>
+
+  <!-- 8. Config -->
+  <section class="slide">
+    <h2>Configuration &amp; precedence</h2>
+    <div class="grid cols-2">
+      <div>
+<pre><span class="c"># mcp-validate.config.yaml</span>
+<span class="b">rules:</span>
+  BP-001: off
+  SEC-001: error
+<span class="b">output:</span>
+  format: human
+  verbose: false
+<span class="b">specVersion:</span> 2025-11-25   <span class="c"># or "draft"</span>
+<span class="b">llm:</span>
+  enabled: false
+  provider: anthropic
+  model: claude-haiku-4-5</pre>
+      </div>
+      <div>
+        <ul class="clean">
+          <li><strong>Auto-discovered</strong> via cosmiconfig: <code class="inline">mcp-validate.config.yaml/.yml/.json</code>, <code class="inline">.mcp-validaterc*</code>, or a <code class="inline">"mcp-validate"</code> key in package.json.</li>
+          <li><strong>Validated on load</strong> — unknown keys and invalid severities fail with a descriptive error, never silently ignored.</li>
+          <li><strong>Precedence</strong>: defaults ← config file ← explicit CLI flags / HTTP overrides. Only flags you actually pass override file values.</li>
+          <li><strong>HTTP parity</strong> — API request config goes through the same schema, so a bad override returns <code class="inline">400</code> with the exact field that failed.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. LLM analysis -->
+  <section class="slide">
+    <h2>Optional LLM-assisted analysis</h2>
+    <p class="muted" style="margin-bottom:1.4rem; max-width:48rem;">Static rules catch structural problems. With <code class="inline">--llm</code>, each tool is additionally scored by a model for the things regexes can't judge:</p>
+    <div class="grid cols-3">
+      <div class="card"><h3>Clarity score</h3><p>Would an agent reading only this description know exactly what the tool does and returns?</p></div>
+      <div class="card"><h3>Ambiguities &amp; conflicts</h3><p>Descriptions that contradict their own schema, overloaded parameters, undefined behavior.</p></div>
+      <div class="card"><h3>Improvement suggestions</h3><p>Concrete rewrites attached per tool in the result.</p></div>
+    </div>
+    <ul class="clean" style="margin-top:1.6rem;">
+      <li>Providers are <strong>optional peer dependencies</strong>: <code class="inline">@ai-sdk/anthropic</code>, <code class="inline">@ai-sdk/openai</code>, or <code class="inline">ollama-ai-provider-v2</code> — install only what you use.</li>
+      <li><strong>Fail-safe by design</strong>: missing package, bad key, or network failure lands in <code class="inline">metadata.llmAnalysisError</code>; static findings always survive.</li>
+    </ul>
+  </section>
+
+  <!-- 10. Verification -->
+  <section class="slide">
+    <h2>Verified in this review</h2>
+    <div class="grid cols-3" style="margin-bottom:1.4rem;">
+      <div class="card"><div class="big" style="color:var(--green)">988 / 988</div><p>tests passing across 70 files — one test file per rule, plus core, parsers, reporters, service, CLI, and integration suites</p></div>
+      <div class="card"><div class="big" style="color:var(--green)">93.8%</div><p>statement coverage (v8); core engine and rules near 100%, CLI wiring is the only thin spot</p></div>
+      <div class="card"><div class="big" style="color:var(--green)">0</div><p>type errors — <code class="inline">tsc</code> clean over src, tests, and scripts</p></div>
+    </div>
+    <ul class="clean check">
+      <li>CLI exercised end-to-end: human, JSON, and SARIF output; rule overrides; <code class="inline">--spec-version draft</code>; YAML input; correct exit codes (0 / 1 with <code class="inline">--ci</code> / 2 on bad input).</li>
+      <li>Malformed input handled gracefully — missing files, garbage JSON, and illegal tool names all produce descriptive errors, never stack traces.</li>
+      <li>Live validation against the official MCP memory server over STDIO: 9 tools fetched and scored 75/100.</li>
+      <li>HTTP service verified: <code class="inline">/health</code>, <code class="inline">/validate</code> (200 with full result), invalid config rejected with 400 and field-level detail.</li>
+    </ul>
+  </section>
+
+</div>
+
+<div class="nav">
+  <span class="slide-num"><span id="cur">1</span> / <span id="total">10</span></span>
+  <div class="dots" id="dots"></div>
+  <div>
+    <span class="hint">← → or click&nbsp;&nbsp;</span>
+    <button class="arrow-btn" onclick="go(-1)">←</button>
+    <button class="arrow-btn" onclick="go(1)">→</button>
+  </div>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const dotsEl = document.getElementById('dots');
+  let idx = 0;
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = (e) => { e.stopPropagation(); show(i); };
+    dotsEl.appendChild(d);
+  });
+  document.getElementById('total').textContent = slides.length;
+  function show(i) {
+    idx = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, j) => s.classList.toggle('active', j === idx));
+    dotsEl.querySelectorAll('.dot').forEach((d, j) => d.classList.toggle('active', j === idx));
+    document.getElementById('cur').textContent = idx + 1;
+  }
+  function go(dir) { show(idx + dir); }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') go(1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(-1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+  document.querySelector('.deck').addEventListener('click', (e) => {
+    if (e.target.closest('.nav') || e.target.closest('a')) return;
+    go(1);
+  });
+</script>
+</body>
+</html>
