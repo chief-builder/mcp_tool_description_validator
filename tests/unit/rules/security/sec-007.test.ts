@@ -53,6 +53,14 @@ describe('SEC-007: Sensitive parameter names should be flagged', () => {
     it('should detect auth', () => {
       expect(isSensitiveParameter('auth')).toBe(true);
       expect(isSensitiveParameter('authHeader')).toBe(true);
+      expect(isSensitiveParameter('auth_token')).toBe(true);
+    });
+
+    it('should not flag auth substrings like author', () => {
+      // Regression: /auth/ matched "author" and "authorName"
+      expect(isSensitiveParameter('author')).toBe(false);
+      expect(isSensitiveParameter('authorName')).toBe(false);
+      expect(isSensitiveParameter('author_id')).toBe(false);
     });
 
     it('should detect credential', () => {
@@ -83,6 +91,15 @@ describe('SEC-007: Sensitive parameter names should be flagged', () => {
         name: { type: 'string' },
         email: { type: 'string' },
         userId: { type: 'string' },
+      });
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(0);
+    });
+
+    it('should pass for author parameters', () => {
+      const tool = createTool({
+        author: { type: 'string' },
+        authorName: { type: 'string' },
       });
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(0);

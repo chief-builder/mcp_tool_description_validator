@@ -1,5 +1,5 @@
 /**
- * BP-001: Consider adding title annotation for display purposes
+ * BP-001: Consider adding a title for display purposes
  */
 
 import { describe, it, expect } from 'vitest';
@@ -24,8 +24,8 @@ function createContext(tools: ToolDefinition[] = []): RuleContext {
   };
 }
 
-describe('BP-001: title annotation', () => {
-  it('should report issue when title annotation is missing', () => {
+describe('BP-001: title for display purposes', () => {
+  it('should report issue when both top-level title and annotations.title are missing', () => {
     const tool = createTool();
     const ctx = createContext([tool]);
 
@@ -34,10 +34,20 @@ describe('BP-001: title annotation', () => {
     expect(issues).toHaveLength(1);
     expect(issues[0].id).toBe('BP-001');
     expect(issues[0].severity).toBe('suggestion');
-    expect(issues[0].message).toContain('missing title annotation');
+    expect(issues[0].message).toContain('missing a title');
+    expect(issues[0].suggestion).toContain('top-level `title`');
   });
 
-  it('should pass when title annotation is present', () => {
+  it('should pass when top-level title is present', () => {
+    const tool = createTool({ title: 'Test Tool' });
+    const ctx = createContext([tool]);
+
+    const issues = rule.check(tool, ctx);
+
+    expect(issues).toHaveLength(0);
+  });
+
+  it('should pass when annotations.title is present', () => {
     const tool = createTool({
       annotations: {
         title: 'Test Tool',
@@ -50,7 +60,19 @@ describe('BP-001: title annotation', () => {
     expect(issues).toHaveLength(0);
   });
 
-  it('should report issue when annotations object exists but title is missing', () => {
+  it('should pass when both titles are present', () => {
+    const tool = createTool({
+      title: 'Test Tool',
+      annotations: { title: 'Test Tool (legacy)' },
+    });
+    const ctx = createContext([tool]);
+
+    const issues = rule.check(tool, ctx);
+
+    expect(issues).toHaveLength(0);
+  });
+
+  it('should report issue when annotations object exists but has no title', () => {
     const tool = createTool({
       annotations: {
         readOnlyHint: true,
@@ -62,6 +84,15 @@ describe('BP-001: title annotation', () => {
 
     expect(issues).toHaveLength(1);
     expect(issues[0].id).toBe('BP-001');
+  });
+
+  it('should report issue when title is an empty string', () => {
+    const tool = createTool({ title: '' });
+    const ctx = createContext([tool]);
+
+    const issues = rule.check(tool, ctx);
+
+    expect(issues).toHaveLength(1);
   });
 
   it('should have correct rule metadata', () => {

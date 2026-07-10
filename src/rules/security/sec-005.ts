@@ -8,6 +8,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { getAllPropertyEntries } from '../utils/schema-walker.js';
 
 /** Patterns that suggest a parameter is a URL */
 const URL_NAME_PATTERNS = [/url/i, /uri/i, /href/i, /link/i, /endpoint/i];
@@ -24,10 +25,10 @@ const rule: Rule = {
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
-    const properties =
-      (tool.inputSchema?.properties as Record<string, Record<string, unknown>>) || {};
+    // Cover nested schemas too (properties inside objects/arrays)
+    const propertyEntries = getAllPropertyEntries(tool.inputSchema);
 
-    for (const [name, schema] of Object.entries(properties)) {
+    for (const { name, schema, path } of propertyEntries) {
       if (schema.type === 'string' && isUrlParameter(name) && schema.format !== 'uri') {
         issues.push({
           id: this.id,
@@ -35,7 +36,7 @@ const rule: Rule = {
           severity: this.defaultSeverity,
           message: `URL parameter '${name}' should use format: "uri" for proper URL validation`,
           tool: tool.name,
-          path: `inputSchema.properties.${name}`,
+          path,
           suggestion: 'Add "format": "uri" to validate URL structure',
         });
       }

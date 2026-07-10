@@ -13,6 +13,8 @@ const mockResult: ValidationResult = {
     validTools: 1,
     issuesByCategory: { schema: 1, security: 0, 'llm-compatibility': 1, naming: 0, 'best-practice': 0 },
     issuesBySeverity: { error: 1, warning: 1, suggestion: 0 },
+    maturityScore: 88,
+    maturityLevel: 'mature',
   },
   issues: [
     { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool' },

@@ -5,16 +5,23 @@
  * Command-line interface for validating MCP tool definitions.
  */
 
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import chalk from 'chalk';
 import { validateFile, validateServer } from './core/validator.js';
-import { startServer } from './service/server.js';
+import { resolveConfig, type ConfigOverrides } from './core/config.js';
+import { VERSION } from './version.js';
+import { createDefaultLLMConfig } from './llm/analyzer.js';
 import {
   formatHumanOutput,
   formatJsonOutput,
   formatSarifOutput,
 } from './reporters/index.js';
-import type { ValidatorConfig, IssueSeverity } from './types/index.js';
+import type {
+  ValidatorConfig,
+  OutputConfig,
+  IssueSeverity,
+  MCPSpecVersion,
+} from './types/index.js';
 
 const program = new Command();
 
@@ -72,6 +79,7 @@ export interface CLIOptions {
   server?: string;
   format: 'human' | 'json' | 'sarif';
   config?: string;
+  specVersion?: MCPSpecVersion;
   rule: Record<string, string>;
   llm?: boolean;
   llmProvider?: string;
@@ -97,34 +105,54 @@ async function runValidation(
     process.exit(2);
   }
 
-  // Build config from options
-  const config: Partial<ValidatorConfig> = {
-    output: {
-      format: options.format,
-      verbose: options.verbose ?? false,
-      color: options.color !== false,
-    },
+  // Build overrides from options the user actually set, so config-file
+  // settings survive when the corresponding flag was not passed.
+  const explicitOutput: Partial<OutputConfig> = {};
+  if (program.getOptionValueSource('format') === 'cli') {
+    explicitOutput.format = options.format;
+  }
+  if (options.verbose !== undefined) {
+    explicitOutput.verbose = options.verbose;
+  }
+  if (program.getOptionValueSource('color') === 'cli') {
+    explicitOutput.color = options.color !== false;
+  }
+
+  const overrides: ConfigOverrides = {
+    output: explicitOutput,
     rules: parseRuleOverrides(options.rule || {}),
   };
+  // Only override the spec version when the flag was passed explicitly,
+  // so a config-file specVersion survives (default comes from config)
+  if (program.getOptionValueSource('specVersion') === 'cli') {
+    overrides.specVersion = options.specVersion;
+  }
 
-  // Handle LLM options
+  // Resolve effective config (explicit path or discovery + overrides)
+  const { config } = await resolveConfig(options.config, overrides);
+
+  // Handle LLM options: --llm enables analysis on top of any file config
   if (options.llm) {
     config.llm = {
+      ...createDefaultLLMConfig(),
+      ...(config.llm ?? {}),
       enabled: true,
-      provider: options.llmProvider || 'anthropic',
-      model: '',
-      timeout: 30000,
+      ...(options.llmProvider ? { provider: options.llmProvider } : {}),
     };
   }
 
-  // Run validation
+  // Run validation with the fully-resolved config
   const result = file
     ? await validateFile(file, { config, configPath: options.config })
-    : await validateServer(options.server!, { config, configPath: options.config });
+    : await validateServer(options.server!, {
+        config,
+        configPath: options.config,
+      });
 
   // Format output
+  const effectiveFormat = config.output.format;
   let output: string;
-  switch (options.format) {
+  switch (effectiveFormat) {
     case 'json':
       output = formatJsonOutput(result);
       break;
@@ -133,13 +161,13 @@ async function runValidation(
       break;
     default:
       output = formatHumanOutput(result, {
-        color: options.color !== false,
-        verbose: options.verbose,
+        color: config.output.color,
+        verbose: config.output.verbose,
       });
   }
 
   // In quiet mode with human format, filter to only errors
-  if (options.quiet && options.format === 'human') {
+  if (options.quiet && effectiveFormat === 'human') {
     const lines = output.split('\n');
     const filteredLines = lines.filter((line) => {
       // Keep header lines, error lines, and summary
@@ -173,7 +201,7 @@ program
   .description(
     'Validate MCP tool definitions for quality, security, and LLM compatibility'
   )
-  .version('0.1.0')
+  .version(VERSION)
   .argument('[file]', 'Tool definition file to validate (JSON or YAML)')
   .option('-s, --server <url>', 'Validate tools from a live MCP server')
   .option(
@@ -182,6 +210,12 @@ program
     'human'
   )
   .option('-c, --config <path>', 'Path to config file')
+  .addOption(
+    new Option(
+      '--spec-version <version>',
+      'MCP spec version to validate against'
+    ).choices(['2025-11-25', 'draft'])
+  )
   .option(
     '-r, --rule <rule>',
     'Override rule: RULE-ID=on|off|error|warning|suggestion',
@@ -215,34 +249,14 @@ program
   .description('Start HTTP validation service')
   .option('-p, --port <port>', 'Port to listen on', '8080')
   .option('-h, --host <host>', 'Host to bind to', 'localhost')
-  .option('--dry-run', 'Validate serve options without binding a port')
-  .action(async (options: { port: string; host: string; dryRun?: boolean }) => {
+  .action(async (options: { port: string; host: string }) => {
     const port = Number.parseInt(options.port, 10);
-    if (!Number.isInteger(port) || port <= 0 || port > 65535) {
-      console.error(chalk.red('Error:'), `Invalid port "${options.port}"`);
+    if (Number.isNaN(port) || port < 0 || port > 65535) {
+      console.error(chalk.red('Error:'), `Invalid port: ${options.port}`);
       process.exit(2);
     }
-
-    if (options.dryRun) {
-      console.log(`MCP Tool Validator service would listen on http://${options.host}:${port}`);
-      return;
-    }
-
-    const server = startServer({ host: options.host, port });
-    server.on('error', (error: NodeJS.ErrnoException) => {
-      console.error(chalk.red('Error:'), error.message);
-      process.exit(2);
-    });
-
-    const shutdown = (signal: NodeJS.Signals) => {
-      console.log(`\nReceived ${signal}; shutting down validation service...`);
-      server.close(() => {
-        process.exit(0);
-      });
-    };
-
-    process.once('SIGINT', shutdown);
-    process.once('SIGTERM', shutdown);
+    const { startServer } = await import('./service/server.js');
+    startServer(port, options.host);
   });
 
 // Export the program for testing

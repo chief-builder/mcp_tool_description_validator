@@ -1,61 +1,74 @@
 /**
- * NAM-002: Tool name must use kebab-case format
+ * NAM-002: Tool name must match the MCP spec grammar
  *
- * Validates that tool names follow kebab-case naming convention.
- * Valid: get-user, create-file, list-items
- * Invalid: getUser, get_user, GetUser, GET-USER
+ * The MCP specification says tool names SHOULD be 1-128 characters and
+ * contain only the characters [A-Za-z0-9_.-]. Names are case-sensitive.
+ * Valid (from the spec): getUser, DATA_EXPORT_v2, admin.tools.list
+ * Invalid: "my tool" (space), "tool,name" (comma), names over 128 chars
+ *
+ * Casing style (kebab/snake/camel) is NOT part of the spec grammar and
+ * is intentionally not checked here.
  */
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
 
-/**
- * Regex for kebab-case validation.
- * - Must start with lowercase letter
- * - Can contain lowercase letters, numbers
- * - Segments separated by single hyphens
- */
-const KEBAB_CASE_REGEX = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
+/** Maximum tool name length per the MCP spec. */
+const MAX_NAME_LENGTH = 128;
+
+/** Characters allowed in tool names per the MCP spec. */
+const VALID_NAME_REGEX = /^[A-Za-z0-9_.-]+$/;
 
 const rule: Rule = {
   id: 'NAM-002',
   category: 'naming',
   defaultSeverity: 'error',
-  description: 'Tool name must use kebab-case format',
+  description: 'Tool name must be 1-128 characters using only [A-Za-z0-9_.-]',
+  documentation:
+    'https://modelcontextprotocol.io/specification/draft/server/tools#tool-names',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
 
-    // Skip if name is empty (handled by NAM-001)
+    // Skip if name is empty (handled by SCH-001)
     if (!tool.name || tool.name.trim() === '') {
       return issues;
     }
 
-    if (!KEBAB_CASE_REGEX.test(tool.name)) {
+    if (tool.name.length > MAX_NAME_LENGTH) {
       issues.push({
         id: 'NAM-002',
         category: 'naming',
         severity: this.defaultSeverity,
-        message: `Tool name "${tool.name}" must use kebab-case format`,
+        message: `Tool name is ${tool.name.length} characters long; the MCP spec limits names to ${MAX_NAME_LENGTH} characters`,
         tool: tool.name,
         path: 'name',
-        suggestion: `Use kebab-case format: "${toKebabCase(tool.name)}"`,
+        suggestion: `Shorten the tool name to at most ${MAX_NAME_LENGTH} characters`,
+        documentation: this.documentation,
+      });
+    }
+
+    if (!VALID_NAME_REGEX.test(tool.name)) {
+      const illegalChars = [
+        ...new Set(tool.name.replace(/[A-Za-z0-9_.-]/g, '')),
+      ];
+      issues.push({
+        id: 'NAM-002',
+        category: 'naming',
+        severity: this.defaultSeverity,
+        message: `Tool name "${tool.name}" contains illegal character(s): ${illegalChars
+          .map((c) => JSON.stringify(c))
+          .join(', ')}. The MCP spec allows only letters, digits, underscores, dots, and hyphens`,
+        tool: tool.name,
+        path: 'name',
+        suggestion:
+          'Remove spaces, commas, and other special characters; use only [A-Za-z0-9_.-]',
+        documentation: this.documentation,
       });
     }
 
     return issues;
   },
 };
-
-/**
- * Convert a string to kebab-case for suggestions.
- */
-function toKebabCase(str: string): string {
-  return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2') // camelCase -> camel-Case
-    .replace(/[\s_]+/g, '-') // spaces and underscores -> hyphens
-    .replace(/--+/g, '-') // multiple hyphens -> single
-    .toLowerCase();
-}
 
 export default rule;

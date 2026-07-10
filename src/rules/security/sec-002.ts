@@ -8,6 +8,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { getAllPropertyEntries } from '../utils/schema-walker.js';
 
 const rule: Rule = {
   id: 'SEC-002',
@@ -17,10 +18,10 @@ const rule: Rule = {
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
-    const properties =
-      (tool.inputSchema?.properties as Record<string, Record<string, unknown>>) || {};
+    // Cover nested schemas too (properties inside objects/arrays)
+    const propertyEntries = getAllPropertyEntries(tool.inputSchema);
 
-    for (const [name, schema] of Object.entries(properties)) {
+    for (const { name, schema, path } of propertyEntries) {
       if (schema.type === 'array' && schema.maxItems === undefined) {
         issues.push({
           id: this.id,
@@ -28,7 +29,7 @@ const rule: Rule = {
           severity: this.defaultSeverity,
           message: `Array parameter '${name}' is missing maxItems constraint`,
           tool: tool.name,
-          path: `inputSchema.properties.${name}`,
+          path,
           suggestion: 'Add "maxItems": 100 or an appropriate limit',
         });
       }

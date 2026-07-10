@@ -8,23 +8,32 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { getAllPropertyEntries } from '../utils/schema-walker.js';
+import { makeWordMatcher } from '../utils/text.js';
 
-/** Patterns that suggest a parameter contains sensitive data */
-const SENSITIVE_NAME_PATTERNS = [
-  /password/i,
-  /passwd/i,
-  /token/i,
-  /secret/i,
-  /api[_-]?key/i,
-  /apikey/i,
-  /auth/i,
-  /credential/i,
-  /private[_-]?key/i,
-  /access[_-]?key/i,
+/**
+ * Terms that suggest a parameter contains sensitive data. Matched as
+ * whole tokens/phrases (camelCase and snake_case aware), so "apiKey"
+ * and "api_key" match but "author" does not match "auth".
+ */
+const SENSITIVE_NAME_TERMS = [
+  'password',
+  'passwd',
+  'token',
+  'secret',
+  'api key',
+  'apikey',
+  'auth',
+  'credential',
+  'credentials',
+  'private key',
+  'access key',
 ];
 
+const matchesSensitiveTerm = makeWordMatcher(SENSITIVE_NAME_TERMS);
+
 export function isSensitiveParameter(name: string): boolean {
-  return SENSITIVE_NAME_PATTERNS.some((pattern) => pattern.test(name));
+  return matchesSensitiveTerm(name);
 }
 
 const rule: Rule = {
@@ -36,10 +45,10 @@ const rule: Rule = {
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
-    const properties =
-      (tool.inputSchema?.properties as Record<string, Record<string, unknown>>) || {};
+    // Cover nested schemas too (properties inside objects/arrays)
+    const propertyEntries = getAllPropertyEntries(tool.inputSchema);
 
-    for (const [name, _schema] of Object.entries(properties)) {
+    for (const { name, path } of propertyEntries) {
       if (isSensitiveParameter(name)) {
         issues.push({
           id: this.id,
@@ -47,7 +56,7 @@ const rule: Rule = {
           severity: this.defaultSeverity,
           message: `Parameter '${name}' appears to contain sensitive data`,
           tool: tool.name,
-          path: `inputSchema.properties.${name}`,
+          path,
           suggestion:
             'Ensure this parameter is handled securely: avoid logging, use secure transmission, and consider if it should be passed at runtime instead of stored',
         });

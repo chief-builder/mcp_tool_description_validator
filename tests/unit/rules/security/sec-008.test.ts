@@ -46,6 +46,15 @@ describe('SEC-008: No default values for security-sensitive parameters', () => {
       expect(issues).toHaveLength(0);
     });
 
+    it('should pass for author parameter with default', () => {
+      // Regression: "author" must not match the "auth" pattern
+      const tool = createTool({
+        author: { type: 'string', default: 'anonymous' },
+      });
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(0);
+    });
+
     it('should pass when no properties defined', () => {
       const tool = createTool({});
       const issues = rule.check(tool, createContext());

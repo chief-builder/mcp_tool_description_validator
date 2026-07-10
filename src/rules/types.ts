@@ -36,6 +36,11 @@ export interface Rule {
   description: string;
   /** Documentation URL (optional) */
   documentation?: string;
+  /**
+   * MCP spec versions this rule applies to (e.g. ['draft']).
+   * Absent means the rule applies to all spec versions.
+   */
+  specVersions?: string[];
 
   /**
    * Check a single tool and return any validation issues.

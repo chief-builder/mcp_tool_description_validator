@@ -78,6 +78,18 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
       }
     }
 
+    if (toolResult.llmAnalysis) {
+      const llm = toolResult.llmAnalysis;
+      lines.push(
+        `  ${c.gray('LLM:')} clarity ${llm.clarity_score}/10, completeness ${llm.completeness_score}/10`
+      );
+      if (verbose) {
+        for (const suggestion of llm.suggestions) {
+          lines.push(`    ${c.gray('llm suggestion:')} ${suggestion}`);
+        }
+      }
+    }
+
     lines.push('');
   }
 
@@ -105,6 +117,13 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
   lines.push(`Maturity: ${maturityColor(result.summary.maturityLevel.toUpperCase())} (${result.summary.maturityScore}/100)`);
   lines.push(`  ${c.gray(maturityDescription)}`);
   lines.push('');
+
+  if (result.metadata.llmAnalysisError) {
+    lines.push(
+      c.yellow(`LLM analysis failed: ${result.metadata.llmAnalysisError}`)
+    );
+    lines.push('');
+  }
 
   // Final status
   if (result.valid) {

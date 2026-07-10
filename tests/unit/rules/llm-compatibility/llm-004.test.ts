@@ -47,17 +47,25 @@ describe('LLM-004: Tool description should explain WHEN to use the tool', () => 
     expect(issues).toHaveLength(0);
   });
 
-  it('should pass for description with "use this to" phrase', () => {
+  it('should fail for "use this to" phrase (restates WHAT, not WHEN)', () => {
     const tool = createTool({
       description: 'Use this to create new user accounts in the system.',
     });
     const issues = rule.check(tool, createContext([tool]));
-    expect(issues).toHaveLength(0);
+    expect(issues).toHaveLength(1);
   });
 
-  it('should pass for description with "for" clause', () => {
+  it('should fail for bare "for" clause (overbroad, not conditional)', () => {
     const tool = createTool({
       description: 'A tool for managing user permissions.',
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(1);
+  });
+
+  it('should pass for description with "designed for" phrase', () => {
+    const tool = createTool({
+      description: 'Designed for bulk imports of user records.',
     });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(0);
@@ -79,6 +87,23 @@ describe('LLM-004: Tool description should explain WHEN to use the tool', () => 
     expect(issues).toHaveLength(1);
     expect(issues[0].id).toBe('LLM-004');
     expect(issues[0].suggestion).toContain('when to use');
+  });
+
+  it('should fail for description containing bare "to" (regression)', () => {
+    // Regression: 'to ' via includes() made virtually every description pass
+    const tool = createTool({
+      description: 'Adds two numbers to produce a sum',
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(1);
+  });
+
+  it('should pass for "use this when" phrasing', () => {
+    const tool = createTool({
+      description: 'Use this when the user asks for weather.',
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(0);
   });
 
   it('should skip empty descriptions (handled by LLM-001)', () => {

@@ -81,7 +81,11 @@ async function testServer(config: ServerConfig): Promise<ServerTestResult> {
     });
 
     console.log(`   ✅ Found ${result.summary.totalTools} tools`);
-    console.log(`   Issues: ${result.summary.totalIssues} total`);
+    const totalIssues =
+      result.summary.issuesBySeverity.error +
+      result.summary.issuesBySeverity.warning +
+      result.summary.issuesBySeverity.suggestion;
+    console.log(`   Issues: ${totalIssues} total`);
     console.log(`     - Errors: ${result.summary.issuesBySeverity.error}`);
     console.log(`     - Warnings: ${result.summary.issuesBySeverity.warning}`);
     console.log(`     - Suggestions: ${result.summary.issuesBySeverity.suggestion}`);

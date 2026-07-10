@@ -113,4 +113,85 @@ describe('SCH-004: inputSchema must be valid JSON Schema', () => {
     expect(issues[0].path).toBe('inputSchema');
     expect(issues[0].suggestion).toBeDefined();
   });
+
+  describe('dialect handling', () => {
+    it('should validate two tools sharing the same $id without collision', () => {
+      const makeTool = (name: string): ToolDefinition => ({
+        name,
+        description: 'A test tool',
+        inputSchema: {
+          $id: 'https://example.com/shared-schema',
+          type: 'object',
+          properties: { value: { type: 'string' } },
+        },
+        source: mockSource,
+      });
+
+      const toolA = makeTool('tool-a');
+      const toolB = makeTool('tool-b');
+
+      expect(rule.check(toolA, createContext(toolA))).toHaveLength(0);
+      expect(rule.check(toolB, createContext(toolB))).toHaveLength(0);
+    });
+
+    it('should compile 2020-12 keywords like prefixItems by default', () => {
+      const tool: ToolDefinition = {
+        name: 'test-tool',
+        description: 'A test tool',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            coords: {
+              type: 'array',
+              prefixItems: [{ type: 'number' }, { type: 'number' }],
+            },
+          },
+        },
+        source: mockSource,
+      };
+
+      const issues = rule.check(tool, createContext(tool));
+      expect(issues).toHaveLength(0);
+    });
+
+    it('should validate schemas with an explicit draft-07 $schema', () => {
+      const tool: ToolDefinition = {
+        name: 'test-tool',
+        description: 'A test tool',
+        inputSchema: {
+          $schema: 'http://json-schema.org/draft-07/schema#',
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: [{ type: 'string' }], // tuple form, valid in draft-07
+            },
+          },
+        },
+        source: mockSource,
+      };
+
+      const issues = rule.check(tool, createContext(tool));
+      expect(issues).toHaveLength(0);
+    });
+
+    it('should report an unknown dialect as unsupported', () => {
+      const tool: ToolDefinition = {
+        name: 'test-tool',
+        description: 'A test tool',
+        inputSchema: {
+          $schema: 'https://example.com/my-custom-dialect',
+          type: 'object',
+        },
+        source: mockSource,
+      };
+
+      const issues = rule.check(tool, createContext(tool));
+      expect(issues).toHaveLength(1);
+      expect(issues[0].id).toBe('SCH-004');
+      expect(issues[0].severity).toBe('error');
+      expect(issues[0].message).toContain('unsupported');
+      expect(issues[0].path).toBe('inputSchema.$schema');
+    });
+  });
 });

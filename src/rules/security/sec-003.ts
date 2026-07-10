@@ -8,6 +8,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { getAllPropertyEntries } from '../utils/schema-walker.js';
 
 const rule: Rule = {
   id: 'SEC-003',
@@ -17,10 +18,10 @@ const rule: Rule = {
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
-    const properties =
-      (tool.inputSchema?.properties as Record<string, Record<string, unknown>>) || {};
+    // Cover nested schemas too (properties inside objects/arrays)
+    const propertyEntries = getAllPropertyEntries(tool.inputSchema);
 
-    for (const [name, schema] of Object.entries(properties)) {
+    for (const { name, schema, path } of propertyEntries) {
       if (
         (schema.type === 'number' || schema.type === 'integer') &&
         schema.minimum === undefined &&
@@ -32,7 +33,7 @@ const rule: Rule = {
           severity: this.defaultSeverity,
           message: `Number parameter '${name}' is missing minimum/maximum constraints`,
           tool: tool.name,
-          path: `inputSchema.properties.${name}`,
+          path,
           suggestion: 'Add "minimum" and/or "maximum" constraints to bound the value',
         });
       }

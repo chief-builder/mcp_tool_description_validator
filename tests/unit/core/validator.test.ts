@@ -4,7 +4,7 @@
  * Tests for the main validation API: validate(), validateFile(), validateServer()
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdir, writeFile, rm, realpath } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -14,6 +14,24 @@ import {
   validateServer,
 } from '../../../src/core/validator.js';
 import type { ToolDefinition } from '../../../src/types/index.js';
+
+// Mock the LLM analyzer so --llm wiring can be tested without providers
+vi.mock('../../../src/llm/analyzer.js', () => ({
+  analyzeTools: vi.fn().mockResolvedValue(
+    new Map([
+      [
+        'test-tool',
+        {
+          clarity_score: 9,
+          completeness_score: 8,
+          ambiguities: [],
+          conflicts: [],
+          suggestions: ['Add an example'],
+        },
+      ],
+    ])
+  ),
+}));
 
 /**
  * Create a valid tool definition for testing.
@@ -105,11 +123,11 @@ describe('Core Validator', () => {
       // Disable all rules
       const disabledRules: Record<string, boolean> = {};
       const ruleIds = [
-        'SCH-001', 'SCH-002', 'SCH-003', 'SCH-004', 'SCH-005', 'SCH-006', 'SCH-007', 'SCH-008',
-        'NAM-001', 'NAM-002', 'NAM-003', 'NAM-004', 'NAM-005', 'NAM-006',
-        'SEC-001', 'SEC-002', 'SEC-003', 'SEC-004', 'SEC-005', 'SEC-006', 'SEC-007', 'SEC-008', 'SEC-009', 'SEC-010',
+        'SCH-001', 'SCH-002', 'SCH-003', 'SCH-004', 'SCH-005', 'SCH-006', 'SCH-007', 'SCH-008', 'SCH-009', 'SCH-010',
+        'NAM-002', 'NAM-003', 'NAM-004', 'NAM-005', 'NAM-006', 'NAM-007',
+        'SEC-001', 'SEC-002', 'SEC-003', 'SEC-004', 'SEC-005', 'SEC-006', 'SEC-007', 'SEC-008', 'SEC-009', 'SEC-010', 'SEC-011',
         'LLM-001', 'LLM-002', 'LLM-003', 'LLM-004', 'LLM-005', 'LLM-006', 'LLM-007', 'LLM-008', 'LLM-009', 'LLM-010', 'LLM-011', 'LLM-012', 'LLM-013',
-        'BP-001', 'BP-002', 'BP-003', 'BP-004', 'BP-005', 'BP-006', 'BP-007', 'BP-008', 'BP-009',
+        'BP-001', 'BP-002', 'BP-003', 'BP-004', 'BP-005', 'BP-006', 'BP-007', 'BP-008', 'BP-009', 'BP-010', 'BP-011', 'BP-012',
       ];
       for (const id of ruleIds) {
         disabledRules[id] = false;
@@ -133,6 +151,36 @@ describe('Core Validator', () => {
       expect(result.metadata.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
       expect(result.metadata.duration).toBeGreaterThanOrEqual(0);
       expect(result.metadata.llmAnalysisUsed).toBe(false);
+    });
+
+    it('should report the configured spec version in metadata', async () => {
+      const tools = [createValidTool()];
+
+      const result = await validate(tools, {
+        config: { specVersion: 'draft' },
+      });
+
+      expect(result.metadata.mcpSpecVersion).toBe('draft');
+    });
+
+    it('should only run draft-gated rules when targeting the draft spec', async () => {
+      // SCH-009 (network $ref) is draft-only
+      const tool = createValidTool({
+        inputSchema: {
+          type: 'object',
+          properties: {
+            user: { $ref: 'https://example.com/schemas/user.json' },
+          },
+        },
+      });
+
+      const defaultResult = await validate([tool]);
+      expect(defaultResult.issues.filter((i) => i.id === 'SCH-009')).toHaveLength(0);
+
+      const draftResult = await validate([tool], {
+        config: { specVersion: 'draft' },
+      });
+      expect(draftResult.issues.filter((i) => i.id === 'SCH-009')).toHaveLength(1);
     });
 
     it('should include per-tool results', async () => {
@@ -201,7 +249,8 @@ describe('Core Validator', () => {
 
       expect(result.summary.totalTools).toBe(1);
       expect(result.tools[0].name).toBe('file-test-tool');
-      expect(result.metadata.configUsed).toBe('');
+      // Config discovery now finds the repo's own mcp-validate.config.yaml
+      expect(result.metadata.configUsed).toContain('mcp-validate.config.yaml');
     });
 
     it('should load and validate YAML file', async () => {
@@ -325,6 +374,49 @@ output:
       } finally {
         await rm(testDir, { recursive: true, force: true });
       }
+    });
+  });
+
+  describe('hostile tool definitions', () => {
+    it('completes when a property schema is null', async () => {
+      const tool = createValidTool({
+        inputSchema: {
+          type: 'object',
+          properties: { foo: null },
+        } as unknown as ToolDefinition['inputSchema'],
+      });
+
+      const result = await validate([tool]);
+      expect(result.summary.totalTools).toBe(1);
+    });
+
+    it('completes when the schema is pathologically deep', async () => {
+      let schema: Record<string, unknown> = { type: 'string' };
+      for (let i = 0; i < 20000; i++) {
+        schema = { type: 'object', properties: { a: schema } };
+      }
+
+      const result = await validate([createValidTool({ inputSchema: schema })]);
+      expect(result.summary.totalTools).toBe(1);
+    });
+  });
+
+  describe('LLM analysis wiring', () => {
+    it('runs the analyzer and attaches per-tool results when enabled', async () => {
+      const result = await validate([createValidTool()], {
+        config: {
+          llm: { enabled: true, provider: 'anthropic', model: '', timeout: 1000 },
+        },
+      });
+
+      expect(result.metadata.llmAnalysisUsed).toBe(true);
+      expect(result.tools[0].llmAnalysis?.clarity_score).toBe(9);
+    });
+
+    it('does not run the analyzer when disabled', async () => {
+      const result = await validate([createValidTool()]);
+      expect(result.metadata.llmAnalysisUsed).toBe(false);
+      expect(result.tools[0].llmAnalysis).toBeUndefined();
     });
   });
 });

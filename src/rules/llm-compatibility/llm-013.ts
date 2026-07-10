@@ -13,6 +13,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { findWordMatches, makeWordMatcher } from '../utils/text.js';
 
 // Workflow sequencing keywords
 const WORKFLOW_KEYWORDS = [
@@ -32,6 +33,13 @@ const WORKFLOW_KEYWORDS = [
   'subsequently',
   'in advance',
 ];
+
+// Precompiled whole-word matcher (avoids per-check regex construction)
+const hasWorkflowKeywordMatcher = makeWordMatcher(WORKFLOW_KEYWORDS);
+
+// Tool names shorter than this are too generic ('run', 'get') to treat
+// a mention in prose as a deliberate cross-tool reference
+const MIN_REFERENCED_TOOL_NAME_LENGTH = 4;
 
 // Patterns that suggest tool references and workflow
 const WORKFLOW_PATTERNS = [
@@ -58,27 +66,22 @@ const rule: Rule = {
       return issues;
     }
 
-    const descLower = tool.description.toLowerCase();
-
-    // Check for workflow keywords
-    const hasWorkflowKeyword = WORKFLOW_KEYWORDS.some(keyword => {
-      // Use word boundary check to avoid false positives
-      const regex = new RegExp(`\\b${keyword}\\b`, 'i');
-      return regex.test(tool.description);
-    });
+    // Check for workflow keywords (whole words, precompiled matcher)
+    const hasWorkflowKeyword = hasWorkflowKeywordMatcher(tool.description);
 
     // Check for workflow patterns
     const hasWorkflowPattern = WORKFLOW_PATTERNS.some(pattern => pattern.test(tool.description));
 
-    // Check for references to other tool names
-    const hasToolReference = ctx.allTools.some(otherTool => {
-      if (otherTool.name === tool.name) {
-        return false; // Skip self-reference
-      }
-      // Check if the description mentions another tool's name
-      const toolNameLower = otherTool.name.toLowerCase();
-      return descLower.includes(toolNameLower);
-    });
+    // Check for references to other tool names, matched as whole words so
+    // short names like 'run' or 'get' don't match inside ordinary prose
+    const otherToolNames = ctx.allTools
+      .map(otherTool => otherTool.name)
+      .filter(
+        name =>
+          name !== tool.name && name.length >= MIN_REFERENCED_TOOL_NAME_LENGTH
+      );
+    const hasToolReference =
+      findWordMatches(tool.description, otherToolNames).length > 0;
 
     const hasWorkflowGuidance = hasWorkflowKeyword || hasWorkflowPattern || hasToolReference;
 

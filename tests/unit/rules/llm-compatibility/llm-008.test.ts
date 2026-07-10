@@ -97,6 +97,59 @@ describe('LLM-008: Avoid ambiguous terms without context', () => {
     expect(issues.length).toBeGreaterThan(0);
   });
 
+  it('should find ambiguous terms inside compound names (regression)', () => {
+    // Regression: \bdata\b on the raw name missed 'data' in payloadData
+    const tool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          payloadData: {
+            type: 'object',
+            description: 'Opaque blob forwarded downstream',
+          },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain('payloadData');
+  });
+
+  it('should find ambiguous terms in snake_case names (regression)', () => {
+    const tool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          raw_data: {
+            type: 'object',
+            description: 'Pass this along',
+          },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain('data');
+  });
+
+  it('should not treat overbroad words like "to"/"from" as context', () => {
+    // Regression: 'to'/'from' in CONTEXT_INDICATORS made hasContext
+    // nearly always true
+    const tool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          data: {
+            type: 'object',
+            description: 'Sent from one place to another',
+          },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues.length).toBeGreaterThan(0);
+  });
+
   it('should fail for "input" parameter without context', () => {
     const tool = createTool({
       inputSchema: {

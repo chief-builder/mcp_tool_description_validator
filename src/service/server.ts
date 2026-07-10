@@ -8,11 +8,10 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { serve, type ServerType } from '@hono/node-server';
+import { serve } from '@hono/node-server';
 import { validate } from '../core/validator.js';
+import { VERSION } from '../version.js';
 import type { ToolDefinition, ValidatorConfig } from '../types/index.js';
-
-const VERSION = '0.1.0';
 
 /**
  * Request body for the /validate endpoint.
@@ -86,35 +85,20 @@ export function createApp() {
 }
 
 /**
- * Options for starting the HTTP service.
- */
-export interface StartServerOptions {
-  /** Port number to listen on */
-  port?: number;
-  /** Hostname to bind to */
-  host?: string;
-}
-
-/**
- * Start the HTTP server.
+ * Start the HTTP server on the specified port.
  *
- * @param options - Optional host and port settings
- * @returns The underlying Node server
+ * @param port - Port number to listen on (default: 8080)
+ * @param hostname - Host to bind to (default: localhost)
+ * @returns The server handle from @hono/node-server
  */
-export function startServer(options: StartServerOptions = {}): ServerType {
-  const { port = 8080, host = 'localhost' } = options;
+export function startServer(port: number = 8080, hostname: string = 'localhost') {
   const app = createApp();
 
-  return serve(
-    {
-      fetch: app.fetch,
-      port,
-      hostname: host,
-    },
-    () => {
-      console.log(`MCP Tool Validator service listening on http://${host}:${port}`);
-    }
+  console.log(
+    `MCP Tool Validator service listening on http://${hostname}:${port}`
   );
+
+  return serve({ fetch: app.fetch, port, hostname });
 }
 
 // Export app instance for testing

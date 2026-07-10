@@ -10,15 +10,28 @@ import type { RuleConfig, IssueSeverity } from '../types/index.js';
 import { RULES } from '../rules/index.js';
 
 /**
- * Load rules based on configuration.
- * Only loads rules that are enabled (not set to false).
+ * Default MCP spec version rules are loaded for when none is given.
  */
-export async function loadRules(config: RuleConfig): Promise<Rule[]> {
+const DEFAULT_SPEC_VERSION = '2025-11-25';
+
+/**
+ * Load rules based on configuration.
+ * Only loads rules that are enabled (not set to false) and that apply to
+ * the given MCP spec version (rules without specVersions apply to all).
+ */
+export async function loadRules(
+  config: RuleConfig,
+  specVersion: string = DEFAULT_SPEC_VERSION
+): Promise<Rule[]> {
   const rules: Rule[] = [];
 
   for (const [ruleId, rule] of Object.entries(RULES)) {
     // Skip rules explicitly disabled in config
     if (config[ruleId] === false) {
+      continue;
+    }
+    // Skip rules that don't apply to the targeted spec version
+    if (rule.specVersions && !rule.specVersions.includes(specVersion)) {
       continue;
     }
     rules.push(rule);

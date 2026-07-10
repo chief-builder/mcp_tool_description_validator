@@ -1,6 +1,6 @@
 # MCP Tool Definition Best Practices
 
-This document outlines best practices for creating effective MCP (Model Context Protocol) tool definitions. These practices form the foundation for the MCP Tool Description Validator's 46 validation rules.
+This document outlines best practices for creating effective MCP (Model Context Protocol) tool definitions. These practices form the foundation for the MCP Tool Description Validator's 56 validation rules.
 
 ## Core Principles
 
@@ -75,32 +75,36 @@ The server maturity score is the **average of individual tool scores**. This ens
 
 ## Validation Rule Categories
 
-The validator implements 46 rules organized into 5 categories:
+The validator implements 56 rules organized into 5 categories:
 
-### 1. Schema Validation (SCH-001 to SCH-008)
+### 1. Schema Validation (SCH-001 to SCH-010)
 
 Ensures MCP protocol compliance and valid JSON Schema structure.
 
 - Tool must have name, description, and inputSchema
-- inputSchema must be valid JSON Schema with type "object"
+- inputSchema must be valid JSON Schema (2020-12 by default, or an explicitly declared draft-07) with type "object"
 - Required parameters must be listed in the required array
+- Draft spec only: no network `$ref` URIs (SCH-009), valid `x-mcp-header` values (SCH-010)
 
-### 2. Naming Conventions (NAM-001 to NAM-006)
+### 2. Naming Conventions (NAM-002 to NAM-008)
 
 Ensures consistent, descriptive naming patterns.
 
-- Tool names: kebab-case (e.g., `get-user`, `create-document`)
-- Parameter names: camelCase (e.g., `userId`, `fileName`)
+- Tool names: 1-128 characters using only `[A-Za-z0-9_.-]` per the MCP spec (camelCase, snake_case, dot.case, and hyphenated names are all valid)
+- Tool names must be unique within a server
+- Parameter names: consistent casing, camelCase recommended (e.g., `userId`, `fileName`)
 - Descriptive verbs: get, create, update, delete, list, search, etc.
+- Large tool sets (10+): group related tools under common name prefixes
 
-### 3. Security Constraints (SEC-001 to SEC-010)
+### 3. Security Constraints (SEC-001 to SEC-011)
 
-Identifies potential vulnerabilities in input handling.
+Identifies potential vulnerabilities in input handling, checking nested schemas at any depth.
 
 - String parameters must have `maxLength`
 - Array parameters must have `maxItems`
 - File paths must have validation patterns
 - Sensitive parameters should not have default values
+- Draft spec only: sensitive parameters must not be exposed as HTTP headers via `x-mcp-header` (SEC-011)
 
 ### 4. LLM Compatibility (LLM-001 to LLM-013)
 
@@ -112,14 +116,17 @@ Optimizes tool definitions for LLM understanding.
 - Avoid ambiguous terms without context
 - Include workflow guidance for complex tools
 
-### 5. Best Practices (BP-001 to BP-009)
+### 5. Best Practices (BP-001 to BP-015)
 
-Follows MCP annotations and usability guidelines.
+Follows MCP annotations, agent-design, and usability guidelines.
 
-- Include title, readOnlyHint, destructiveHint, idempotentHint annotations
+- Include a title (top-level `title` preferred, or annotations.title) plus readOnlyHint, destructiveHint, idempotentHint annotations
 - Limit parameter count (max 10)
 - Limit nesting depth (max 4 levels)
 - Provide outputSchema for response validation
+- Icons must use safe sources (https:// or data:)
+- Parameterless tools should set `additionalProperties: false`
+- Document handle lifetimes, support pagination/filtering, offer response-format control, and avoid overlapping tool descriptions
 
 ---
 
@@ -132,9 +139,9 @@ This framework is inspired by community best practices for MCP tool definitions:
 | Concise descriptions (1-2 sentences) | LLM-002: 20-500 character length |
 | Front-load critical information | LLM-003, LLM-004: WHAT and WHEN checks |
 | Workflow guidance | LLM-013: Detects workflow patterns |
-| Unambiguous parameter names | NAM-006: camelCase enforcement |
+| Unambiguous parameter names | NAM-006: consistent casing (camelCase recommended) |
 | Detailed parameter descriptions | LLM-006, LLM-007: Description requirements |
 | outputSchema when possible | BP-009: outputSchema validation |
-| Security constraints | SEC-*: 10 security rules |
+| Security constraints | SEC-*: 11 security rules |
 
 See [RULES.md](RULES.md) for the complete rule reference with examples.

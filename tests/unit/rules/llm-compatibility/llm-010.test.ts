@@ -65,6 +65,46 @@ describe('LLM-010: Avoid jargon and abbreviations without explanation', () => {
     expect(issues[0].message).toContain('id');
   });
 
+  it('should find abbreviations inside camelCase and snake_case names (regression)', () => {
+    // Regression: lowercasing destroyed camelCase boundaries, so \bid\b
+    // never matched userId or user_id
+    const camelTool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          userId: { type: 'string', description: 'The user to look up' },
+        },
+      },
+    });
+    expect(rule.check(camelTool, createContext([camelTool]))).toHaveLength(1);
+
+    const snakeTool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          user_id: { type: 'string', description: 'The user to look up' },
+        },
+      },
+    });
+    expect(rule.check(snakeTool, createContext([snakeTool]))).toHaveLength(1);
+  });
+
+  it('should not accept unrelated generic words as an explanation (regression)', () => {
+    // Regression: any of ~60 generic indicator words counted as an
+    // explanation; "request" must not explain "id"
+    const tool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', description: 'Used in the request' },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain('id');
+  });
+
   it('should pass for "id" when "identifier" is in description', () => {
     const tool = createTool({
       inputSchema: {

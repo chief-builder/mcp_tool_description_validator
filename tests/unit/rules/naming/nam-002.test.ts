@@ -1,5 +1,6 @@
 /**
- * Tests for NAM-002: Tool name must use kebab-case format
+ * Tests for NAM-002: Tool name must match the MCP spec grammar
+ * (1-128 characters, only [A-Za-z0-9_.-])
  */
 
 import { describe, it, expect } from 'vitest';
@@ -19,125 +20,86 @@ const createContext = (): RuleContext => ({
   ruleConfig: true,
 });
 
-describe('NAM-002: Tool name must use kebab-case format', () => {
+const errorIssues = (name: string) =>
+  rule
+    .check(createTool(name), createContext())
+    .filter((i) => i.severity === 'error');
+
+describe('NAM-002: Tool name must match the MCP spec grammar', () => {
   it('should have correct metadata', () => {
     expect(rule.id).toBe('NAM-002');
     expect(rule.category).toBe('naming');
     expect(rule.defaultSeverity).toBe('error');
-    expect(rule.description).toBe('Tool name must use kebab-case format');
+    expect(rule.documentation).toBe(
+      'https://modelcontextprotocol.io/specification/draft/server/tools#tool-names'
+    );
   });
 
-  describe('passing cases', () => {
-    it('should pass for simple kebab-case name', () => {
-      const tool = createTool('get-user');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(0);
-    });
-
-    it('should pass for single word lowercase name', () => {
-      const tool = createTool('list');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(0);
-    });
-
-    it('should pass for multi-segment kebab-case name', () => {
-      const tool = createTool('get-user-profile-data');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(0);
-    });
-
-    it('should pass for name with numbers', () => {
-      const tool = createTool('get-user-v2');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(0);
-    });
-
-    it('should pass for name starting with letter followed by numbers', () => {
-      const tool = createTool('process3d-model');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(0);
+  describe('spec-valid names (must produce zero error-severity findings)', () => {
+    it.each([
+      'getUser', // camelCase (spec example)
+      'DATA_EXPORT_v2', // SCREAMING + version (spec example)
+      'admin.tools.list', // dot namespacing (spec example)
+      'read_file', // snake_case
+      'get-user', // kebab-case
+      'GetUser', // PascalCase
+      'list', // single word
+      'a', // single character (minimum length)
+      'a'.repeat(128), // maximum length
+    ])('should pass for %s', (name) => {
+      expect(errorIssues(name)).toHaveLength(0);
     });
   });
 
-  describe('failing cases', () => {
-    it('should fail for camelCase name', () => {
-      const tool = createTool('getUser');
-      const issues = rule.check(tool, createContext());
+  describe('spec-invalid names', () => {
+    it('should fail for name with a space', () => {
+      const issues = errorIssues('my tool');
       expect(issues).toHaveLength(1);
       expect(issues[0].id).toBe('NAM-002');
       expect(issues[0].severity).toBe('error');
-      expect(issues[0].suggestion).toContain('get-user');
+      expect(issues[0].message).toContain('illegal character');
     });
 
-    it('should fail for PascalCase name', () => {
-      const tool = createTool('GetUser');
-      const issues = rule.check(tool, createContext());
+    it('should fail for name with a comma', () => {
+      const issues = errorIssues('tool,name');
       expect(issues).toHaveLength(1);
-      expect(issues[0].suggestion).toContain('get-user');
+      expect(issues[0].message).toContain('","');
     });
 
-    it('should fail for snake_case name', () => {
-      const tool = createTool('get_user');
-      const issues = rule.check(tool, createContext());
+    it('should fail for name exceeding 128 characters', () => {
+      const issues = errorIssues('a'.repeat(129));
       expect(issues).toHaveLength(1);
-      expect(issues[0].suggestion).toContain('get-user');
+      expect(issues[0].message).toContain('129');
+      expect(issues[0].message).toContain('128');
     });
 
-    it('should fail for uppercase name', () => {
-      const tool = createTool('GET-USER');
-      const issues = rule.check(tool, createContext());
+    it('should fail for name with a special character', () => {
+      const issues = errorIssues('tool$name');
       expect(issues).toHaveLength(1);
+      expect(issues[0].message).toContain('"$"');
     });
 
-    it('should fail for name with spaces', () => {
-      const tool = createTool('get user');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(1);
-      expect(issues[0].suggestion).toContain('get-user');
-    });
-
-    it('should fail for name starting with hyphen', () => {
-      const tool = createTool('-get-user');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(1);
-    });
-
-    it('should fail for name ending with hyphen', () => {
-      const tool = createTool('get-user-');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(1);
-    });
-
-    it('should fail for name with consecutive hyphens', () => {
-      const tool = createTool('get--user');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(1);
-    });
-
-    it('should fail for name starting with number', () => {
-      const tool = createTool('123-get-user');
-      const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(1);
+    it('should report both length and character problems', () => {
+      const issues = errorIssues(`${'a'.repeat(128)} b`);
+      expect(issues).toHaveLength(2);
     });
   });
 
   describe('edge cases', () => {
-    it('should skip empty names (handled by NAM-001)', () => {
-      const tool = createTool('');
-      const issues = rule.check(tool, createContext());
+    it('should skip empty names (handled by SCH-001)', () => {
+      const issues = rule.check(createTool(''), createContext());
       expect(issues).toHaveLength(0);
     });
 
-    it('should skip whitespace-only names (handled by NAM-001)', () => {
-      const tool = createTool('   ');
-      const issues = rule.check(tool, createContext());
+    it('should skip whitespace-only names (handled by SCH-001)', () => {
+      const issues = rule.check(createTool('   '), createContext());
       expect(issues).toHaveLength(0);
     });
 
-    it('should provide path in issue', () => {
-      const tool = createTool('getUser');
-      const issues = rule.check(tool, createContext());
+    it('should provide path and documentation in issue', () => {
+      const issues = errorIssues('my tool');
       expect(issues[0].path).toBe('name');
+      expect(issues[0].documentation).toBe(rule.documentation);
     });
   });
 });

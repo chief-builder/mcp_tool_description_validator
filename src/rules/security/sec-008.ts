@@ -9,6 +9,7 @@
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
 import { isSensitiveParameter } from './sec-007.js';
+import { getAllPropertyEntries } from '../utils/schema-walker.js';
 
 const rule: Rule = {
   id: 'SEC-008',
@@ -18,10 +19,10 @@ const rule: Rule = {
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
-    const properties =
-      (tool.inputSchema?.properties as Record<string, Record<string, unknown>>) || {};
+    // Cover nested schemas too (properties inside objects/arrays)
+    const propertyEntries = getAllPropertyEntries(tool.inputSchema);
 
-    for (const [name, schema] of Object.entries(properties)) {
+    for (const { name, schema, path } of propertyEntries) {
       if (isSensitiveParameter(name) && schema.default !== undefined) {
         issues.push({
           id: this.id,
@@ -29,7 +30,7 @@ const rule: Rule = {
           severity: this.defaultSeverity,
           message: `Security-sensitive parameter '${name}' has a default value`,
           tool: tool.name,
-          path: `inputSchema.properties.${name}`,
+          path,
           suggestion:
             'Remove the default value from this sensitive parameter. Credentials should always be explicitly provided',
         });

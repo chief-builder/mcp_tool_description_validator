@@ -45,6 +45,8 @@ describe('BP-003: destructiveHint annotation', () => {
       'user-create',
       'record-update',
       'file-delete',
+      'setConfig',
+      'add_member',
     ];
 
     it.each(modifyingNames)(
@@ -103,6 +105,11 @@ describe('BP-003: destructiveHint annotation', () => {
       'find-matches',
       'query-database',
       'check-status',
+      // Regression: verb must be a whole token, not a substring prefix
+      'settings_get',
+      'address_search',
+      'settings-panel',
+      'addressBook',
     ];
 
     it.each(nonModifyingNames)(

@@ -6,38 +6,50 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { tokenizeIdentifier } from '../utils/text.js';
 
 /**
- * Patterns that suggest a tool modifies data.
+ * Verbs that suggest a tool modifies data when they lead the name
+ * (e.g. "create-user", "setConfig").
  */
-const MODIFYING_PATTERNS = [
-  /^create/i,
-  /^update/i,
-  /^delete/i,
-  /^remove/i,
-  /^set/i,
-  /^add/i,
-  /^insert/i,
-  /^drop/i,
-  /^clear/i,
-  /^reset/i,
-  /^modify/i,
-  /^change/i,
-  /^write/i,
-  /^destroy/i,
-  /^purge/i,
-  /-create$/i,
-  /-update$/i,
-  /-delete$/i,
-  /-remove$/i,
-  /-set$/i,
+const MODIFYING_VERBS = [
+  'create',
+  'update',
+  'delete',
+  'remove',
+  'set',
+  'add',
+  'insert',
+  'drop',
+  'clear',
+  'reset',
+  'modify',
+  'change',
+  'write',
+  'destroy',
+  'purge',
 ];
 
 /**
+ * Verbs that also suggest modification as the trailing token
+ * (e.g. "user-create", "record_update").
+ */
+const MODIFYING_SUFFIX_VERBS = ['create', 'update', 'delete', 'remove', 'set'];
+
+/**
  * Check if a tool name suggests it modifies data.
+ * Matches verbs only as whole tokens so names like "settings_get"
+ * or "address_search" are not mistaken for "set"/"add" prefixes.
  */
 function isModifyingTool(name: string): boolean {
-  return MODIFYING_PATTERNS.some((pattern) => pattern.test(name));
+  const tokens = tokenizeIdentifier(name);
+  if (tokens.length === 0) {
+    return false;
+  }
+  return (
+    MODIFYING_VERBS.includes(tokens[0]) ||
+    MODIFYING_SUFFIX_VERBS.includes(tokens[tokens.length - 1])
+  );
 }
 
 const rule: Rule = {

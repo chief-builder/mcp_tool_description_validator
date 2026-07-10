@@ -3,40 +3,26 @@
   "version": "0.1.0",
   "description": "A governance validator for Model Context Protocol (MCP) tool definitions that ensures quality, security, and LLM-compatibility",
   "type": "module",
-  "homepage": "https://chief-builder.github.io/mcp_tool_description_validator/",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/chief-builder/mcp_tool_description_validator.git"
-  },
-  "bugs": {
-    "url": "https://github.com/chief-builder/mcp_tool_description_validator/issues"
-  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "bin": {
     "mcp-validate": "./bin/mcp-validate.js"
   },
-  "files": [
-    "bin",
-    "dist",
-    "docs",
-    "examples",
-    "README.md"
-  ],
   "scripts": {
     "build": "tsup",
-    "test": "vitest",
-    "test:run": "vitest --run",
-    "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run build && npm run test:run",
-    "validate:examples": "npm run build && node ./dist/cli.js examples/polished-tools.json && node ./dist/cli.js examples/needs-work-tools.json --format json",
-    "serve": "node ./dist/cli.js serve"
+    "pretest": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json",
+    "prepublishOnly": "npm run typecheck && npm run build",
+    "analyze:servers": "tsx scripts/test-official-servers.ts",
+    "llm:analyze": "node scripts/llm-analyze.mjs"
   },
   "keywords": [
     "mcp",
@@ -51,8 +37,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.71.2",
-    "@hono/node-server": "^2.0.5",
+    "@hono/node-server": "^2.0.8",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "ai": "^6.0.0",
     "ajv": "^8.17.0",
@@ -65,29 +50,41 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
     "@modelcontextprotocol/server-everything": "^2025.12.18",
     "@modelcontextprotocol/server-filesystem": "^2025.12.18",
+    "@modelcontextprotocol/server-github": "^2025.4.8",
     "@modelcontextprotocol/server-memory": "^2025.11.25",
     "@modelcontextprotocol/server-sequential-thinking": "^2025.12.18",
     "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^4.1.10",
     "tsup": "^8.0.0",
+    "tsx": "^4.23.0",
     "typescript": "^5.4.0",
     "vitest": "^4.0.0"
   },
   "peerDependencies": {
-    "@ai-sdk/anthropic": "^1.0.0",
-    "@ai-sdk/openai": "^1.0.0",
-    "ollama-ai-provider": "^1.0.0"
+    "@ai-sdk/anthropic": "^3.0.0",
+    "@ai-sdk/openai": "^3.0.0",
+    "ollama-ai-provider-v2": "^3.0.0"
   },
   "peerDependenciesMeta": {
-    "@ai-sdk/openai": {
-      "optional": true
-    },
     "@ai-sdk/anthropic": {
       "optional": true
     },
-    "ollama-ai-provider": {
+    "@ai-sdk/openai": {
+      "optional": true
+    },
+    "ollama-ai-provider-v2": {
       "optional": true
     }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chief-builder/mcp_tool_description_validator.git"
   }
 }

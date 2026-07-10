@@ -12,22 +12,24 @@ import type {
   ValidationMetadata,
   ToolValidationResult,
 } from '../types/index.js';
-import { loadConfig, mergeConfig, getDefaultConfig } from './config.js';
+import { resolveConfig, type ConfigOverrides } from './config.js';
 import { loadRules } from './rule-loader.js';
 import { executeRules, aggregateResults, flattenIssues } from './rule-engine.js';
 import { parseFile } from '../parsers/file.js';
 import { fetchToolsFromServer } from '../parsers/mcp-client.js';
+import { analyzeTools } from '../llm/analyzer.js';
 
-// Package version (should match package.json)
-const VALIDATOR_VERSION = '0.1.0';
-const MCP_SPEC_VERSION = '2025-11-25';
+import { VERSION as VALIDATOR_VERSION } from '../version.js';
+
+/** Spec version reported/validated when the config does not set one. */
+const DEFAULT_MCP_SPEC_VERSION = '2025-11-25';
 
 /**
  * Options for validation functions.
  */
 export interface ValidateOptions {
-  /** Override default config */
-  config?: Partial<ValidatorConfig>;
+  /** Inline config overrides (sections may be partial) */
+  config?: ConfigOverrides;
   /** Load config from file path */
   configPath?: string;
 }
@@ -65,22 +67,16 @@ export async function validate(
 ): Promise<ValidationResult> {
   const startTime = Date.now();
 
-  // Load and merge config
-  let config: ValidatorConfig;
-  if (options.configPath) {
-    const loaded = await loadConfig(options.configPath);
-    config = loaded.config;
-  } else {
-    config = getDefaultConfig();
-  }
+  // Load config (explicit path or cosmiconfig discovery) and overlay
+  // inline overrides per-section so they don't clobber file settings.
+  const { config, filepath } = await resolveConfig(
+    options.configPath,
+    options.config
+  );
 
-  // Apply any inline config overrides
-  if (options.config) {
-    config = mergeConfig({ ...config, ...options.config });
-  }
-
-  // Load enabled rules based on config
-  const rules = await loadRules(config.rules);
+  // Load enabled rules based on config and targeted spec version
+  const specVersion = config.specVersion ?? DEFAULT_MCP_SPEC_VERSION;
+  const rules = await loadRules(config.rules, specVersion);
 
   // Execute rules against all tools
   const toolResults = executeRules(tools, rules, config.rules);
@@ -93,6 +89,26 @@ export async function validate(
     issues: tr.issues,
   }));
 
+  // Optional LLM-assisted analysis. A failure here (missing provider
+  // package, network error) must not discard the static results.
+  let llmAnalysisUsed = false;
+  let llmAnalysisError: string | undefined;
+  if (config.llm?.enabled) {
+    try {
+      const analyses = await analyzeTools(tools, { config: config.llm });
+      for (const toolResult of toolValidationResults) {
+        const analysis = analyses.get(toolResult.name);
+        if (analysis) {
+          toolResult.llmAnalysis = analysis;
+        }
+      }
+      llmAnalysisUsed = true;
+    } catch (error) {
+      llmAnalysisError =
+        error instanceof Error ? error.message : String(error);
+    }
+  }
+
   // Aggregate summary statistics
   const summary = aggregateResults(toolResults);
   const allIssues = flattenIssues(toolResults);
@@ -100,11 +116,12 @@ export async function validate(
   // Build metadata
   const metadata: ValidationMetadata = {
     validatorVersion: VALIDATOR_VERSION,
-    mcpSpecVersion: MCP_SPEC_VERSION,
+    mcpSpecVersion: specVersion,
     timestamp: new Date().toISOString(),
     duration: Date.now() - startTime,
-    configUsed: options.configPath || '',
-    llmAnalysisUsed: false,
+    configUsed: filepath ?? '',
+    llmAnalysisUsed,
+    ...(llmAnalysisError !== undefined ? { llmAnalysisError } : {}),
   };
 
   return {

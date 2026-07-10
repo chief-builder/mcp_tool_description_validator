@@ -26,17 +26,46 @@ export interface ToolDefinition {
   /** Tool name (kebab-case recommended) */
   name: string;
 
+  /** Optional human-readable display name (takes precedence over annotations.title) */
+  title?: string;
+
   /** Human-readable description for LLM understanding */
   description: string;
+
+  /** Optional icons for display in user interfaces */
+  icons?: ToolIcon[];
 
   /** JSON Schema defining the tool's input parameters */
   inputSchema: JSONSchema;
 
+  /** Optional JSON Schema describing the tool's structured output */
+  outputSchema?: JSONSchema;
+
   /** Optional MCP annotations for tool behavior hints */
   annotations?: ToolAnnotations;
 
+  /** Optional metadata reserved for MCP extensions */
+  _meta?: Record<string, unknown>;
+
   /** Metadata about where this tool definition came from */
   source: ToolSource;
+}
+
+/**
+ * An icon entry for a tool (MCP spec: `icons` array).
+ */
+export interface ToolIcon {
+  /** Icon location: HTTPS URL or data: URI */
+  src: string;
+
+  /** Optional MIME type (e.g. "image/png") */
+  mimeType?: string;
+
+  /** Optional sizes (e.g. ["48x48"] or ["any"]) */
+  sizes?: string[];
+
+  /** Optional theme the icon is designed for */
+  theme?: 'light' | 'dark';
 }
 
 /**
@@ -175,6 +204,26 @@ export type IssueSeverity = 'error' | 'warning' | 'suggestion';
 export type MaturityLevel = 'immature' | 'moderate' | 'mature' | 'exemplary';
 
 /**
+ * Result of LLM analysis for a single tool definition.
+ */
+export interface LLMAnalysisResult {
+  /** Clarity score (1-10): How clear is the description for an AI to understand? */
+  clarity_score: number;
+
+  /** Completeness score (1-10): Does it cover what, when, and how? */
+  completeness_score: number;
+
+  /** List of vague phrases that could cause misuse */
+  ambiguities: string[];
+
+  /** List of contradictions between description and schema */
+  conflicts: string[];
+
+  /** List of specific improvement suggestions */
+  suggestions: string[];
+}
+
+/**
  * Validation result for a single tool.
  */
 export interface ToolValidationResult {
@@ -189,6 +238,9 @@ export interface ToolValidationResult {
 
   /** The original tool definition (for reference) */
   tool: ToolDefinition;
+
+  /** LLM analysis result (present when LLM analysis was enabled) */
+  llmAnalysis?: LLMAnalysisResult;
 }
 
 /**
@@ -198,7 +250,7 @@ export interface ValidationMetadata {
   /** Version of the validator */
   validatorVersion: string;
 
-  /** MCP specification version validated against (always "2025-11-25") */
+  /** MCP specification version validated against (e.g. "2025-11-25" or "draft") */
   mcpSpecVersion: string;
 
   /** ISO 8601 timestamp when validation started */
@@ -212,11 +264,19 @@ export interface ValidationMetadata {
 
   /** Whether LLM analysis was performed */
   llmAnalysisUsed: boolean;
+
+  /** Error message when LLM analysis was requested but failed */
+  llmAnalysisError?: string;
 }
 
 // ============================================================================
 // Configuration Types
 // ============================================================================
+
+/**
+ * MCP specification versions the validator can target.
+ */
+export type MCPSpecVersion = '2025-11-25' | 'draft';
 
 /**
  * Complete validator configuration.
@@ -227,6 +287,9 @@ export interface ValidatorConfig {
 
   /** Output configuration */
   output: OutputConfig;
+
+  /** MCP spec version to validate against (default: '2025-11-25') */
+  specVersion?: MCPSpecVersion;
 
   /** Optional LLM analysis configuration */
   llm?: LLMConfig;

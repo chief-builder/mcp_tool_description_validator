@@ -97,6 +97,15 @@ describe('LLM-005: Tool description should include example usage', () => {
     expect(issues[0].severity).toBe('suggestion');
   });
 
+  it('should fail for a lone apostrophe (regression)', () => {
+    // Regression: a bare ' or " counted as a quoted example
+    const tool = createTool({
+      description: "Creates the user's account in the system.",
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(1);
+  });
+
   it('should skip empty descriptions (handled by LLM-001)', () => {
     const tool = createTool({ description: '' });
     const issues = rule.check(tool, createContext([tool]));

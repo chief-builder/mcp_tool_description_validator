@@ -154,6 +154,29 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(1);
     });
+
+    it('should not match short sibling tool names as substrings (regression)', () => {
+      // Regression: includes() matched sibling 'get' inside "Gets" and
+      // sibling 'run' inside "prune"
+      const sibling1 = createTool({ name: 'get', description: 'Gets a value.' });
+      const sibling2 = createTool({ name: 'run', description: 'Runs a task.' });
+      const tool = createTool({
+        name: 'show_profile',
+        description: 'Gets the current user profile and prunes stale entries.',
+      });
+      const issues = rule.check(tool, createContext([sibling1, sibling2, tool]));
+      expect(issues).toHaveLength(1);
+    });
+
+    it('should require whole-word matches for sibling tool names', () => {
+      const sibling = createTool({ name: 'user', description: 'Shows a user.' });
+      const tool = createTool({
+        name: 'show_accounts',
+        description: 'Lists all users in the account.',
+      });
+      const issues = rule.check(tool, createContext([sibling, tool]));
+      expect(issues).toHaveLength(1);
+    });
   });
 
   describe('missing workflow guidance', () => {

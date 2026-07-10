@@ -14,8 +14,10 @@
 export type {
   JSONSchema,
   ToolDefinition,
+  ToolIcon,
   ToolSource,
   ToolAnnotations,
+  MCPSpecVersion,
   ValidationResult,
   ValidationSummary,
   ValidationIssue,

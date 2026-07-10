@@ -82,6 +82,8 @@ describe('Type Definitions', () => {
             warning: 0,
             suggestion: 0,
           },
+    maturityScore: 88,
+    maturityLevel: 'mature',
         },
         issues: [],
         tools: [],

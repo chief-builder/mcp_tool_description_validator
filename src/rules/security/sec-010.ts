@@ -8,6 +8,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { getAllPropertyEntries } from '../utils/schema-walker.js';
 
 /** Patterns that suggest a parameter accepts code or scripts */
 const CODE_NAME_PATTERNS = [
@@ -39,10 +40,10 @@ const rule: Rule = {
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
-    const properties =
-      (tool.inputSchema?.properties as Record<string, Record<string, unknown>>) || {};
+    // Cover nested schemas too (properties inside objects/arrays)
+    const propertyEntries = getAllPropertyEntries(tool.inputSchema);
 
-    for (const [name, schema] of Object.entries(properties)) {
+    for (const { name, schema, path } of propertyEntries) {
       if (isCodeParameter(name)) {
         // Check if the description mentions the security implications
         const description = (schema.description as string) || '';
@@ -56,7 +57,7 @@ const rule: Rule = {
             severity: this.defaultSeverity,
             message: `Parameter '${name}' appears to accept code/scripts but lacks security documentation`,
             tool: tool.name,
-            path: `inputSchema.properties.${name}`,
+            path,
             suggestion:
               'Add a description that clearly documents the security implications of accepting code/script input',
           });

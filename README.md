@@ -1,239 +1,200 @@
-# MCP Tool Validator
+# MCP Tool Description Validator
 
-[![CI](https://github.com/chief-builder/mcp_tool_description_validator/actions/workflows/ci.yml/badge.svg)](https://github.com/chief-builder/mcp_tool_description_validator/actions/workflows/ci.yml)
+A governance validator for Model Context Protocol (MCP) tool definitions that ensures quality, security, and LLM-compatibility.
 
-A governance validator for Model Context Protocol (MCP) tool definitions. It checks whether tools are clear enough for LLMs to select, bounded enough to use safely, and structured enough to integrate into CI.
+## Overview
 
-[View the project page](https://chief-builder.github.io/mcp_tool_description_validator/) | [Rule reference](docs/RULES.md) | [Best practices](docs/BEST_PRACTICES.md)
+The MCP Tool Description Validator analyzes MCP tool definitions and provides actionable feedback to improve:
 
-## Why This Exists
+- **LLM Compatibility**: Ensure tools are easy for language models to understand and use correctly
+- **Security**: Identify potential vulnerabilities in input handling and parameter design
+- **Spec Compliance**: Validate against the MCP specification, including the draft revision (tool-name grammar, JSON Schema 2020-12, `x-mcp-header`, icons)
+- **Agent Ergonomics**: Apply evolved tool-design guidance (pagination, response-format controls, namespacing, overlap detection)
 
-MCP servers can expose dozens of tools, and the model only sees the names, descriptions, annotations, and schemas you give it. Vague names, missing parameter descriptions, unbounded strings, and absent behavior hints make agents more likely to choose the wrong tool or call the right tool with unsafe arguments.
+## Features
 
-MCP Tool Validator turns those review instincts into repeatable checks:
+- **56 validation rules** across 5 categories (3 rules are draft-spec-only and activate with `--spec-version draft`)
+- **Maturity scoring** (0-100, per-tool averaged) with level classification
+- **CLI** for local validation and CI pipelines
+- **HTTP service** (`mcp-validate serve`) for validation as an API
+- **Live server validation** over STDIO or Streamable HTTP transports
+- **Optional LLM-assisted analysis** (`--llm`) via Anthropic, OpenAI, or Ollama
+- **Multiple output formats**: human, JSON, SARIF 2.1.0
+- **Programmatic API** for build-pipeline integration
 
-- Are tool names and parameter names predictable?
-- Does each description explain what the tool does and when to use it?
-- Are user-controlled strings, arrays, file paths, URLs, and sensitive fields constrained?
-- Do annotations communicate read-only, destructive, idempotent, and open-world behavior?
-- Can CI block risky tool definitions before they ship?
+## Installation
 
-## What It Includes
-
-- **46 validation rules** across schema, naming, security, LLM compatibility, and best practices
-- **Maturity scoring** from 0-100 with `immature`, `moderate`, `mature`, and `exemplary` levels
-- **CLI validation** for JSON and YAML files
-- **Live MCP server validation** through `--server`
-- **Programmatic API** for build tools and custom quality gates
-- **HTTP service** with `/health` and `/validate`
-- **Human, JSON, and SARIF reporters** for local use, scripts, and code scanning workflows
+```bash
+npm install mcp-tool-validator
+```
 
 ## Quick Start
 
-```bash
-git clone https://github.com/chief-builder/mcp_tool_description_validator.git
-cd mcp_tool_description_validator
-npm install
-npm run build
-```
-
-Validate the included examples:
+### CLI
 
 ```bash
-node ./dist/cli.js examples/polished-tools.json
-node ./dist/cli.js examples/needs-work-tools.json --verbose
+# Validate a JSON or YAML file of tool definitions
+mcp-validate tools.json
+
+# Validate a live MCP server (STDIO command or HTTP URL)
+mcp-validate --server "node ./my-server.js"
+mcp-validate --server "http://localhost:3000/mcp"
+
+# Validate against the draft MCP spec (enables SCH-009, SCH-010, SEC-011)
+mcp-validate tools.json --spec-version draft
+
+# Output JSON or SARIF for CI/CD integration
+mcp-validate tools.json --format json
+mcp-validate tools.json --format sarif
+
+# CI mode: exit 1 when any error-severity issue is found
+mcp-validate tools.json --ci
+
+# Override individual rules
+mcp-validate tools.json --rule SEC-001=off --rule LLM-005=error
+
+# LLM-assisted analysis (requires an installed provider package and API key)
+mcp-validate tools.json --llm --llm-provider anthropic
+
+# Start the HTTP validation service
+mcp-validate serve --port 8080
 ```
 
-Use CI mode to fail builds when validation errors are present:
-
-```bash
-node ./dist/cli.js tools.json --ci
-```
-
-Emit machine-readable reports:
-
-```bash
-node ./dist/cli.js tools.json --format json
-node ./dist/cli.js tools.json --format sarif > validation.sarif
-```
-
-## CLI Usage
-
-```bash
-mcp-validate [file] [options]
-```
-
-Common options:
+### CLI options
 
 | Option | Description |
-| --- | --- |
-| `--format human\|json\|sarif` | Choose output format. |
-| `--ci` | Exit with code `1` when validation errors are present. |
-| `--config <path>` | Load `.mcp-validate.json`, `.mcp-validate.yaml`, or another config path. |
-| `--rule RULE-ID=off` | Disable or override a single rule. |
-| `--server <url-or-command>` | Validate tools exposed by a live MCP server. |
-| `--verbose` | Include suggestions in human output. |
+|--------|-------------|
+| `[file]` | Tool definition file (JSON or YAML): single tool, array, `{ tools: [...] }`, or manifest |
+| `-s, --server <url>` | Validate a live MCP server (HTTP URL or STDIO command; quoted args supported) |
+| `-f, --format <format>` | Output format: `human` (default), `json`, `sarif` |
+| `-c, --config <path>` | Explicit config file path (otherwise auto-discovered) |
+| `-r, --rule <RULE-ID=setting>` | Override a rule: `on`, `off`, `error`, `warning`, `suggestion` (repeatable) |
+| `--spec-version <version>` | MCP spec revision to validate against: `2025-11-25` (default) or `draft` |
+| `--llm` | Enable LLM-assisted analysis |
+| `--llm-provider <provider>` | `anthropic` (default), `openai`, or `ollama` |
+| `-v, --verbose` | Show suggestions and LLM detail |
+| `-q, --quiet` | Only show errors |
+| `--ci` | Exit 1 when any error-severity issue is found |
+| `--no-color` | Disable colored output |
+| `serve [-p port] [-h host]` | Start the HTTP validation service |
 
-Rule overrides accept `on`, `off`, `error`, `warning`, or `suggestion`:
-
-```bash
-mcp-validate tools.json --rule BP-001=off --rule SEC-001=error
-```
-
-## HTTP Service
-
-Start a local validation service:
-
-```bash
-npm run build
-node ./dist/cli.js serve --port 8080
-```
-
-Check health:
-
-```bash
-curl http://localhost:8080/health
-```
-
-Validate tools:
-
-```bash
-curl -X POST http://localhost:8080/validate \
-  -H 'Content-Type: application/json' \
-  --data @examples/polished-tools.json
-```
-
-The service accepts:
-
-```json
-{
-  "tools": [
-    {
-      "name": "search-knowledge-base",
-      "description": "Searches approved support articles by keyword. Use this when answering product or troubleshooting questions. Example: search for password reset.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "searchText": {
-            "type": "string",
-            "description": "Customer question or troubleshooting phrase to search for, minimum length 3 characters and maximum length 200 characters.",
-            "minLength": 3,
-            "maxLength": 200
-          }
-        },
-        "required": ["searchText"]
-      }
-    }
-  ],
-  "config": {
-    "rules": {
-      "BP-001": false
-    }
-  }
-}
-```
-
-## Programmatic Usage
+### Programmatic usage
 
 ```typescript
 import { validate, validateFile, validateServer } from 'mcp-tool-validator';
 
 const result = await validateFile('./tools.json');
 
-console.log(result.valid);
-console.log(result.summary.maturityScore);
-console.log(result.issues);
+console.log(`Valid: ${result.valid}`);
+console.log(
+  `Maturity: ${result.summary.maturityScore}/100 (${result.summary.maturityLevel})`
+);
+for (const issue of result.issues) {
+  console.log(`${issue.severity} ${issue.id}: ${issue.message} [${issue.tool}]`);
+}
 
-const inlineResult = await validate([
-  {
-    name: 'search-knowledge-base',
-    description:
-      'Searches approved support articles by keyword. Use this when answering product or troubleshooting questions. Example: search for password reset.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        searchText: {
-          type: 'string',
-          description:
-            'Customer question or troubleshooting phrase to search for, minimum length 3 characters and maximum length 200 characters.',
-          minLength: 3,
-          maxLength: 200,
-        },
-      },
-      required: ['searchText'],
-    },
-    source: {
-      type: 'file',
-      location: 'inline',
-      raw: {},
-    },
+// Direct validation with inline overrides
+const direct = await validate(tools, {
+  config: {
+    rules: { 'SEC-001': false },
+    specVersion: 'draft',
   },
-]);
-
-const liveServerResult = await validateServer('http://localhost:3000/mcp');
+});
 ```
 
-## Rule Categories
+### HTTP service
 
-| Category | Prefix | Count | Focus |
-| --- | --- | ---: | --- |
-| Schema Validation | `SCH` | 8 | MCP protocol compliance and JSON Schema validity |
-| Naming Conventions | `NAM` | 6 | Consistent, descriptive tool and parameter naming |
-| Security Constraints | `SEC` | 10 | Input validation and safety constraints |
-| LLM Compatibility | `LLM` | 13 | Descriptions and parameters that models can use reliably |
-| Best Practices | `BP` | 9 | MCP annotations, output schemas, and tool usability |
+`mcp-validate serve` exposes:
 
-See [docs/RULES.md](docs/RULES.md) for the complete rule catalog.
+- `GET /health` — service health and version
+- `POST /validate` — body `{ "tools": [...], "config": { ... } }`, returns a full validation result
+
+## Validation Rules
+
+56 rules across 5 categories:
+
+| Category | Prefix | Count | Description |
+|----------|--------|-------|-------------|
+| Schema Validation | SCH | 10 | MCP protocol compliance and JSON Schema validity (2020-12 by default) |
+| Naming Conventions | NAM | 7 | Spec name grammar, uniqueness, descriptive and consistent naming |
+| Security Constraints | SEC | 11 | Input bounds, sensitive-data handling, header-exposure checks |
+| LLM Compatibility | LLM | 13 | Optimizing tool definitions for LLM understanding |
+| Best Practices | BP | 15 | Annotations, icons, output schemas, pagination, agent ergonomics |
+
+Three rules only apply when validating against the draft spec (`--spec-version draft`):
+`SCH-009` (network `$ref` ban), `SCH-010` (`x-mcp-header` constraints), and `SEC-011` (sensitive parameters exposed as headers).
+
+See [docs/RULES.md](docs/RULES.md) for the complete rule reference with examples.
 
 ## Maturity Scoring
 
-Each tool starts at 100 points. Issues deduct points by severity, and the server score is the average across tools.
+The validator calculates a **per-tool averaged** maturity score (0-100). Each tool starts at 100 points, deductions apply per issue, and the server score is the average across all tools.
 
-| Score | Level | Meaning |
-| --- | --- | --- |
-| 91-100 | Exemplary | Optimized for advanced multi-tool agents |
-| 71-90 | Mature | Reliable for complex workflows |
-| 41-70 | Moderate | Usable in simple agents, with some guidance gaps |
-| 0-40 | Immature | High risk of misuse |
+| Score | Level | Description |
+|-------|-------|-------------|
+| **91-100** | Exemplary | Optimized for advanced multi-tool agents |
+| **71-90** | Mature | Reliable for complex workflows |
+| **41-70** | Moderate | Usable in simple agents; some guidance |
+| **0-40** | Immature | High risk of misuse; basic functionality only |
+
+### Severity impact
+
+| Severity | Deduction | Examples |
+|----------|-----------|----------|
+| `error` | -5 points | Spec violations, missing required fields, security vulnerabilities |
+| `warning` | -2 points | Suboptimal descriptions, missing constraints |
+| `suggestion` | -1 point | Missing annotations, agent-ergonomics recommendations |
 
 ## Configuration
 
-Create `.mcp-validate.json` or `.mcp-validate.yaml` in your project root:
+Configuration is discovered automatically from (in order): `mcp-validate.config.yaml`, `mcp-validate.config.yml`, `mcp-validate.config.json`, `.mcp-validaterc` (and `.yaml`/`.yml`/`.json` variants), or an `"mcp-validate"` key in `package.json`. Pass `--config <path>` to use an explicit file. CLI flags override file settings per-key; file settings survive for anything not passed on the command line.
 
-```json
-{
-  "rules": {
-    "BP-001": "off",
-    "SEC-001": "error"
-  },
-  "output": {
-    "format": "human",
-    "verbose": false,
-    "color": true
-  }
-}
+```yaml
+# mcp-validate.config.yaml
+rules:
+  BP-001: off            # disable a rule ("off"/"on" or false/true)
+  SEC-001: error         # override a rule's severity
+output:
+  format: human          # human | json | sarif
+  verbose: false
+  color: true
+specVersion: 2025-11-25  # or "draft"
+llm:                     # optional LLM-assisted analysis
+  enabled: false
+  provider: anthropic    # anthropic | openai | ollama
+  model: claude-haiku-4-5
+  timeout: 30000
+  # apiKey: ...          # or ANTHROPIC_API_KEY / OPENAI_API_KEY env vars
 ```
+
+Configs are validated on load — unknown keys and invalid rule settings fail with a descriptive error instead of being silently ignored.
+
+## LLM-Assisted Analysis
+
+With `--llm` (or `llm.enabled: true`), each tool is additionally scored by an LLM for clarity and completeness, with ambiguities, description/schema conflicts, and improvement suggestions attached per tool. Provider packages are optional peer dependencies:
+
+```bash
+npm install @ai-sdk/anthropic   # or @ai-sdk/openai, ollama-ai-provider-v2
+```
+
+A failed LLM analysis never discards static validation results; the error is reported in `metadata.llmAnalysisError`.
 
 ## Development
 
 ```bash
 npm install
-npm run typecheck
-npm run build
-npm run test:run
-npm run check
+npm test              # build + run test suite once
+npm run test:watch    # watch mode
+npm run typecheck     # typecheck src, tests, and scripts
+npm run build         # build dist/
+npm run analyze:servers  # validate the official-server fixtures
+npm run llm:analyze      # LLM analysis over fixtures (needs ANTHROPIC_API_KEY)
 ```
 
-The current suite covers rule behavior, parser formats, reporters, CLI integration, and the HTTP service.
+## Documentation
 
-## Publishing Notes
-
-Before publishing or highlighting this project:
-
-- Enable GitHub Pages from `/docs` to serve the project page.
-- Add a release workflow or npm publish checklist.
-- Decide whether the HTTP service should stay local-only or get a hosted demo.
-- Run a dependency security pass; the current dependency graph includes audit findings that need review.
+- [docs/RULES.md](docs/RULES.md) - Complete rule reference with examples
+- [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) - Best practices and maturity scoring framework
 
 ## License
 

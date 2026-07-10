@@ -107,7 +107,7 @@ export function formatSarifOutput(result: ValidationResult): string {
         driver: {
           name: 'mcp-tool-validator',
           version: result.metadata.validatorVersion,
-          informationUri: 'https://github.com/example/mcp-tool-validator',
+          informationUri: 'https://github.com/chief-builder/mcp_tool_description_validator',
           rules,
         },
       },

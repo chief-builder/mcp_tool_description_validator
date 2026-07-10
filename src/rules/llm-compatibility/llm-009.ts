@@ -34,7 +34,7 @@ const CONSTRAINT_CHECKS: ConstraintCheck[] = [
       /\bmin(imum)?\b/i,
       /\bat\s+least\b/i,
       /\bgreater\s+than\b/i,
-      /\b>=?\s*\d/i,
+      />=?\s*\d/, // ">= 5" or ">5"; no \b since '>' is not a word char
       /\bno\s+less\s+than\b/i,
       /\blower\s+bound\b/i,
     ],
@@ -46,7 +46,7 @@ const CONSTRAINT_CHECKS: ConstraintCheck[] = [
       /\bmax(imum)?\b/i,
       /\bat\s+most\b/i,
       /\bless\s+than\b/i,
-      /\b<=?\s*\d/i,
+      /<=?\s*\d/, // "<= 5" or "<5"; no \b since '<' is not a word char
       /\bno\s+more\s+than\b/i,
       /\bupper\s+bound\b/i,
       /\bup\s+to\b/i,
@@ -108,7 +108,7 @@ const CONSTRAINT_CHECKS: ConstraintCheck[] = [
     schemaKey: 'format',
     descriptionPatterns: [
       /\bformat\b/i,
-      /\biso\s*\d*/i,
+      /\biso(?:[-\s]?\d+)?\b/i, // "ISO 8601", "iso8601", or bare "ISO"; not "isolation"
       /\brfc\s*\d+/i,
       /\buuid\b/i,
       /\buri\b/i,

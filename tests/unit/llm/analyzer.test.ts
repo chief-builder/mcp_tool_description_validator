@@ -21,17 +21,18 @@ vi.mock('ai', () => ({
   }),
 }));
 
-// Mock provider packages (they're optional peer deps)
+// Mock provider packages (they're optional peer deps).
+// The analyzer uses the createX factories so apiKey/baseUrl are honored.
 vi.mock('@ai-sdk/openai', () => ({
-  openai: vi.fn().mockReturnValue('openai-model'),
+  createOpenAI: vi.fn().mockReturnValue(vi.fn().mockReturnValue('openai-model')),
 }));
 
 vi.mock('@ai-sdk/anthropic', () => ({
-  anthropic: vi.fn().mockReturnValue('anthropic-model'),
+  createAnthropic: vi.fn().mockReturnValue(vi.fn().mockReturnValue('anthropic-model')),
 }));
 
-vi.mock('ollama-ai-provider', () => ({
-  ollama: vi.fn().mockReturnValue('ollama-model'),
+vi.mock('ollama-ai-provider-v2', () => ({
+  createOllama: vi.fn().mockReturnValue(vi.fn().mockReturnValue('ollama-model')),
 }));
 
 /**
@@ -72,7 +73,7 @@ describe('LLM Analyzer', () => {
         config: {
           enabled: true,
           provider: 'anthropic',
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5',
           timeout: 30000,
         },
       });
@@ -144,7 +145,7 @@ describe('LLM Analyzer', () => {
         config: {
           enabled: true,
           provider: 'anthropic',
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5',
           timeout: 30000,
         },
       });
@@ -171,7 +172,7 @@ describe('LLM Analyzer', () => {
         config: {
           enabled: true,
           provider: 'anthropic',
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5',
           timeout: 30000,
         },
       });
@@ -202,7 +203,7 @@ describe('LLM Analyzer', () => {
         config: {
           enabled: true,
           provider: 'anthropic',
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5',
           timeout: 30000,
         },
       });
@@ -221,7 +222,7 @@ describe('LLM Analyzer', () => {
         config: {
           enabled: true,
           provider: 'anthropic',
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5',
           timeout: 30000,
         },
       });
@@ -243,7 +244,7 @@ describe('LLM Analyzer', () => {
 
       expect(config.enabled).toBe(false);
       expect(config.provider).toBe('anthropic');
-      expect(config.model).toBe('claude-3-haiku-20240307');
+      expect(config.model).toBe('claude-haiku-4-5');
       expect(config.timeout).toBe(30000);
     });
   });
@@ -269,7 +270,7 @@ describe('LLM Analyzer', () => {
         config: {
           enabled: true,
           provider: 'anthropic',
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5',
           timeout: 30000,
         },
       });
@@ -295,7 +296,7 @@ describe('LLM Analyzer', () => {
         config: {
           enabled: true,
           provider: 'anthropic',
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5',
           timeout: 30000,
         },
       });
@@ -321,7 +322,7 @@ describe('LLM Analyzer', () => {
         config: {
           enabled: true,
           provider: 'anthropic',
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5',
           timeout: 30000,
         },
       });
@@ -346,7 +347,7 @@ describe('LLM Analyzer', () => {
           config: {
             enabled: true,
             provider: 'anthropic',
-            model: 'claude-3-haiku-20240307',
+            model: 'claude-haiku-4-5',
             timeout: 30000,
           },
         })

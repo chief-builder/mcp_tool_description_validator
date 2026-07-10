@@ -6,31 +6,17 @@
  */
 
 import { generateText } from 'ai';
-import type { ToolDefinition, LLMConfig } from '../types/index.js';
+import type {
+  ToolDefinition,
+  LLMConfig,
+  LLMAnalysisResult,
+} from '../types/index.js';
 
 // ============================================================================
 // Types
 // ============================================================================
 
-/**
- * Result of LLM analysis for a single tool definition.
- */
-export interface LLMAnalysisResult {
-  /** Clarity score (1-10): How clear is the description for an AI to understand? */
-  clarity_score: number;
-
-  /** Completeness score (1-10): Does it cover what, when, and how? */
-  completeness_score: number;
-
-  /** List of vague phrases that could cause misuse */
-  ambiguities: string[];
-
-  /** List of contradictions between description and schema */
-  conflicts: string[];
-
-  /** List of specific improvement suggestions */
-  suggestions: string[];
-}
+export type { LLMAnalysisResult };
 
 /**
  * Options for analyzing tools with LLM.
@@ -45,14 +31,21 @@ export interface AnalyzeOptions {
 // ============================================================================
 
 /**
- * LLM prompt template for analyzing tool definitions.
+ * Build the analysis prompt. A template function (not String.replace) so
+ * descriptions containing replacement patterns like `$&` or the literal
+ * text `{parameters}` cannot corrupt the prompt.
  */
-const ANALYSIS_PROMPT = `You are evaluating MCP tool definitions for LLM compatibility.
+function buildAnalysisPrompt(
+  name: string,
+  description: string,
+  parameters: string
+): string {
+  return `You are evaluating MCP tool definitions for LLM compatibility.
 
 Tool Definition:
-- Name: {name}
-- Description: {description}
-- Parameters: {parameters}
+- Name: ${name}
+- Description: ${description}
+- Parameters: ${parameters}
 
 Evaluate this tool definition and respond with JSON only (no markdown):
 {
@@ -67,6 +60,7 @@ Consider:
 - Would an AI understand when to call this tool?
 - Are there edge cases not addressed?
 - Could the description lead to incorrect usage?`;
+}
 
 // ============================================================================
 // Helper Functions
@@ -77,26 +71,50 @@ Consider:
  * Dynamically imports the provider package to support optional peer dependencies.
  */
 async function getModel(config: LLMConfig) {
+  const model = config.model || DEFAULT_MODELS[config.provider] || '';
+  if (!model) {
+    throw new Error(
+      `No model configured for LLM provider '${config.provider}'`
+    );
+  }
+
   switch (config.provider) {
     case 'openai': {
       // @ts-expect-error - Optional peer dependency, may not be installed
-      const { openai } = await import('@ai-sdk/openai');
-      return openai(config.model);
+      const { createOpenAI } = await import('@ai-sdk/openai');
+      return createOpenAI({
+        ...(config.apiKey ? { apiKey: config.apiKey } : {}),
+        ...(config.baseUrl ? { baseURL: config.baseUrl } : {}),
+      })(model);
     }
     case 'anthropic': {
       // @ts-expect-error - Optional peer dependency, may not be installed
-      const { anthropic } = await import('@ai-sdk/anthropic');
-      return anthropic(config.model);
+      const { createAnthropic } = await import('@ai-sdk/anthropic');
+      return createAnthropic({
+        ...(config.apiKey ? { apiKey: config.apiKey } : {}),
+        ...(config.baseUrl ? { baseURL: config.baseUrl } : {}),
+      })(model);
     }
     case 'ollama': {
       // @ts-expect-error - Optional peer dependency, may not be installed
-      const { ollama } = await import('ollama-ai-provider');
-      return ollama(config.model);
+      const { createOllama } = await import('ollama-ai-provider-v2');
+      return createOllama({
+        ...(config.baseUrl ? { baseURL: config.baseUrl } : {}),
+      })(model);
     }
     default:
       throw new Error(`Unsupported LLM provider: ${config.provider}`);
   }
 }
+
+/**
+ * Default model per provider, used when config.model is empty.
+ */
+const DEFAULT_MODELS: Record<string, string> = {
+  anthropic: 'claude-haiku-4-5',
+  openai: 'gpt-4o-mini',
+  ollama: 'llama3.2',
+};
 
 /**
  * Format tool parameters for the prompt in a human-readable format.
@@ -127,10 +145,15 @@ function parseAnalysisResponse(text: string): LLMAnalysisResult {
 
   const result = JSON.parse(jsonMatch[0]) as Partial<LLMAnalysisResult>;
 
+  const clampScore = (value: unknown): number =>
+    typeof value === 'number' && Number.isFinite(value)
+      ? Math.min(10, Math.max(1, value))
+      : 5;
+
   // Validate and normalize result structure
   return {
-    clarity_score: Math.min(10, Math.max(1, result.clarity_score || 5)),
-    completeness_score: Math.min(10, Math.max(1, result.completeness_score || 5)),
+    clarity_score: clampScore(result.clarity_score),
+    completeness_score: clampScore(result.completeness_score),
     ambiguities: Array.isArray(result.ambiguities) ? result.ambiguities : [],
     conflicts: Array.isArray(result.conflicts) ? result.conflicts : [],
     suggestions: Array.isArray(result.suggestions) ? result.suggestions : [],
@@ -155,7 +178,7 @@ function parseAnalysisResponse(text: string): LLMAnalysisResult {
  *   config: {
  *     enabled: true,
  *     provider: 'anthropic',
- *     model: 'claude-3-haiku-20240307',
+ *     model: 'claude-haiku-4-5',
  *     timeout: 30000,
  *   }
  * });
@@ -168,14 +191,17 @@ export async function analyzeTool(
 ): Promise<LLMAnalysisResult> {
   const model = await getModel(options.config);
 
-  const prompt = ANALYSIS_PROMPT.replace('{name}', tool.name)
-    .replace('{description}', tool.description)
-    .replace('{parameters}', formatParameters(tool.inputSchema));
+  const prompt = buildAnalysisPrompt(
+    tool.name,
+    tool.description,
+    formatParameters(tool.inputSchema)
+  );
 
   const { text } = await generateText({
     model,
     prompt,
     maxOutputTokens: 1000,
+    abortSignal: AbortSignal.timeout(options.config.timeout),
   });
 
   try {
@@ -232,7 +258,7 @@ export function createDefaultLLMConfig(): LLMConfig {
   return {
     enabled: false,
     provider: 'anthropic',
-    model: 'claude-3-haiku-20240307',
+    model: 'claude-haiku-4-5',
     timeout: 30000,
   };
 }

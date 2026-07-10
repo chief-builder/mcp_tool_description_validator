@@ -216,22 +216,28 @@ describe('CLI', () => {
       expect(result).toHaveProperty('runs');
     });
 
-    it('should exit 1 in CI mode with errors', async () => {
-      // Create a tool with issues
+    it('should exit 1 in CI mode with errors and 0 without --ci', async () => {
+      // Unbounded string parameter -> SEC-001 fires at error severity
       const toolJson = {
-        name: 'x', // Short name - NAM-002 warning/error
-        description: 'bad', // Short description - LLM-001
-        inputSchema: { type: 'object', properties: {} },
+        name: 'ci-test-tool',
+        description: 'A tool used to verify CI exit codes work correctly.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            userId: { type: 'string', description: 'User identifier' },
+          },
+          required: ['userId'],
+        },
       };
 
       const filePath = join(testDir, 'bad-tool.json');
       await writeFile(filePath, JSON.stringify(toolJson));
 
-      const { exitCode } = await runCLI([filePath, '--ci']);
+      const withCi = await runCLI([filePath, '--ci']);
+      expect(withCi.exitCode).toBe(1);
 
-      // Should exit with 1 if there are errors (severity depends on rule config)
-      // The tool has issues, so this tests that --ci works
-      expect([0, 1]).toContain(exitCode);
+      const withoutCi = await runCLI([filePath]);
+      expect(withoutCi.exitCode).toBe(0);
     });
 
     it('should apply rule overrides', async () => {
@@ -256,15 +262,82 @@ describe('CLI', () => {
       expect(nam002Issues).toHaveLength(0);
     });
 
-    it('should handle serve dry run', async () => {
-      const { stdout, exitCode } = await runCLI([
-        'serve',
-        '--port', '9000',
-        '--dry-run',
+    it('should validate against the requested spec version', async () => {
+      // Network $ref: only the draft-gated SCH-009 rule flags this
+      const toolJson = {
+        name: 'spec-version-tool',
+        description: 'A tool used to verify spec-version gating in the CLI.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            user: { $ref: 'https://example.com/schemas/user.json' },
+          },
+        },
+      };
+
+      const filePath = join(testDir, 'spec-version.json');
+      await writeFile(filePath, JSON.stringify(toolJson));
+
+      const defaultRun = await runCLI([filePath, '--format', 'json']);
+      const defaultResult = JSON.parse(defaultRun.stdout);
+      expect(defaultResult.metadata.mcpSpecVersion).toBe('2025-11-25');
+      expect(
+        defaultResult.issues.filter((i: { id: string }) => i.id === 'SCH-009')
+      ).toHaveLength(0);
+
+      const draftRun = await runCLI([
+        filePath,
+        '--spec-version', 'draft',
+        '--format', 'json',
+      ]);
+      const draftResult = JSON.parse(draftRun.stdout);
+      expect(draftResult.metadata.mcpSpecVersion).toBe('draft');
+      expect(
+        draftResult.issues.filter((i: { id: string }) => i.id === 'SCH-009')
+      ).toHaveLength(1);
+    });
+
+    it('should reject an invalid --spec-version value', async () => {
+      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
+      const { stderr, exitCode } = await runCLI([
+        fixturePath,
+        '--spec-version', 'bogus',
       ]);
 
-      expect(exitCode).toBe(0);
-      expect(stdout).toContain('http://localhost:9000');
+      expect(exitCode).not.toBe(0);
+      expect(stderr).toContain('spec-version');
+    });
+
+    it('should start a working HTTP service via serve', async () => {
+      const port = 18000 + Math.floor(Math.random() * 2000);
+      const cliPath = join(process.cwd(), 'dist/cli.js');
+      const child = spawn('node', [cliPath, 'serve', '--port', String(port)]);
+
+      try {
+        // Wait for the listening banner
+        await new Promise<void>((resolve, reject) => {
+          const timer = setTimeout(
+            () => reject(new Error('server did not start')),
+            5000
+          );
+          child.stdout.on('data', (chunk: Buffer) => {
+            if (chunk.toString().includes('listening')) {
+              clearTimeout(timer);
+              resolve();
+            }
+          });
+          child.on('exit', () =>
+            reject(new Error('server exited before listening'))
+          );
+        });
+
+        const response = await fetch(`http://localhost:${port}/health`);
+        const body = (await response.json()) as { status: string };
+        expect(response.status).toBe(200);
+        expect(body.status).toBe('healthy');
+      } finally {
+        child.kill();
+      }
     });
 
     it('should reject an invalid serve port', async () => {

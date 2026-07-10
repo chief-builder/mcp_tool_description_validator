@@ -7,6 +7,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { tokenizeIdentifier } from '../utils/text.js';
 
 // Generic terms that need context
 const AMBIGUOUS_TERMS = [
@@ -52,7 +53,10 @@ const AMBIGUOUS_TERMS = [
   'test',
 ];
 
-// Contextual words that make a term less ambiguous
+// Contextual words that make a term less ambiguous. Only genuinely
+// disambiguating domain words belong here: overbroad entries like
+// 'to', 'from', 'type', or 'set' would make every description count
+// as context and the rule would never fire.
 const CONTEXT_INDICATORS = [
   'user',
   'file',
@@ -66,7 +70,6 @@ const CONTEXT_INDICATORS = [
   'date',
   'time',
   'status',
-  'type',
   'format',
   'size',
   'count',
@@ -81,23 +84,13 @@ const CONTEXT_INDICATORS = [
   'query',
   'filter',
   'sort',
-  'order',
   'search',
   'message',
   'text',
   'title',
-  'description',
   'label',
   'tag',
   'category',
-  'group',
-  'list',
-  'array',
-  'collection',
-  'set',
-  'map',
-  'dictionary',
-  'hash',
   'key',
   'token',
   'secret',
@@ -105,26 +98,17 @@ const CONTEXT_INDICATORS = [
   'credential',
   'auth',
   'session',
-  'request',
   'error',
-  'success',
-  'failure',
   'code',
-  'reason',
   'source',
   'target',
   'destination',
   'origin',
-  'start',
-  'end',
-  'from',
-  'to',
-  'min',
-  'max',
-  'default',
-  'required',
-  'optional',
 ];
+
+// Precomputed sets for token lookups (avoids per-check regex construction)
+const AMBIGUOUS_TERM_SET = new Set(AMBIGUOUS_TERMS);
+const CONTEXT_INDICATOR_SET = new Set(CONTEXT_INDICATORS);
 
 interface PropertySchema {
   description?: string;
@@ -132,28 +116,24 @@ interface PropertySchema {
 }
 
 function hasContext(text: string): boolean {
-  // Normalize separators: replace underscores and hyphens with spaces for word matching
-  const normalized = text.toLowerCase().replace(/[-_]/g, ' ');
-  // Use word boundary matching to avoid false positives (e.g., 'to' matching 'testtool')
-  return CONTEXT_INDICATORS.some(indicator => {
-    const regex = new RegExp(`\\b${indicator}\\b`, 'i');
-    return regex.test(normalized);
-  });
+  // Tokenize so camelCase/snake_case identifiers are matched word-wise
+  return tokenizeIdentifier(text).some(token =>
+    CONTEXT_INDICATOR_SET.has(token)
+  );
 }
 
 function findAmbiguousTerms(text: string): string[] {
-  const textLower = text.toLowerCase();
-  const found: string[] = [];
+  // Tokenize so terms inside identifiers are found
+  // (e.g. 'data' in 'user_data' or 'payloadData')
+  const found = new Set<string>();
 
-  for (const term of AMBIGUOUS_TERMS) {
-    // Match whole word only
-    const regex = new RegExp(`\\b${term}\\b`, 'i');
-    if (regex.test(textLower)) {
-      found.push(term);
+  for (const token of tokenizeIdentifier(text)) {
+    if (AMBIGUOUS_TERM_SET.has(token)) {
+      found.add(token);
     }
   }
 
-  return found;
+  return [...found];
 }
 
 const rule: Rule = {

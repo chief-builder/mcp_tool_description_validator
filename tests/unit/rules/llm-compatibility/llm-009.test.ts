@@ -135,6 +135,42 @@ describe('LLM-009: Include parameter constraints in description', () => {
     expect(issues).toHaveLength(0);
   });
 
+  it('should pass when minimum is mentioned as ">= n" after a space (regression)', () => {
+    // Regression: \b>=? required a word char before '>' so "must be >= 5"
+    // never matched
+    const tool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          age: {
+            type: 'integer',
+            minimum: 5,
+            description: 'User age, must be >= 5',
+          },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(0);
+  });
+
+  it('should pass when maximum is mentioned as "<=n" without a space', () => {
+    const tool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          count: {
+            type: 'integer',
+            maximum: 100,
+            description: 'Item count, value<=100',
+          },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(0);
+  });
+
   it('should fail when minimum is not mentioned', () => {
     const tool = createTool({
       inputSchema: {
@@ -185,6 +221,42 @@ describe('LLM-009: Include parameter constraints in description', () => {
     });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(0);
+  });
+
+  it('should pass when format is described as ISO 8601', () => {
+    const tool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          timestamp: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Timestamp in ISO 8601',
+          },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(0);
+  });
+
+  it('should not accept "isolation" as a format mention (regression)', () => {
+    // Regression: /\biso\s*\d*/ matched the "iso" prefix of "isolation"
+    const tool = createTool({
+      inputSchema: {
+        type: 'object',
+        properties: {
+          txnId: {
+            type: 'string',
+            format: 'uuid',
+            description: 'Runs with isolation enabled',
+          },
+        },
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain('format');
   });
 
   it('should report multiple missing constraints', () => {

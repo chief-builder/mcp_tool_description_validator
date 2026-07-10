@@ -25,7 +25,17 @@ const ALL_RULES: Rule[] = [
 
 /**
  * Registry mapping rule IDs to their Rule objects.
+ * Duplicate IDs would silently shadow an earlier rule via
+ * Object.fromEntries, so fail fast at module init instead.
  */
+const seenIds = new Set<string>();
+for (const rule of ALL_RULES) {
+  if (seenIds.has(rule.id)) {
+    throw new Error(`Duplicate rule ID registered: ${rule.id}`);
+  }
+  seenIds.add(rule.id);
+}
+
 export const RULES: Record<string, Rule> = Object.fromEntries(
   ALL_RULES.map((rule) => [rule.id, rule])
 );

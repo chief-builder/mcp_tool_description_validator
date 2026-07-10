@@ -7,6 +7,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { makeWordMatcher } from '../utils/text.js';
 
 // Common action verbs that indicate what a tool does
 const ACTION_VERBS = [
@@ -171,6 +172,9 @@ const ACTION_VERBS = [
   'modify', 'modifies', 'modifying',
 ];
 
+// Precompiled whole-word matcher (avoids per-check regex construction)
+const hasActionVerbMatcher = makeWordMatcher(ACTION_VERBS);
+
 const rule: Rule = {
   id: 'LLM-003',
   category: 'llm-compatibility',
@@ -185,12 +189,7 @@ const rule: Rule = {
       return issues;
     }
 
-    const descLower = tool.description.toLowerCase();
-    const hasActionVerb = ACTION_VERBS.some(verb => {
-      // Match word boundaries to avoid partial matches
-      const regex = new RegExp(`\\b${verb}\\b`, 'i');
-      return regex.test(descLower);
-    });
+    const hasActionVerb = hasActionVerbMatcher(tool.description);
 
     if (!hasActionVerb) {
       issues.push({

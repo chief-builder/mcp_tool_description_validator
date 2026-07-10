@@ -7,6 +7,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { tokenizeIdentifier } from '../utils/text.js';
 
 // Keywords indicating side effects in tool names
 const SIDE_EFFECT_NAME_PATTERNS = [
@@ -120,13 +121,17 @@ const SIDE_EFFECT_DESCRIPTION_PATTERNS = [
   /\bupdates?\s+state\b/i,
 ];
 
+// Warns about destructiveness: word stems (no trailing boundary, so
+// "deletes", "removal", "permanently", "destructive" all match) plus
+// the "cannot be undone" phrase.
+const DESTRUCTIVE_WARNING_PATTERN =
+  /\b(?:destruct|delet|remov|destroy|permanent|irreversibl)|\bcannot\s+be\s+undone\b/i;
+
 function toolNameSuggestsSideEffects(toolName: string): boolean {
-  const nameLower = toolName.toLowerCase();
-  return SIDE_EFFECT_NAME_PATTERNS.some(pattern => {
-    // Check if pattern is at word boundary (start, after -, or after _)
-    const regex = new RegExp(`(^|[-_])${pattern}([-_]|$)`, 'i');
-    return regex.test(nameLower) || nameLower.startsWith(pattern) || nameLower.endsWith(pattern);
-  });
+  // Match keywords only as whole tokens of the name, so "settings_list",
+  // "news_reader", or "address_book" are not mistaken for "set"/"new"/"add"
+  const tokens = tokenizeIdentifier(toolName);
+  return SIDE_EFFECT_NAME_PATTERNS.some(keyword => tokens.includes(keyword));
 }
 
 function descriptionMentionsSideEffects(description: string): boolean {
@@ -165,7 +170,7 @@ const rule: Rule = {
 
     // Also check annotations for destructive hint
     if (tool.annotations?.destructiveHint === true) {
-      const mentionsDestructive = /\b(destruct|delet|remov|destroy|permanent|irreversible|cannot\s+be\s+undone)\b/i.test(tool.description);
+      const mentionsDestructive = DESTRUCTIVE_WARNING_PATTERN.test(tool.description);
       if (!mentionsDestructive) {
         issues.push({
           id: this.id,

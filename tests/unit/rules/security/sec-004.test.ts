@@ -60,6 +60,17 @@ describe('SEC-004: File path parameters must use pattern for path validation', (
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(0);
     });
+
+    it('should not flag names that merely contain file/dir substrings', () => {
+      // Regression: /file/ matched "profile", /dir/ matched "direction"
+      const tool = createTool({
+        profile: { type: 'string' },
+        direction: { type: 'string' },
+        redirect: { type: 'string' },
+      });
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(0);
+    });
   });
 
   describe('failing cases', () => {
@@ -117,6 +128,15 @@ describe('SEC-004: File path parameters must use pattern for path validation', (
       const tool = createTool({
         outputPath: { type: 'string' },
         sourceFile: { type: 'string' },
+      });
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(2);
+    });
+
+    it('should detect tokens in snake_case and camelCase names', () => {
+      const tool = createTool({
+        file_path: { type: 'string' },
+        dirName: { type: 'string' },
       });
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(2);

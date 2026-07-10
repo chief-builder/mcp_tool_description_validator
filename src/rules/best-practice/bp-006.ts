@@ -6,23 +6,47 @@
 
 import type { Rule, RuleContext } from '../types.js';
 import type { ValidationIssue, JSONSchema } from '../../types/index.js';
+import { MAX_SCHEMA_DEPTH } from '../utils/schema-walker.js';
+
+/**
+ * Keywords whose array values are order-insensitive and may be sorted for
+ * comparison. Other arrays (tuple-form items, prefixItems) are
+ * order-significant and must not be sorted.
+ */
+const ORDER_INSENSITIVE_KEYS = new Set(['required', 'enum', 'type']);
 
 /**
  * Create a canonical representation of a schema for comparison.
  * Removes order-dependent aspects to enable pattern matching.
+ * Depth-bounded: beyond MAX_SCHEMA_DEPTH a sentinel is returned instead of
+ * recursing, so a hostile deeply-nested schema cannot overflow the stack.
  */
-function canonicalizeSchema(schema: unknown): string {
+function canonicalizeSchema(
+  schema: unknown,
+  parentKey?: string,
+  depth: number = 0
+): string {
   if (schema === null || schema === undefined) {
     return '';
+  }
+
+  if (depth > MAX_SCHEMA_DEPTH) {
+    return '"[max-depth-exceeded]"';
   }
 
   if (typeof schema !== 'object') {
     return JSON.stringify(schema);
   }
 
-  // Handle arrays
+  // Handle arrays: only sort where order carries no meaning
   if (Array.isArray(schema)) {
-    return JSON.stringify(schema.map(canonicalizeSchema).sort());
+    const canonicalized = schema.map((item) =>
+      canonicalizeSchema(item, undefined, depth + 1)
+    );
+    if (parentKey !== undefined && ORDER_INSENSITIVE_KEYS.has(parentKey)) {
+      canonicalized.sort();
+    }
+    return JSON.stringify(canonicalized);
   }
 
   // Handle objects - sort keys for consistent comparison
@@ -31,7 +55,7 @@ function canonicalizeSchema(schema: unknown): string {
   const canonical: Record<string, string> = {};
 
   for (const key of sortedKeys) {
-    canonical[key] = canonicalizeSchema(obj[key]);
+    canonical[key] = canonicalizeSchema(obj[key], key, depth + 1);
   }
 
   return JSON.stringify(canonical);
@@ -116,6 +140,40 @@ function extractPropertySchemas(
   return schemas;
 }
 
+/**
+ * The engine calls check() once per tool with the same allTools array, so
+ * cache the cross-tool schema map per run instead of rebuilding it O(n²).
+ */
+const globalSchemaCache = new WeakMap<
+  object,
+  Map<string, Array<{ tool: string; path: string }>>
+>();
+
+function getGlobalSchemas(
+  allTools: RuleContext['allTools']
+): Map<string, Array<{ tool: string; path: string }>> {
+  const cached = globalSchemaCache.get(allTools);
+  if (cached) return cached;
+
+  const globalSchemas = new Map<
+    string,
+    Array<{ tool: string; path: string }>
+  >();
+  for (const t of allTools) {
+    for (const schemaInfo of extractPropertySchemas(t.inputSchema)) {
+      if (!globalSchemas.has(schemaInfo.canonical)) {
+        globalSchemas.set(schemaInfo.canonical, []);
+      }
+      globalSchemas.get(schemaInfo.canonical)!.push({
+        tool: t.name,
+        path: schemaInfo.path,
+      });
+    }
+  }
+  globalSchemaCache.set(allTools, globalSchemas);
+  return globalSchemas;
+}
+
 const rule: Rule = {
   id: 'BP-006',
   category: 'best-practice',
@@ -125,24 +183,7 @@ const rule: Rule = {
   check(tool, ctx: RuleContext) {
     const issues: ValidationIssue[] = [];
 
-    // Build a map of all complex schemas across all tools
-    const globalSchemas = new Map<
-      string,
-      Array<{ tool: string; path: string }>
-    >();
-
-    for (const t of ctx.allTools) {
-      const schemas = extractPropertySchemas(t.inputSchema);
-      for (const schemaInfo of schemas) {
-        if (!globalSchemas.has(schemaInfo.canonical)) {
-          globalSchemas.set(schemaInfo.canonical, []);
-        }
-        globalSchemas.get(schemaInfo.canonical)!.push({
-          tool: t.name,
-          path: schemaInfo.path,
-        });
-      }
-    }
+    const globalSchemas = getGlobalSchemas(ctx.allTools);
 
     // Find repeated patterns for the current tool
     const currentSchemas = extractPropertySchemas(tool.inputSchema);

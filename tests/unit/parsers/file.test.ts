@@ -4,8 +4,10 @@
  * Tests for parsing JSON and YAML tool definition files in various formats.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { mkdir, writeFile, rm } from 'node:fs/promises';
 import {
   parseFile,
   detectFormat,
@@ -267,5 +269,29 @@ describe('File Parser', () => {
       // For now, test that detectFormat catches bad extensions
       await expect(parseFile('invalid.xml')).rejects.toThrow('Unsupported file format');
     });
+  });
+});
+
+describe('malformed file content', () => {
+  const tmpBase = join(tmpdir(), `mcp-parser-badcontent-${Date.now()}`);
+
+  beforeEach(async () => {
+    await mkdir(tmpBase, { recursive: true });
+  });
+
+  afterEach(async () => {
+    await rm(tmpBase, { recursive: true, force: true });
+  });
+
+  it('throws a parse error for malformed JSON content', async () => {
+    const filePath = join(tmpBase, 'broken.json');
+    await writeFile(filePath, '{ invalid json !!!');
+    await expect(parseFile(filePath)).rejects.toThrow(/Failed to parse JSON/);
+  });
+
+  it('throws a parse error for malformed YAML content', async () => {
+    const filePath = join(tmpBase, 'broken.yaml');
+    await writeFile(filePath, 'name: [unclosed');
+    await expect(parseFile(filePath)).rejects.toThrow(/Failed to parse YAML/);
   });
 });

@@ -8,6 +8,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { tokenizeIdentifier } from '../utils/text.js';
 
 /**
  * Common action verbs that clearly indicate tool purpose.
@@ -220,7 +221,6 @@ const DESCRIPTIVE_VERBS = [
   'aggregate',
   'summarize',
   'report',
-  'export',
   'dump',
   'stream',
   'pipe',
@@ -229,6 +229,8 @@ const DESCRIPTIVE_VERBS = [
   'multicast',
   'unicast',
 ];
+
+const DESCRIPTIVE_VERB_SET = new Set(DESCRIPTIVE_VERBS);
 
 const rule: Rule = {
   id: 'NAM-005',
@@ -244,13 +246,12 @@ const rule: Rule = {
       return issues;
     }
 
-    // Extract the first segment (before first hyphen)
-    const firstSegment = tool.name.split('-')[0].toLowerCase();
-
-    // Check if the name starts with a descriptive verb
-    const hasDescriptiveVerb = DESCRIPTIVE_VERBS.some(
-      (verb) => firstSegment === verb || firstSegment.startsWith(verb)
-    );
+    // Check if the first token of the name is a descriptive verb.
+    // Exact token equality avoids false passes like "settings-panel"
+    // matching the "set" prefix.
+    const firstToken = tokenizeIdentifier(tool.name)[0];
+    const hasDescriptiveVerb =
+      firstToken !== undefined && DESCRIPTIVE_VERB_SET.has(firstToken);
 
     if (!hasDescriptiveVerb) {
       issues.push({

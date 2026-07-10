@@ -7,35 +7,29 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { makeWordMatcher } from '../utils/text.js';
 
-// Phrases that indicate when to use the tool
+// Phrases that indicate when to use the tool. Only genuinely conditional
+// phrasing counts: bare 'to '/'for ' (and 'use this to', which restates
+// WHAT, not WHEN) match virtually every description and are excluded.
+// Matched as whole words/phrases, not substrings.
 const WHEN_PHRASES = [
   'when',
-  'if ',
-  'use this to',
+  'whenever',
+  'if you',
+  'if the',
+  'if a',
+  'if an',
+  'for cases where',
   'use this for',
-  'use this when',
-  'used to',
   'used for',
-  'used when',
   'useful for',
-  'useful when',
-  'helps to',
-  'helps with',
-  'for ',
-  'in order to',
-  'to ',
-  'allows you to',
-  'enables',
-  'lets you',
   'designed for',
   'intended for',
   'meant for',
   'best for',
   'ideal for',
   'suitable for',
-  'appropriate when',
-  'recommended when',
   'should be used',
   'can be used',
   'typically used',
@@ -46,8 +40,9 @@ const WHEN_PHRASES = [
   'especially useful',
   'particularly useful',
   'helpful for',
-  'helpful when',
 ];
+
+const hasWhenPhraseMatcher = makeWordMatcher(WHEN_PHRASES);
 
 const rule: Rule = {
   id: 'LLM-004',
@@ -63,8 +58,7 @@ const rule: Rule = {
       return issues;
     }
 
-    const descLower = tool.description.toLowerCase();
-    const hasWhenPhrase = WHEN_PHRASES.some(phrase => descLower.includes(phrase));
+    const hasWhenPhrase = hasWhenPhraseMatcher(tool.description);
 
     if (!hasWhenPhrase) {
       issues.push({

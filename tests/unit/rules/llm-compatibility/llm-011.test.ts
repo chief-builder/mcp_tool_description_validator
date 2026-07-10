@@ -105,6 +105,20 @@ describe('LLM-011: Tool description should mention side effects if any', () => {
     expect(issues).toHaveLength(0);
   });
 
+  it('should not flag names where a keyword is only a substring (regression)', () => {
+    // Regression: startsWith/endsWith matched 'set' in settings_list,
+    // 'new' in news_reader, 'add' in address_book
+    const names = ['settings_list', 'news_reader', 'address_book'];
+    for (const name of names) {
+      const tool = createTool({
+        name,
+        description: 'A read-only utility with no data changes mentioned',
+      });
+      const issues = rule.check(tool, createContext([tool]));
+      expect(issues, name).toHaveLength(0);
+    }
+  });
+
   it('should fail for destructive hint without warning', () => {
     const tool = createTool({
       name: 'remove-data',
@@ -128,6 +142,20 @@ describe('LLM-011: Tool description should mention side effects if any', () => {
     });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues.filter(i => i.message.includes('destructive'))).toHaveLength(0);
+  });
+
+  it('should accept inflected destructive words (regression)', () => {
+    // Regression: stems with trailing \b (e.g. \bdelet\b) never matched
+    // "deletes" or "Permanently"
+    const tool = createTool({
+      name: 'delete-record',
+      description: 'Permanently deletes the record',
+      annotations: {
+        destructiveHint: true,
+      },
+    });
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(0);
   });
 
   it('should skip empty descriptions (handled by LLM-001)', () => {

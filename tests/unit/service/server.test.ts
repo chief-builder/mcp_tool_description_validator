@@ -14,7 +14,7 @@ describe('HTTP Service', () => {
     it('should return healthy status', async () => {
       const res = await app.request('/health');
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body.status).toBe('healthy');
       expect(body.version).toBe('0.1.0');
     });
@@ -51,7 +51,7 @@ describe('HTTP Service', () => {
       });
 
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body).toHaveProperty('valid');
       expect(body).toHaveProperty('summary');
       expect(body).toHaveProperty('issues');
@@ -67,7 +67,7 @@ describe('HTTP Service', () => {
       });
 
       expect(res.status).toBe(400);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body.error).toBe('Invalid request: tools array required');
     });
 
@@ -79,7 +79,7 @@ describe('HTTP Service', () => {
       });
 
       expect(res.status).toBe(400);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body.error).toBe('Invalid request: tools array required');
     });
 
@@ -104,7 +104,7 @@ describe('HTTP Service', () => {
       });
 
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body).toHaveProperty('valid');
     });
 
@@ -124,7 +124,7 @@ describe('HTTP Service', () => {
       });
 
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body.tools).toHaveLength(1);
       expect(body.tools[0].tool.source).toBeDefined();
       expect(body.tools[0].tool.source.location).toBe('request[0]');
@@ -151,7 +151,7 @@ describe('HTTP Service', () => {
       });
 
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body.summary.totalTools).toBe(2);
       expect(body.tools).toHaveLength(2);
     });
@@ -164,7 +164,7 @@ describe('HTTP Service', () => {
       });
 
       expect(res.status).toBe(500);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body.error).toBe('Validation failed');
       expect(body).toHaveProperty('message');
     });
@@ -192,7 +192,7 @@ describe('HTTP Service', () => {
       });
 
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body.tools[0].tool.source.type).toBe('server');
       expect(body.tools[0].tool.source.location).toBe('http://example.com/mcp');
     });
@@ -213,7 +213,7 @@ describe('HTTP Service', () => {
       });
 
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as Record<string, any>;
       expect(body.metadata).toHaveProperty('validatorVersion');
       expect(body.metadata).toHaveProperty('mcpSpecVersion');
       expect(body.metadata).toHaveProperty('timestamp');

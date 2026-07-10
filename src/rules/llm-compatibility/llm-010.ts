@@ -7,6 +7,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import { tokenizeIdentifier } from '../utils/text.js';
 
 // Common abbreviations that should be explained
 const ABBREVIATIONS: Record<string, string> = {
@@ -187,66 +188,23 @@ const ABBREVIATIONS: Record<string, string> = {
   'pop3': 'POP3',
 };
 
-// Words that indicate the abbreviation is being explained
-const EXPLANATION_INDICATORS = [
-  'identifier',
-  'number',
-  'string',
-  'configuration',
-  'environment',
-  'source',
-  'destination',
-  'temporary',
-  'password',
-  'directory',
-  'function',
-  'callback',
-  'context',
-  'request',
-  'response',
-  'error',
-  'message',
-  'value',
-  'length',
-  'index',
-  'count',
-  'maximum',
-  'minimum',
-  'average',
-  'authentication',
-  'authorization',
-  'credentials',
-  'permissions',
-  'user',
-  'group',
-  'organization',
-  'repository',
-  'package',
-  'library',
-  'interface',
-  'database',
-  'table',
-  'column',
-  'label',
-  'image',
-  'document',
-  'reference',
-  'attribute',
-  'property',
-  'parameter',
-  'argument',
-  'option',
-  'initialize',
-  'execute',
-  'process',
-  'asynchronous',
-  'synchronous',
-  'buffer',
-  'format',
-  'version',
-  'timestamp',
-  'timezone',
-];
+/**
+ * Precomputed expansion tokens per abbreviation, built once at module load.
+ * An abbreviation counts as explained only when a word from ITS OWN
+ * expansion appears (e.g. 'id' needs 'identifier'; 'cfg' needs
+ * 'configuration'). Abbreviations whose expansion is just themselves
+ * (e.g. 'json', 'cpu') have nothing to expand and are skipped.
+ */
+const ABBREVIATION_EXPANSION_TOKENS = new Map<string, string[]>(
+  Object.entries(ABBREVIATIONS)
+    .map(([abbrev, expansion]): [string, string[]] => [
+      abbrev,
+      tokenizeIdentifier(expansion).filter(
+        (token) => token !== abbrev && token.length >= 3
+      ),
+    ])
+    .filter(([, tokens]) => tokens.length > 0)
+);
 
 interface PropertySchema {
   description?: string;
@@ -254,25 +212,29 @@ interface PropertySchema {
 }
 
 function findUnexplainedAbbreviations(paramName: string, description: string): string[] {
-  const nameLower = paramName.toLowerCase();
-  const descLower = description.toLowerCase();
-  const combinedText = `${nameLower} ${descLower}`;
+  // Tokenize the name so camelCase boundaries survive
+  // (e.g. 'userId' -> ['user', 'id'])
+  const nameTokens = new Set(tokenizeIdentifier(paramName));
+  const combinedTokens = new Set([
+    ...nameTokens,
+    ...tokenizeIdentifier(description),
+  ]);
 
   const found: string[] = [];
 
-  for (const [abbrev] of Object.entries(ABBREVIATIONS)) {
-    // Check if abbreviation appears as a standalone word or at word boundary
-    const regex = new RegExp(`\\b${abbrev}\\b`, 'i');
+  for (const [abbrev, expansionTokens] of ABBREVIATION_EXPANSION_TOKENS) {
+    if (!nameTokens.has(abbrev)) {
+      continue;
+    }
 
-    if (regex.test(nameLower)) {
-      // Check if explanation is present in the combined text
-      const hasExplanation = EXPLANATION_INDICATORS.some(indicator =>
-        combinedText.includes(indicator.toLowerCase())
-      );
+    // Explained only if a word from this abbreviation's own expansion
+    // appears in the name or description
+    const hasExplanation = expansionTokens.some((token) =>
+      combinedTokens.has(token)
+    );
 
-      if (!hasExplanation) {
-        found.push(abbrev);
-      }
+    if (!hasExplanation) {
+      found.push(abbrev);
     }
   }
 

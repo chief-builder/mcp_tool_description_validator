@@ -116,9 +116,14 @@ function toToolDefinition(
 ): ToolDefinition {
   return {
     name: raw.name as string,
+    // Optional draft-spec surface; untrusted input, rules validate shapes
+    title: raw.title as ToolDefinition['title'],
     description: raw.description as string,
+    icons: raw.icons as ToolDefinition['icons'],
     inputSchema: raw.inputSchema as Record<string, unknown>,
+    outputSchema: raw.outputSchema as ToolDefinition['outputSchema'],
     annotations: raw.annotations as ToolDefinition['annotations'],
+    _meta: raw._meta as ToolDefinition['_meta'],
     source: {
       ...source,
       raw: raw,

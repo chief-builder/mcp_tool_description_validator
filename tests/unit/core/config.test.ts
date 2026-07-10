@@ -15,6 +15,7 @@ import {
   getDefaultRules,
   isRuleEnabled,
   getRuleSeverity,
+  resolveConfig,
 } from '../../../src/core/config.js';
 import type { ValidatorConfig, RuleConfig } from '../../../src/types/index.js';
 
@@ -33,7 +34,7 @@ describe('Configuration System', () => {
 
       // Check some representative rules from each category
       expect(config.rules['SCH-001']).toBe(true);
-      expect(config.rules['NAM-001']).toBe(true);
+      expect(config.rules['NAM-002']).toBe(true);
       expect(config.rules['SEC-001']).toBe(true);
       expect(config.rules['LLM-001']).toBe(true);
       expect(config.rules['BP-001']).toBe(true);
@@ -51,6 +52,12 @@ describe('Configuration System', () => {
       const config = getDefaultConfig();
 
       expect(config.llm).toBeUndefined();
+    });
+
+    it('should default specVersion to 2025-11-25', () => {
+      const config = getDefaultConfig();
+
+      expect(config.specVersion).toBe('2025-11-25');
     });
 
     it('should return a new object each time (no mutation)', () => {
@@ -181,6 +188,11 @@ describe('Configuration System', () => {
       });
 
       expect(merged.llm).toBeUndefined();
+    });
+
+    it('should preserve a user specVersion and default otherwise', () => {
+      expect(mergeConfig({}).specVersion).toBe('2025-11-25');
+      expect(mergeConfig({ specVersion: 'draft' }).specVersion).toBe('draft');
     });
   });
 
@@ -424,5 +436,77 @@ llm:
       expect(result.config.llm?.model).toBe('claude-3-haiku-20240307');
       expect(result.config.llm?.timeout).toBe(60000);
     });
+  });
+});
+
+describe('resolveConfig()', () => {
+  it('overlays CLI overrides per-section without clobbering file rules', async () => {
+    const tmpBase = join(tmpdir(), `mcp-resolve-${Date.now()}`);
+    await mkdir(tmpBase, { recursive: true });
+    const configPath = join(tmpBase, 'mcp-validate.config.yaml');
+    await writeFile(
+      configPath,
+      ['rules:', '  SEC-001: false', 'output:', '  format: json'].join('\n')
+    );
+
+    try {
+      const { config } = await resolveConfig(configPath, {
+        rules: { 'LLM-002': 'error' },
+        output: {},
+      });
+
+      // File rule survives the CLI override merge
+      expect(config.rules['SEC-001']).toBe(false);
+      // CLI rule override applies
+      expect(config.rules['LLM-002']).toBe('error');
+      // File output setting survives an empty CLI output section
+      expect(config.output.format).toBe('json');
+    } finally {
+      await rm(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  it('loads specVersion from a config file and lets overrides win', async () => {
+    const tmpBase = join(tmpdir(), `mcp-resolve-spec-${Date.now()}`);
+    await mkdir(tmpBase, { recursive: true });
+    const configPath = join(tmpBase, 'mcp-validate.config.yaml');
+    await writeFile(configPath, ['specVersion: draft'].join('\n'));
+
+    try {
+      // File value survives when no override is given
+      const fromFile = await resolveConfig(configPath);
+      expect(fromFile.config.specVersion).toBe('draft');
+
+      // Explicit override wins over the file
+      const overridden = await resolveConfig(configPath, {
+        specVersion: '2025-11-25',
+      });
+      expect(overridden.config.specVersion).toBe('2025-11-25');
+
+      // Invalid values are rejected
+      const badPath = join(tmpBase, 'bad.config.yaml');
+      await writeFile(badPath, ['specVersion: 2099-01-01'].join('\n'));
+      await expect(resolveConfig(badPath)).rejects.toThrow(/Invalid configuration/);
+    } finally {
+      await rm(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  it('normalizes off/on strings and rejects unknown keys', async () => {
+    const tmpBase = join(tmpdir(), `mcp-resolve2-${Date.now()}`);
+    await mkdir(tmpBase, { recursive: true });
+
+    try {
+      const okPath = join(tmpBase, 'ok.config.yaml');
+      await writeFile(okPath, ['rules:', '  BP-001: "off"'].join('\n'));
+      const { config } = await resolveConfig(okPath);
+      expect(config.rules['BP-001']).toBe(false);
+
+      const badPath = join(tmpBase, 'bad.config.yaml');
+      await writeFile(badPath, ['minScore: 70'].join('\n'));
+      await expect(resolveConfig(badPath)).rejects.toThrow(/Invalid configuration/);
+    } finally {
+      await rm(tmpBase, { recursive: true, force: true });
+    }
   });
 });

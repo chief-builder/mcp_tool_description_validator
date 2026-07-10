@@ -56,6 +56,7 @@ import {
   getToolDefinitions,
   disconnect,
   fetchToolsFromServer,
+  parseCommand,
   type MCPConnection,
   type ServerConfig,
 } from '../../../src/parsers/mcp-client.js';
@@ -431,5 +432,23 @@ describe('MCP Client', () => {
       await expect(fetchToolsFromServer(config)).rejects.toThrow('List tools failed');
       expect(mockClientInstance.close).toHaveBeenCalled();
     });
+  });
+});
+
+describe('parseCommand', () => {
+  it('splits a simple command on whitespace', () => {
+    expect(parseCommand('node server.js --flag')).toEqual(['node', 'server.js', '--flag']);
+  });
+
+  it('honors double-quoted arguments containing spaces', () => {
+    expect(parseCommand('node "my server.js" --flag')).toEqual(['node', 'my server.js', '--flag']);
+  });
+
+  it("honors single-quoted arguments containing spaces", () => {
+    expect(parseCommand("python '/tmp/my dir/server.py'")).toEqual(['python', '/tmp/my dir/server.py']);
+  });
+
+  it('returns empty array for blank input', () => {
+    expect(parseCommand('   ')).toEqual([]);
   });
 });

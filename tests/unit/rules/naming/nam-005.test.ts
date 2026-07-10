@@ -184,6 +184,19 @@ describe('NAM-005: Tool name should use descriptive verbs', () => {
       expect(issues).toHaveLength(1);
     });
 
+    it('should fail when first token merely starts with a verb', () => {
+      // Regression: startsWith('set') let "settings-panel" pass
+      const tool = createTool('settings-panel');
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(1);
+    });
+
+    it('should fail for snake_case name with verb-prefixed noun', () => {
+      const tool = createTool('address_book');
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(1);
+    });
+
     it('should provide helpful suggestion', () => {
       const tool = createTool('user-data');
       const issues = rule.check(tool, createContext());
@@ -221,6 +234,11 @@ describe('NAM-005: Tool name should use descriptive verbs', () => {
       const tool = createTool('list');
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(0);
+    });
+
+    it('should handle snake_case and camelCase verb prefixes', () => {
+      expect(rule.check(createTool('get_user'), createContext())).toHaveLength(0);
+      expect(rule.check(createTool('getUser'), createContext())).toHaveLength(0);
     });
   });
 });

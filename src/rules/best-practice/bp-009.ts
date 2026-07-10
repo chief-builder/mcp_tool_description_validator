@@ -57,7 +57,8 @@ const rule: Rule = {
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
-    const raw = tool.source.raw as Record<string, unknown> | undefined;
+    // raw is unknown and may be a primitive; 'in' on a non-object throws
+    const raw = isObject(tool.source.raw) ? tool.source.raw : undefined;
 
     // Check if outputSchema exists
     if (!raw || !('outputSchema' in raw)) {

@@ -6,6 +6,7 @@
 
 import type { Rule } from '../types.js';
 import type { ValidationIssue, JSONSchema } from '../../types/index.js';
+import { MAX_SCHEMA_DEPTH } from '../utils/schema-walker.js';
 
 /**
  * Maximum recommended schema depth.
@@ -15,9 +16,12 @@ const MAX_DEPTH = 4;
 /**
  * Calculate the maximum depth of a JSON schema.
  * Depth is counted by nesting levels through properties and items.
+ * Traversal is hard-bounded: anything deeper than MAX_SCHEMA_DEPTH is
+ * already far past the recommended limit, and unbounded recursion over an
+ * untrusted schema would overflow the stack.
  */
 function getSchemaDepth(schema: unknown, depth: number = 0): number {
-  if (!schema || typeof schema !== 'object') {
+  if (!schema || typeof schema !== 'object' || depth > MAX_SCHEMA_DEPTH) {
     return depth;
   }
 
@@ -69,7 +73,7 @@ function findDeepestPath(
   depth: number = 0,
   targetDepth: number = 0
 ): string {
-  if (!schema || typeof schema !== 'object') {
+  if (!schema || typeof schema !== 'object' || depth > MAX_SCHEMA_DEPTH) {
     return currentPath;
   }
 

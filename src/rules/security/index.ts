@@ -16,6 +16,7 @@ import sec007 from './sec-007.js';
 import sec008 from './sec-008.js';
 import sec009 from './sec-009.js';
 import sec010 from './sec-010.js';
+import sec011 from './sec-011.js';
 
 export {
   sec001,
@@ -28,6 +29,7 @@ export {
   sec008,
   sec009,
   sec010,
+  sec011,
 };
 
 // Re-export helper function for cross-rule use
@@ -47,6 +49,7 @@ export const securityRules: Rule[] = [
   sec008,
   sec009,
   sec010,
+  sec011,
 ];
 
 export default securityRules;

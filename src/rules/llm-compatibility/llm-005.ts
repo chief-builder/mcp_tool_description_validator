@@ -22,8 +22,6 @@ const EXAMPLE_PATTERNS = [
   'including',
   'sample',
   '```',  // Code block
-  '"',    // Quoted example
-  "'",    // Quoted example
 ];
 
 // Regex patterns for detecting example-like content
@@ -32,6 +30,8 @@ const EXAMPLE_REGEXES = [
   /\b\w+:\s*["'][^"']+["']/,     // key: "value" or key: 'value'
   /`[^`]+`/,                      // `inline code`
   /\(\s*e\.?g\.?\s+/i,           // (e.g. or (eg
+  /"[^"]+"/,                      // "quoted example" (requires a pair)
+  /'[^']{2,}'/,                   // 'quoted example' (pair; skips apostrophes like "user's")
 ];
 
 const rule: Rule = {

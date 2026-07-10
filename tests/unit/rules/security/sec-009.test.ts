@@ -7,10 +7,12 @@ import rule from '../../../../src/rules/security/sec-009.js';
 import type { ToolDefinition } from '../../../../src/types/index.js';
 import type { RuleContext } from '../../../../src/rules/types.js';
 
+// Root closes additionalProperties so nested-parameter cases are isolated;
+// the root-level check has its own describe block below.
 const createTool = (properties: Record<string, unknown>): ToolDefinition => ({
   name: 'test-tool',
   description: 'Test tool description',
-  inputSchema: { type: 'object', properties },
+  inputSchema: { type: 'object', properties, additionalProperties: false },
   source: { type: 'file', location: 'test.json', raw: {} },
 });
 
@@ -130,6 +132,34 @@ describe('SEC-009: Object parameters with additionalProperties: true need justif
       });
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(0);
+    });
+  });
+
+  describe('root inputSchema', () => {
+    it('suggests closing an open root schema that declares properties', () => {
+      const tool: ToolDefinition = {
+        name: 'test-tool',
+        description: 'Test tool description',
+        inputSchema: {
+          type: 'object',
+          properties: { name: { type: 'string', maxLength: 10 } },
+        },
+        source: { type: 'file', location: 'test.json', raw: {} },
+      };
+      const issues = rule.check(tool, createContext());
+      expect(issues).toHaveLength(1);
+      expect(issues[0].path).toBe('inputSchema');
+      expect(issues[0].severity).toBe('suggestion');
+    });
+
+    it('does not flag a bare parameterless root schema', () => {
+      const tool: ToolDefinition = {
+        name: 'test-tool',
+        description: 'Test tool description',
+        inputSchema: { type: 'object' },
+        source: { type: 'file', location: 'test.json', raw: {} },
+      };
+      expect(rule.check(tool, createContext())).toHaveLength(0);
     });
   });
 });

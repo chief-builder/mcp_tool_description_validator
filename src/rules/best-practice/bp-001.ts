@@ -1,7 +1,9 @@
 /**
- * BP-001: Consider adding title annotation for display purposes
+ * BP-001: Consider adding a title for display purposes
  *
- * Checks if tool has a title annotation for better UI display.
+ * Checks if tool has a human-readable display name. The spec-preferred
+ * location is the top-level `title` field; `annotations.title` is also
+ * accepted (top-level `title` takes precedence for display).
  */
 
 import type { Rule } from '../types.js';
@@ -11,19 +13,20 @@ const rule: Rule = {
   id: 'BP-001',
   category: 'best-practice',
   defaultSeverity: 'suggestion',
-  description: 'Consider adding title annotation for display purposes',
+  description: 'Consider adding a title for display purposes',
 
   check(tool) {
     const issues: ValidationIssue[] = [];
 
-    if (!tool.annotations?.title) {
+    if (!tool.title && !tool.annotations?.title) {
       issues.push({
         id: 'BP-001',
         category: 'best-practice',
         severity: this.defaultSeverity,
-        message: 'Tool is missing title annotation for display purposes',
+        message: 'Tool is missing a title for display purposes',
         tool: tool.name,
-        suggestion: 'Add annotations.title with a human-friendly name',
+        suggestion:
+          'Add a top-level `title` field with a human-friendly name (preferred over annotations.title)',
       });
     }
 

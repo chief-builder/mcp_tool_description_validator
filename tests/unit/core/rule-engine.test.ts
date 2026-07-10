@@ -607,3 +607,62 @@ describe('Rule Engine', () => {
     });
   });
 });
+
+describe('hostile tool definitions', () => {
+  it('isolates a crashing rule instead of aborting the run', () => {
+    const crashingRule: Rule = {
+      id: 'TEST-CRASH',
+      category: 'schema',
+      defaultSeverity: 'warning',
+      description: 'always throws',
+      check() {
+        throw new Error('boom');
+      },
+    };
+    const okRule: Rule = {
+      id: 'TEST-OK',
+      category: 'schema',
+      defaultSeverity: 'suggestion',
+      description: 'always fires',
+      check(tool) {
+        return [
+          {
+            id: 'TEST-OK',
+            category: 'schema',
+            severity: 'suggestion',
+            message: 'ok',
+            tool: tool.name,
+          },
+        ];
+      },
+    };
+
+    const results = executeRules([createMockTool()], [crashingRule, okRule], {});
+    const issues = results[0].issues;
+
+    // The crash became a finding and the other rule still ran
+    expect(issues.some((i) => i.id === 'TEST-CRASH' && i.severity === 'error')).toBe(true);
+    expect(issues.some((i) => i.id === 'TEST-OK')).toBe(true);
+  });
+
+  it('preserves per-issue severity unless config overrides the rule', () => {
+    const escalatingRule: Rule = {
+      id: 'TEST-ESC',
+      category: 'schema',
+      defaultSeverity: 'suggestion',
+      description: 'escalates one finding',
+      check(tool) {
+        return [
+          { id: 'TEST-ESC', category: 'schema', severity: 'warning', message: 'escalated', tool: tool.name },
+          { id: 'TEST-ESC', category: 'schema', severity: 'suggestion', message: 'normal', tool: tool.name },
+        ];
+      },
+    };
+
+    const kept = executeRules([createMockTool()], [escalatingRule], {});
+    expect(kept[0].issues.map((i) => i.severity)).toEqual(['warning', 'suggestion']);
+
+    const overridden = executeRules([createMockTool()], [escalatingRule], { 'TEST-ESC': 'error' });
+    expect(overridden[0].issues.map((i) => i.severity)).toEqual(['error', 'error']);
+  });
+});

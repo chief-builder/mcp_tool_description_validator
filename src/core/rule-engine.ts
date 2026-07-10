@@ -14,7 +14,6 @@ import type {
   IssueSeverity,
   MaturityLevel,
 } from '../types/index.js';
-import { getEffectiveSeverity } from './rule-loader.js';
 
 /**
  * Execute all loaded rules against a set of tools.
@@ -38,15 +37,35 @@ export function executeRules(
         ruleConfig: config[rule.id] ?? true,
       };
 
-      const ruleIssues = rule.check(tool, ctx);
-
-      // Apply effective severity from config
-      const effectiveSeverity = getEffectiveSeverity(rule, config);
-      for (const issue of ruleIssues) {
+      // Rules run over untrusted tool definitions; one pathological tool
+      // must not abort the whole run. A crash becomes a finding instead.
+      let ruleIssues: ValidationIssue[];
+      try {
+        ruleIssues = rule.check(tool, ctx);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
         issues.push({
-          ...issue,
-          severity: effectiveSeverity,
+          id: rule.id,
+          category: rule.category,
+          severity: 'error',
+          message: `Rule ${rule.id} failed to execute: ${message}`,
+          tool: tool.name,
+          suggestion:
+            'The tool definition may be malformed (e.g. non-object property schemas or excessive nesting). Other rules still ran.',
         });
+        continue;
+      }
+
+      // Config may override severity for the whole rule; otherwise keep
+      // the severity each issue was emitted with (rules may escalate
+      // individual findings above their default severity).
+      const configured = config[rule.id];
+      const severityOverride =
+        typeof configured === 'string' ? configured : undefined;
+      for (const issue of ruleIssues) {
+        issues.push(
+          severityOverride ? { ...issue, severity: severityOverride } : issue
+        );
       }
     }
 
