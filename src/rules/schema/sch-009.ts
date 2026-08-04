@@ -24,10 +24,10 @@ const rule: Rule = {
   id: 'SCH-009',
   category: 'schema',
   defaultSeverity: 'error',
-  specVersions: ['draft'],
+  specVersions: ['2026-07-28'],
   description: '$ref must not resolve to a network URI',
   documentation:
-    'https://modelcontextprotocol.io/specification/draft/basic/index#ref-resolution',
+    'https://modelcontextprotocol.io/specification/2026-07-28/basic/index#ref-resolution',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];

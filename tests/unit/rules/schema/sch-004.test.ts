@@ -194,4 +194,72 @@ describe('SCH-004: inputSchema must be valid JSON Schema', () => {
       expect(issues[0].path).toBe('inputSchema.$schema');
     });
   });
+
+  describe('outputSchema', () => {
+    it('should accept any valid JSON Schema 2020-12 shape', () => {
+      const tool: ToolDefinition = {
+        name: 'test-tool',
+        description: 'A test tool',
+        inputSchema: { type: 'object' },
+        outputSchema: {
+          oneOf: [
+            { type: 'string' },
+            { type: 'array', items: { type: 'integer' } },
+          ],
+        },
+        source: mockSource,
+      };
+
+      expect(rule.check(tool, createContext(tool))).toHaveLength(0);
+    });
+
+    it('should reject an invalid outputSchema', () => {
+      const tool: ToolDefinition = {
+        name: 'test-tool',
+        description: 'A test tool',
+        inputSchema: { type: 'object' },
+        outputSchema: {
+          properties: { value: { type: 'not-a-json-schema-type' } },
+        },
+        source: mockSource,
+      };
+
+      const issues = rule.check(tool, createContext(tool));
+      expect(issues).toHaveLength(1);
+      expect(issues[0].path).toBe('outputSchema');
+      expect(issues[0].severity).toBe('error');
+    });
+
+    it('should reject a non-object outputSchema', () => {
+      const tool = {
+        name: 'test-tool',
+        inputSchema: { type: 'object' },
+        outputSchema: [],
+        source: mockSource,
+      } as unknown as ToolDefinition;
+
+      const issues = rule.check(tool, createContext(tool));
+      expect(issues).toHaveLength(1);
+      expect(issues[0].message).toContain('JSON Schema object');
+    });
+  });
+
+  it('should reject schemas that exceed bounded validation depth', () => {
+    let deepSchema: Record<string, unknown> = { type: 'string' };
+    for (let index = 0; index < 60; index++) {
+      deepSchema = {
+        type: 'object',
+        properties: { nested: deepSchema },
+      };
+    }
+    const tool: ToolDefinition = {
+      name: 'deep-tool',
+      inputSchema: deepSchema,
+      source: mockSource,
+    };
+
+    const issues = rule.check(tool, createContext(tool));
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain('resource limits');
+  });
 });

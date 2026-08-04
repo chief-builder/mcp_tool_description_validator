@@ -1,7 +1,7 @@
 /**
  * Schema Rules Barrel Export
  *
- * Exports all schema validation rules (SCH-001 through SCH-010).
+ * Exports all schema validation rules (SCH-001 through SCH-011).
  */
 
 import type { Rule } from '../types.js';
@@ -16,6 +16,7 @@ import sch007 from './sch-007.js';
 import sch008 from './sch-008.js';
 import sch009 from './sch-009.js';
 import sch010 from './sch-010.js';
+import sch011 from './sch-011.js';
 
 export {
   sch001 as SCH_001,
@@ -28,6 +29,7 @@ export {
   sch008 as SCH_008,
   sch009 as SCH_009,
   sch010 as SCH_010,
+  sch011 as SCH_011,
 };
 
 /**
@@ -44,6 +46,7 @@ export const schemaRules: Rule[] = [
   sch008,
   sch009,
   sch010,
+  sch011,
 ];
 
 export default schemaRules;

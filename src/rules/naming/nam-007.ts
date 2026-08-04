@@ -1,5 +1,5 @@
 /**
- * NAM-007: Tool names must be unique within a server
+ * NAM-007: Tool names should be unique within a server
  *
  * The MCP specification says tool names SHOULD be unique within a server
  * (comparison is case-sensitive). This rule reports an error on every
@@ -14,16 +14,16 @@ import type { ValidationIssue } from '../../types/index.js';
 const rule: Rule = {
   id: 'NAM-007',
   category: 'naming',
-  defaultSeverity: 'error',
-  description: 'Tool names must be unique within a server',
+  defaultSeverity: 'warning',
+  description: 'Tool names should be unique within a server',
   documentation:
-    'https://modelcontextprotocol.io/specification/draft/server/tools#tool-names',
+    'https://modelcontextprotocol.io/specification/2026-07-28/server/tools#tool-names',
 
   check(tool, ctx) {
     const issues: ValidationIssue[] = [];
 
     // Skip if name is empty (handled by SCH-001)
-    if (!tool.name || tool.name.trim() === '') {
+    if (typeof tool.name !== 'string' || tool.name.trim() === '') {
       return issues;
     }
 

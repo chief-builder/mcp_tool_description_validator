@@ -33,7 +33,7 @@ describe('Validator Integration', () => {
       const result = await validate(tools);
 
       expect(result.metadata.validatorVersion).toBe('0.1.0');
-      expect(result.metadata.mcpSpecVersion).toBe('2025-11-25');
+      expect(result.metadata.mcpSpecVersion).toBe('2026-07-28');
       expect(result.tools).toHaveLength(1);
       expect(result.summary.totalTools).toBe(1);
       expect(typeof result.metadata.duration).toBe('number');

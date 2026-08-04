@@ -81,8 +81,8 @@ export function detectToolFormat(data: unknown): ToolFormat {
       return 'array';
     }
 
-    // Single tool has name, description, inputSchema
-    if ('name' in obj && 'description' in obj && 'inputSchema' in obj) {
+    // Description is optional in MCP 2026-07-28.
+    if ('name' in obj && 'inputSchema' in obj) {
       return 'single';
     }
   }
@@ -101,7 +101,6 @@ function isToolLike(obj: unknown): obj is Record<string, unknown> {
   const record = obj as Record<string, unknown>;
   return (
     typeof record.name === 'string' &&
-    typeof record.description === 'string' &&
     typeof record.inputSchema === 'object' &&
     record.inputSchema !== null
   );
@@ -116,9 +115,9 @@ function toToolDefinition(
 ): ToolDefinition {
   return {
     name: raw.name as string,
-    // Optional draft-spec surface; untrusted input, rules validate shapes
+    // Optional finalized-spec surface; untrusted input, rules validate shapes
     title: raw.title as ToolDefinition['title'],
-    description: raw.description as string,
+    description: raw.description as ToolDefinition['description'],
     icons: raw.icons as ToolDefinition['icons'],
     inputSchema: raw.inputSchema as Record<string, unknown>,
     outputSchema: raw.outputSchema as ToolDefinition['outputSchema'],
@@ -160,7 +159,7 @@ export function normalizeToToolDefinitions(
     case 'single': {
       if (!isToolLike(data)) {
         throw new Error(
-          `Invalid tool definition in "${sourcePath}": expected object with name, description, and inputSchema properties.`
+          `Invalid tool definition in "${sourcePath}": expected object with name and inputSchema properties.`
         );
       }
       return [toToolDefinition(data, source)];
@@ -185,7 +184,7 @@ export function normalizeToToolDefinitions(
       return tools.map((tool, index) => {
         if (!isToolLike(tool)) {
           throw new Error(
-            `Invalid tool definition at index ${index} in "${sourcePath}": expected object with name, description, and inputSchema properties.`
+            `Invalid tool definition at index ${index} in "${sourcePath}": expected object with name and inputSchema properties.`
           );
         }
         return toToolDefinition(tool, source);
@@ -209,7 +208,7 @@ export function normalizeToToolDefinitions(
       return tools.map((tool, index) => {
         if (!isToolLike(tool)) {
           throw new Error(
-            `Invalid tool definition at index ${index} in manifest "${sourcePath}": expected object with name, description, and inputSchema properties.`
+            `Invalid tool definition at index ${index} in manifest "${sourcePath}": expected object with name and inputSchema properties.`
           );
         }
         return toToolDefinition(tool, source);

@@ -193,7 +193,7 @@ export async function analyzeTool(
 
   const prompt = buildAnalysisPrompt(
     tool.name,
-    tool.description,
+    tool.description ?? '',
     formatParameters(tool.inputSchema)
   );
 

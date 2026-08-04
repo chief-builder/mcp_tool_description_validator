@@ -1,7 +1,7 @@
 /**
  * SEC-011: Sensitive parameters must not be exposed as HTTP headers
  *
- * The DRAFT MCP spec's x-mcp-header extension maps a parameter to an
+ * The MCP spec's x-mcp-header extension maps a parameter to an
  * Mcp-Param-{name} HTTP header. Header values are visible to network
  * intermediaries (proxies, gateways, logs), so servers SHOULD NOT mark
  * sensitive parameters (passwords, API keys, tokens, PII) with
@@ -19,9 +19,10 @@ const rule: Rule = {
   id: 'SEC-011',
   category: 'security',
   defaultSeverity: 'error',
-  specVersions: ['draft'],
+  specVersions: ['2026-07-28'],
   description: 'Sensitive parameters must not be exposed via x-mcp-header',
-  documentation: 'https://modelcontextprotocol.io/specification/draft',
+  documentation:
+    'https://modelcontextprotocol.io/specification/2026-07-28/server/tools#x-mcp-header',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];

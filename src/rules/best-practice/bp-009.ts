@@ -53,7 +53,8 @@ const rule: Rule = {
   category: 'best-practice',
   defaultSeverity: 'suggestion',
   description: 'Consider providing outputSchema for better output validation and parsing',
-  documentation: 'https://modelcontextprotocol.io/specification/2025-11-25#tools',
+  documentation:
+    'https://modelcontextprotocol.io/specification/2026-07-28/server/tools#output-schema',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];

@@ -28,7 +28,7 @@ describe('SEC-011: sensitive parameter exposed as header', () => {
     expect(rule.id).toBe('SEC-011');
     expect(rule.category).toBe('security');
     expect(rule.defaultSeverity).toBe('error');
-    expect(rule.specVersions).toEqual(['draft']);
+    expect(rule.specVersions).toEqual(['2026-07-28']);
   });
 
   it('should flag a sensitive parameter carrying x-mcp-header', () => {

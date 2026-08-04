@@ -12,18 +12,19 @@ const rule: Rule = {
   category: 'schema',
   defaultSeverity: 'error',
   description: 'Tool must have a name field',
-  documentation: 'https://modelcontextprotocol.io/specification/2025-11-25#tools',
+  documentation:
+    'https://modelcontextprotocol.io/specification/2026-07-28/server/tools#tool',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
 
-    if (!tool.name || (typeof tool.name === 'string' && tool.name.trim() === '')) {
+    if (typeof tool.name !== 'string' || tool.name.trim() === '') {
       issues.push({
         id: 'SCH-001',
         category: 'schema',
         severity: this.defaultSeverity,
-        message: 'Tool is missing required "name" field',
-        tool: tool.name || '(unnamed)',
+        message: 'Tool must include a non-empty string "name" field',
+        tool: typeof tool.name === 'string' && tool.name ? tool.name : '(unnamed)',
         path: 'name',
         suggestion: 'Add a descriptive name for the tool using kebab-case (e.g., "get-user-profile")',
         documentation: this.documentation,

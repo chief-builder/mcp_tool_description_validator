@@ -9,7 +9,7 @@ function createContext(tool: ToolDefinition): RuleContext {
   return { allTools: [tool], ruleConfig: true };
 }
 
-describe('SCH-002: Tool must have a description field', () => {
+describe('SCH-002: Tool description shape', () => {
   it('should have correct rule metadata', () => {
     expect(rule.id).toBe('SCH-002');
     expect(rule.category).toBe('schema');
@@ -28,7 +28,7 @@ describe('SCH-002: Tool must have a description field', () => {
     expect(issues).toHaveLength(0);
   });
 
-  it('should fail when tool has empty description', () => {
+  it('should allow an empty description because the field is optional text', () => {
     const tool: ToolDefinition = {
       name: 'test-tool',
       description: '',
@@ -37,13 +37,10 @@ describe('SCH-002: Tool must have a description field', () => {
     };
 
     const issues = rule.check(tool, createContext(tool));
-    expect(issues).toHaveLength(1);
-    expect(issues[0].id).toBe('SCH-002');
-    expect(issues[0].severity).toBe('error');
-    expect(issues[0].tool).toBe('test-tool');
+    expect(issues).toHaveLength(0);
   });
 
-  it('should fail when tool has whitespace-only description', () => {
+  it('should allow a whitespace-only string at the schema layer', () => {
     const tool: ToolDefinition = {
       name: 'test-tool',
       description: '   \t\n  ',
@@ -52,19 +49,32 @@ describe('SCH-002: Tool must have a description field', () => {
     };
 
     const issues = rule.check(tool, createContext(tool));
-    expect(issues).toHaveLength(1);
-    expect(issues[0].id).toBe('SCH-002');
+    expect(issues).toHaveLength(0);
   });
 
-  it('should include path and suggestion in issue', () => {
+  it('should allow an omitted description', () => {
     const tool: ToolDefinition = {
       name: 'test-tool',
-      description: '',
       inputSchema: { type: 'object' },
       source: mockSource,
     };
 
     const issues = rule.check(tool, createContext(tool));
+    expect(issues).toHaveLength(0);
+  });
+
+  it('should reject a non-string description', () => {
+    const tool = {
+      name: 'test-tool',
+      description: 42,
+      inputSchema: { type: 'object' },
+      source: mockSource,
+    } as unknown as ToolDefinition;
+
+    const issues = rule.check(tool, createContext(tool));
+    expect(issues).toHaveLength(1);
+    expect(issues[0].id).toBe('SCH-002');
+    expect(issues[0].severity).toBe('error');
     expect(issues[0].path).toBe('description');
     expect(issues[0].suggestion).toBeDefined();
     expect(issues[0].documentation).toBeDefined();

@@ -1,5 +1,5 @@
 /**
- * NAM-002: Tool name must match the MCP spec grammar
+ * NAM-002: Tool name should follow the MCP spec recommendations
  *
  * The MCP specification says tool names SHOULD be 1-128 characters and
  * contain only the characters [A-Za-z0-9_.-]. Names are case-sensitive.
@@ -22,16 +22,16 @@ const VALID_NAME_REGEX = /^[A-Za-z0-9_.-]+$/;
 const rule: Rule = {
   id: 'NAM-002',
   category: 'naming',
-  defaultSeverity: 'error',
-  description: 'Tool name must be 1-128 characters using only [A-Za-z0-9_.-]',
+  defaultSeverity: 'warning',
+  description: 'Tool name should be 1-128 characters using only [A-Za-z0-9_.-]',
   documentation:
-    'https://modelcontextprotocol.io/specification/draft/server/tools#tool-names',
+    'https://modelcontextprotocol.io/specification/2026-07-28/server/tools#tool-names',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
 
     // Skip if name is empty (handled by SCH-001)
-    if (!tool.name || tool.name.trim() === '') {
+    if (typeof tool.name !== 'string' || tool.name.trim() === '') {
       return issues;
     }
 
@@ -40,7 +40,7 @@ const rule: Rule = {
         id: 'NAM-002',
         category: 'naming',
         severity: this.defaultSeverity,
-        message: `Tool name is ${tool.name.length} characters long; the MCP spec limits names to ${MAX_NAME_LENGTH} characters`,
+        message: `Tool name is ${tool.name.length} characters long; the MCP spec recommends at most ${MAX_NAME_LENGTH} characters`,
         tool: tool.name,
         path: 'name',
         suggestion: `Shorten the tool name to at most ${MAX_NAME_LENGTH} characters`,
@@ -56,9 +56,9 @@ const rule: Rule = {
         id: 'NAM-002',
         category: 'naming',
         severity: this.defaultSeverity,
-        message: `Tool name "${tool.name}" contains illegal character(s): ${illegalChars
+        message: `Tool name "${tool.name}" contains discouraged character(s): ${illegalChars
           .map((c) => JSON.stringify(c))
-          .join(', ')}. The MCP spec allows only letters, digits, underscores, dots, and hyphens`,
+          .join(', ')}. The MCP spec recommends only letters, digits, underscores, dots, and hyphens`,
         tool: tool.name,
         path: 'name',
         suggestion:

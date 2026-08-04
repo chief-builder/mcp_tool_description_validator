@@ -30,7 +30,7 @@ const DEFAULT_OUTPUT: OutputConfig = {
 /**
  * Default MCP spec version to validate against
  */
-const DEFAULT_SPEC_VERSION: MCPSpecVersion = '2025-11-25';
+const DEFAULT_SPEC_VERSION: MCPSpecVersion = '2026-07-28';
 
 /**
  * Default rule configurations (all rules enabled with default severities)
@@ -47,6 +47,7 @@ const DEFAULT_RULES: RuleConfig = {
   'SCH-008': true,
   'SCH-009': true,
   'SCH-010': true,
+  'SCH-011': true,
 
   // Naming rules (NAM-xxx)
   'NAM-002': true,
@@ -188,7 +189,7 @@ const nullableSection = <T extends z.ZodType>(schema: T) =>
 const userConfigSchema = z.strictObject({
   rules: nullableSection(z.record(z.string(), ruleSettingSchema)),
   output: nullableSection(outputSchema),
-  specVersion: z.enum(['2025-11-25', 'draft']).optional(),
+  specVersion: z.enum(['2025-11-25', '2026-07-28']).optional(),
   llm: nullableSection(llmSchema),
 });
 

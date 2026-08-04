@@ -29,7 +29,7 @@ describe('NAM-007: Tool names must be unique within a server', () => {
   it('should have correct metadata', () => {
     expect(rule.id).toBe('NAM-007');
     expect(rule.category).toBe('naming');
-    expect(rule.defaultSeverity).toBe('error');
+    expect(rule.defaultSeverity).toBe('warning');
   });
 
   it('should pass when all names are unique', () => {
@@ -41,7 +41,7 @@ describe('NAM-007: Tool names must be unique within a server', () => {
     expect(results.flat()).toHaveLength(0);
   });
 
-  it('should report an error on the 2nd+ occurrence of a duplicate name', () => {
+  it('should report a warning on the 2nd+ occurrence of a duplicate name', () => {
     const results = checkAll([
       createTool('read_file'),
       createTool('read_file'),
@@ -50,10 +50,10 @@ describe('NAM-007: Tool names must be unique within a server', () => {
     // First occurrence is not reported
     expect(results[0]).toHaveLength(0);
 
-    // Second occurrence is an error
+    // Second occurrence is a warning
     expect(results[1]).toHaveLength(1);
     expect(results[1][0].id).toBe('NAM-007');
-    expect(results[1][0].severity).toBe('error');
+    expect(results[1][0].severity).toBe('warning');
     expect(results[1][0].message).toContain('read_file');
     expect(results[1][0].path).toBe('name');
   });
@@ -93,7 +93,7 @@ describe('NAM-007: Tool names must be unique within a server', () => {
     ]);
 
     expect(results[1]).toHaveLength(1);
-    expect(results[1][0].severity).toBe('error');
+    expect(results[1][0].severity).toBe('warning');
 
     expect(results[2]).toHaveLength(1);
     expect(results[2][0].severity).toBe('warning');

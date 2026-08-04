@@ -173,7 +173,7 @@
     <div class="eyebrow">mcp-tool-validator · v0.1.0</div>
     <h1>MCP Tool Description Validator</h1>
     <p class="lead">A governance validator for Model Context Protocol tool definitions — catching the schema violations, security gaps, and ambiguous descriptions that make LLM agents misuse tools.</p>
-    <p class="lead" style="font-size:1rem; margin-top:2rem;">56 rules · 5 categories · CLI + HTTP API + library · live-server validation · optional LLM-assisted analysis</p>
+    <p class="lead" style="font-size:1rem; margin-top:2rem;">57 rules · 5 categories · CLI + HTTP API + library · live-server validation · optional LLM-assisted analysis</p>
   </section>
 
   <!-- 2. The problem -->
@@ -190,7 +190,7 @@
       </div>
       <div class="card">
         <h3 style="color:var(--accent)">The spec keeps moving</h3>
-        <p>MCP has an official grammar for tool names, JSON Schema 2020-12 requirements, and a draft revision adding icons and <code class="inline">x-mcp-header</code>. Compliance is easy to drift from.</p>
+        <p>MCP 2026-07-28 defines tool metadata, JSON Schema 2020-12 behavior, icons, and <code class="inline">x-mcp-header</code>. Compliance is easy to drift from.</p>
       </div>
     </div>
     <p class="lead" style="margin-top:2rem; font-size:1.05rem;">The validator turns all of this into a repeatable, CI-friendly quality gate with a single maturity score per server.</p>
@@ -235,23 +235,23 @@ POST /validate  { <span class="b">"tools"</span>: [...] }</pre>
 
 <span class="c">// Manifest with server metadata</span>
 { <span class="b">"name"</span>: <span class="g">"my-server"</span>, <span class="b">"version"</span>: <span class="g">"1.0"</span>, <span class="b">"tools"</span>: [...] }</pre>
-        <p style="margin-top:.7rem;">Every tool is normalized into one common shape and tagged with its source, so the 56 rules run identically no matter where it came from. A <strong style="color:var(--text)">live MCP server</strong> (<code class="inline">--server</code>, STDIO or HTTP) feeds this same pipeline — its <code class="inline">tools/list</code> response replaces the file.</p>
+        <p style="margin-top:.7rem;">Every tool is normalized into one common shape and tagged with its source, so the 57 rules run identically no matter where it came from. A <strong style="color:var(--text)">live MCP server</strong> (<code class="inline">--server</code>, STDIO or HTTP) feeds this same pipeline — its <code class="inline">tools/list</code> response replaces the file.</p>
       </div>
     </div>
     <ul class="clean" style="margin-top:1.2rem;">
-      <li><strong>Crash-proof rule engine</strong> — a rule that throws on a pathological tool becomes a finding on that tool; the other 55 rules still run.</li>
+      <li><strong>Crash-proof rule engine</strong> — a rule that throws on a pathological tool becomes a finding on that tool; the other 56 rules still run.</li>
       <li><strong>Every entry point converges</strong> — CLI, library, and HTTP API all call the same <code class="inline">validate()</code> with identically validated config.</li>
     </ul>
   </section>
 
   <!-- 4. Rule categories -->
   <section class="slide">
-    <h2>56 rules, 5 categories</h2>
+    <h2>57 rules, 5 categories</h2>
     <div style="margin-bottom:1.6rem;">
       <div class="bar-row"><div class="bar-label"><span class="pill bp">BP</span>Best Practices</div><div class="bar-track"><div class="bar-fill" style="width:100%; background:#e3b341;">15</div></div></div>
       <div class="bar-row"><div class="bar-label"><span class="pill llm">LLM</span>LLM Compatibility</div><div class="bar-track"><div class="bar-fill" style="width:87%; background:#7ee787;">13</div></div></div>
       <div class="bar-row"><div class="bar-label"><span class="pill sec">SEC</span>Security</div><div class="bar-track"><div class="bar-fill" style="width:73%; background:#ff9492;">11</div></div></div>
-      <div class="bar-row"><div class="bar-label"><span class="pill sch">SCH</span>Schema</div><div class="bar-track"><div class="bar-fill" style="width:67%; background:#79b8ff;">10</div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="pill sch">SCH</span>Schema</div><div class="bar-track"><div class="bar-fill" style="width:73%; background:#79b8ff;">11</div></div></div>
       <div class="bar-row"><div class="bar-label"><span class="pill nam">NAM</span>Naming</div><div class="bar-track"><div class="bar-fill" style="width:47%; background:#bc8cff;">7</div></div></div>
     </div>
     <div class="grid cols-2">
@@ -262,7 +262,7 @@ POST /validate  { <span class="b">"tools"</span>: [...] }</pre>
         <span class="pill bp">BP-003</span> "delete" tool missing <code class="inline">destructiveHint</code></p>
       </div>
       <div class="card"><h3>Draft-spec rules</h3>
-        <p>Three rules activate only with <code class="inline">--spec-version draft</code>:<br>
+        <p>Three finalized rules are skipped only with legacy <code class="inline">--spec-version 2025-11-25</code>:<br>
         <span class="pill sch">SCH-009</span> network <code class="inline">$ref</code> ban ·
         <span class="pill sch">SCH-010</span> <code class="inline">x-mcp-header</code> constraints ·
         <span class="pill sec">SEC-011</span> sensitive params exposed as headers</p>
@@ -363,7 +363,7 @@ Maturity: <span class="y">MODERATE</span> (85/100)</pre>
 <span class="b">output:</span>
   format: human
   verbose: false
-<span class="b">specVersion:</span> 2025-11-25   <span class="c"># or "draft"</span>
+<span class="b">specVersion:</span> "2026-07-28"   <span class="c"># or legacy "2025-11-25"</span>
 <span class="b">llm:</span>
   enabled: false
   provider: anthropic
@@ -404,7 +404,7 @@ Maturity: <span class="y">MODERATE</span> (85/100)</pre>
       <div class="card"><div class="big" style="color:var(--green)">0</div><p>type errors — <code class="inline">tsc</code> clean over src, tests, and scripts</p></div>
     </div>
     <ul class="clean check">
-      <li>CLI exercised end-to-end: human, JSON, and SARIF output; rule overrides; <code class="inline">--spec-version draft</code>; YAML input; correct exit codes (0 / 1 with <code class="inline">--ci</code> / 2 on bad input).</li>
+      <li>CLI exercised end-to-end: human, JSON, and SARIF output; rule overrides; both supported spec revisions; YAML input; correct exit codes (0 / 1 with <code class="inline">--ci</code> / 2 on bad input).</li>
       <li>Malformed input handled gracefully — missing files, garbage JSON, and illegal tool names all produce descriptive errors, never stack traces.</li>
       <li>Live validation against the official MCP memory server over STDIO: 9 tools fetched and scored 75/100.</li>
       <li>HTTP service verified: <code class="inline">/health</code>, <code class="inline">/validate</code> (200 with full result), invalid config rejected with 400 and field-level detail.</li>

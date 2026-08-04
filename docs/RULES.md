@@ -1,6 +1,6 @@
 # MCP Tool Description Validator Rules Reference
 
-This document provides a comprehensive reference for all 56 validation rules implemented in the MCP Tool Description Validator. Rules are organized by category and include descriptions, rationale, severity levels, and examples.
+This document provides a comprehensive reference for all 57 validation rules implemented in the MCP Tool Description Validator. Rules are organized by category and include descriptions, rationale, severity levels, and examples.
 
 ## Table of Contents
 
@@ -19,13 +19,13 @@ This document provides a comprehensive reference for all 56 validation rules imp
 
 | Category | Prefix | Count | Focus |
 |----------|--------|-------|-------|
-| Schema Validation | SCH | 10 | MCP protocol compliance and JSON Schema validity |
+| Schema Validation | SCH | 11 | MCP protocol compliance and JSON Schema validity |
 | Naming Conventions | NAM | 7 | Consistent, descriptive tool and parameter naming |
 | Security Constraints | SEC | 11 | Input validation and security best practices |
 | LLM Compatibility | LLM | 13 | Optimizing tool definitions for LLM understanding |
 | Best Practices | BP | 15 | MCP annotations, schema design, and usability |
 
-Three rules validate features that only exist in the **draft** MCP specification: SCH-009, SCH-010, and SEC-011. They are skipped by default and only run when the draft spec is selected via `--spec-version draft` on the CLI or `specVersion: "draft"` in the config file.
+The validator defaults to the finalized **2026-07-28** specification. SCH-009, SCH-010, and SEC-011 cover features introduced in that revision and are skipped only when the legacy `2025-11-25` target is explicitly selected.
 
 ---
 
@@ -66,11 +66,11 @@ Validates that every tool definition includes a non-empty name field.
 
 ---
 
-### SCH-002: Tool must have a description field
+### SCH-002: Tool description must be a string when provided
 
 **Severity:** error
 
-Validates that every tool definition includes a non-empty description field.
+The finalized MCP Tool schema makes `description` optional. When present, it must be a string. LLM-001 separately recommends providing a non-empty description for model usability.
 
 **Good Example:**
 ```json
@@ -84,7 +84,7 @@ Validates that every tool definition includes a non-empty description field.
 ```json
 {
   "name": "get-user",
-  "description": ""
+  "description": 42
 }
 ```
 
@@ -119,11 +119,11 @@ Validates that every tool definition includes an inputSchema field defining its 
 
 ---
 
-### SCH-004: inputSchema must be valid JSON Schema
+### SCH-004: inputSchema and outputSchema must be valid JSON Schema
 
 **Severity:** error
 
-Validates that the inputSchema field is a valid JSON Schema document that can be compiled. Per the MCP spec, schemas are validated against JSON Schema 2020-12 by default (when no `$schema` field is present). A schema may explicitly declare draft-07 via `$schema` (e.g., `"http://json-schema.org/draft-07/schema#"`) and is then validated against that dialect. Any other declared dialect is reported as unsupported.
+Validates that `inputSchema` and an optional `outputSchema` are JSON Schema objects that can be compiled. Per the MCP spec, schemas use JSON Schema 2020-12 by default when `$schema` is absent. The validator also supports explicitly declared draft-07; unsupported dialects are reported rather than interpreted incorrectly. `outputSchema` may use any valid schema shape and does not need a root `type`.
 
 **Good Example:**
 ```json
@@ -279,9 +279,9 @@ Validates that every parameter name listed in the `required` array corresponds t
 ### SCH-009: $ref must not resolve to a network URI
 
 **Severity:** error
-**Spec version:** draft only (requires `--spec-version draft` or `specVersion: "draft"` in config)
+**Spec version:** 2026-07-28
 
-The draft MCP spec says implementations MUST NOT automatically dereference `$ref` values that resolve to network URIs (`http://`, `https://`, or protocol-relative `//`). Schemas relying on external network references would be rejected rather than silently treated as permissive. Local references are fine. Checked at any nesting depth.
+The finalized MCP spec says implementations MUST NOT automatically dereference `$ref` values that resolve to network URIs (`http://`, `https://`, or protocol-relative `//`). Schemas relying on unresolved external references are rejected rather than silently treated as permissive. Local references are fine. Checked at any nesting depth.
 
 **Good Example:**
 ```json
@@ -312,18 +312,19 @@ The draft MCP spec says implementations MUST NOT automatically dereference `$ref
 
 ---
 
-### SCH-010: x-mcp-header values must satisfy the draft spec constraints
+### SCH-010: x-mcp-header values must satisfy the MCP constraints
 
 **Severity:** error
-**Spec version:** draft only (requires `--spec-version draft` or `specVersion: "draft"` in config)
+**Spec version:** 2026-07-28
 
-The draft MCP spec allows a property's schema to carry an `x-mcp-header` extension whose value becomes the name portion of an `Mcp-Param-{name}` HTTP header. Clients MUST reject tools with invalid values, so each value must:
+The finalized MCP spec allows a property's schema to carry an `x-mcp-header` extension whose value becomes the name portion of an `Mcp-Param-{name}` HTTP header. Clients MUST reject tools with invalid annotations, so each value must:
 
 - be a non-empty string
 - match RFC 9110 field-name token syntax (no spaces, colons, or separators)
 - contain no CR/LF or other control characters
 - be case-insensitively unique among all `x-mcp-header` values in the inputSchema
 - appear only on primitive-typed parameters: `string`, `integer`, or `boolean` (`number` is explicitly not permitted)
+- be attached to a property statically reachable from the schema root through `properties` keys only—not through arrays, composition, conditionals, `$defs`, or `$ref`
 
 **Good Example:**
 ```json
@@ -348,15 +349,23 @@ The draft MCP spec allows a property's schema to carry an `x-mcp-header` extensi
 
 ---
 
+### SCH-011: Optional tool metadata must match the MCP Tool schema
+
+**Severity:** error
+
+Validates finalized Tool metadata shapes: top-level `title` and `annotations.title` must be strings, behavioral annotation hints must be booleans, and `_meta` must be an object. Icon structure and URI safety are handled by BP-010.
+
+---
+
 ## Naming Conventions (NAM)
 
 Naming rules ensure tool and parameter names are consistent, clear, and follow conventions. (Name presence itself is validated by SCH-001; NAM rules skip tools with empty names.)
 
-### NAM-002: Tool name must match the MCP spec grammar
+### NAM-002: Tool name should follow the MCP spec recommendations
 
-**Severity:** error
+**Severity:** warning
 
-Validates that tool names follow the MCP specification's name grammar: 1-128 characters, using only letters, digits, underscores, dots, and hyphens (`[A-Za-z0-9_.-]`). Names are case-sensitive.
+Checks the MCP specification's SHOULD-level naming recommendations: 1-128 characters, using only letters, digits, underscores, dots, and hyphens (`[A-Za-z0-9_.-]`). Names are case-sensitive.
 
 Casing style (kebab/snake/camel) is not part of the spec grammar and is intentionally not checked — `getUser`, `get_user`, `get-user`, and `admin.tools.list` are all valid.
 
@@ -469,7 +478,7 @@ Validates that all parameter names in the tool's inputSchema use consistent casi
 
 ### NAM-007: Tool names must be unique within a server
 
-**Severity:** error
+**Severity:** warning
 
 The MCP specification says tool names should be unique within a server (comparison is case-sensitive). Every second and subsequent occurrence of a duplicated name is reported as an error. Additionally, two names that differ only by letter case (e.g., `getUser` vs `getuser`) are reported as a warning — technically distinct per spec, but an invitation for confusion.
 
@@ -800,9 +809,9 @@ Parameters that accept executable code or scripts should clearly document the se
 ### SEC-011: Sensitive parameters must not be exposed via x-mcp-header
 
 **Severity:** error
-**Spec version:** draft only (requires `--spec-version draft` or `specVersion: "draft"` in config)
+**Spec version:** 2026-07-28
 
-The draft MCP spec's `x-mcp-header` extension maps a parameter to an `Mcp-Param-{name}` HTTP header. Header values are visible to network intermediaries (proxies, gateways, access logs), so sensitive parameters (passwords, API keys, tokens — same token-aware matching as SEC-007) must not carry an `x-mcp-header` mapping. Pass sensitive values in the request body instead.
+The finalized MCP spec's `x-mcp-header` extension maps a parameter to an `Mcp-Param-{name}` HTTP header. Header values are visible to network intermediaries (proxies, gateways, access logs), so sensitive parameters (passwords, API keys, tokens — same token-aware matching as SEC-007) must not carry an `x-mcp-header` mapping. Pass sensitive values in the request body instead.
 
 **Good Example:**
 ```json
@@ -1456,7 +1465,7 @@ This validator was designed to align with best practices from the MCP specificat
 | Use clear, unambiguous naming | NAM-002, NAM-005, NAM-006 |
 | Describe parameters thoroughly | LLM-006, LLM-007, LLM-008 |
 | Provide outputSchema when possible | BP-009 |
-| Use JSON Schema features effectively | SCH-004 through SCH-010 |
+| Use JSON Schema features effectively | SCH-004 through SCH-011 |
 | Namespaced/unique naming | NAM-007, NAM-008 |
 | Bound collection responses (pagination/filtering) | BP-013 |
 | Control response verbosity | BP-014 |
@@ -1473,7 +1482,7 @@ The validator includes additional rules not explicitly covered in the sample spe
 4. **Abbreviation Detection (LLM-010)**: Flags unexplained technical jargon
 5. **Consistency Checking (LLM-012)**: Ensures related tools have consistent patterns
 6. **Agent-Design Rules (BP-010 through BP-015)**: Icon safety, parameterless tool shape, handle lifetimes, pagination, response-format control, and overlap detection
-7. **Draft-Spec Rules (SCH-009, SCH-010, SEC-011)**: Network `$ref` ban and `x-mcp-header` validation, active only with `--spec-version draft`
+7. **2026-07-28 Rules (SCH-009, SCH-010, SEC-011)**: Network `$ref` handling and `x-mcp-header` validation, skipped only for the legacy `2025-11-25` target
 
 ### Maturity Scoring
 

@@ -6,6 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { join } from 'node:path';
 import type { ToolDefinition } from '../../../src/types/index.js';
 
 // Create mock class instances
@@ -57,6 +58,7 @@ import {
   disconnect,
   fetchToolsFromServer,
   parseCommand,
+  parseSseResponse,
   type MCPConnection,
   type ServerConfig,
 } from '../../../src/parsers/mcp-client.js';
@@ -290,7 +292,7 @@ describe('MCP Client', () => {
       const tools = await getToolDefinitions(connection, 'http://localhost:3000');
 
       expect(tools).toHaveLength(1);
-      expect(tools[0].description).toBe('');
+      expect(tools[0].description).toBeUndefined();
     });
 
     it('should attach correct source metadata', async () => {
@@ -432,6 +434,120 @@ describe('MCP Client', () => {
       await expect(fetchToolsFromServer(config)).rejects.toThrow('List tools failed');
       expect(mockClientInstance.close).toHaveBeenCalled();
     });
+
+    it('should issue a stateless 2026-07-28 tools/list request over HTTP', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        result: {
+          resultType: 'complete',
+          tools: [{ name: 'modern-tool', inputSchema: { type: 'object' } }],
+          ttlMs: 300000,
+          cacheScope: 'private',
+        },
+      }), { headers: { 'content-type': 'application/json' } }));
+      vi.stubGlobal('fetch', fetchMock);
+
+      const tools = await fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      });
+
+      expect(tools.map((tool) => tool.name)).toEqual(['modern-tool']);
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(url).toBe('https://example.com/mcp');
+      expect(init.headers['MCP-Protocol-Version']).toBe('2026-07-28');
+      expect(init.headers['Mcp-Method']).toBe('tools/list');
+      const body = JSON.parse(init.body);
+      expect(body.params._meta['io.modelcontextprotocol/protocolVersion']).toBe('2026-07-28');
+      expect(body.params._meta['io.modelcontextprotocol/clientCapabilities']).toEqual({});
+      expect(mockClientInstance.connect).not.toHaveBeenCalled();
+    });
+
+    it('should parse a modern tools/list response delivered as SSE', async () => {
+      const sse = [
+        'event: message',
+        'data: {"jsonrpc":"2.0","method":"notifications/progress"}',
+        '',
+        'event: message',
+        'data: {"jsonrpc":"2.0","id":1,"result":{"resultType":"complete","tools":[],"ttlMs":1000,"cacheScope":"private"}}',
+        '',
+      ].join('\n');
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(sse, {
+        headers: { 'content-type': 'text/event-stream' },
+      })));
+
+      await expect(fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      })).resolves.toEqual([]);
+    });
+
+    it('should reject a modern response with a mismatched request id', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 99,
+        result: { tools: [] },
+      }), { headers: { 'content-type': 'application/json' } })));
+
+      await expect(fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      })).rejects.toThrow('expected 1');
+    });
+
+    it('should follow nextCursor across modern tools/list pages', async () => {
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(new Response(JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          result: {
+            resultType: 'complete',
+            tools: [{ name: 'page-one', inputSchema: { type: 'object' } }],
+            nextCursor: 'page-2',
+            ttlMs: 1000,
+            cacheScope: 'private',
+          },
+        }), { headers: { 'content-type': 'application/json' } }))
+        .mockResolvedValueOnce(new Response(JSON.stringify({
+          jsonrpc: '2.0',
+          id: 2,
+          result: {
+            resultType: 'complete',
+            tools: [{ name: 'page-two', inputSchema: { type: 'object' } }],
+            ttlMs: 1000,
+            cacheScope: 'private',
+          },
+        }), { headers: { 'content-type': 'application/json' } }));
+      vi.stubGlobal('fetch', fetchMock);
+
+      const tools = await fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      });
+
+      expect(tools.map((tool) => tool.name)).toEqual(['page-one', 'page-two']);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      const secondBody = JSON.parse(fetchMock.mock.calls[1][1].body);
+      expect(secondBody.id).toBe(2);
+      expect(secondBody.params.cursor).toBe('page-2');
+    });
+
+    it('should retrieve tools from a stateless 2026-07-28 stdio server', async () => {
+      const fixture = join(
+        import.meta.dirname,
+        '../../fixtures/modern-mcp-server.mjs'
+      );
+      const tools = await fetchToolsFromServer({
+        server: `${process.execPath} "${fixture}"`,
+        specVersion: '2026-07-28',
+      });
+
+      expect(tools).toHaveLength(1);
+      expect(tools[0].name).toBe('modern-stdio-tool');
+      expect(tools[0].source.type).toBe('server');
+    });
   });
 });
 
@@ -450,5 +566,27 @@ describe('parseCommand', () => {
 
   it('returns empty array for blank input', () => {
     expect(parseCommand('   ')).toEqual([]);
+  });
+});
+
+describe('parseSseResponse', () => {
+  it('returns the final JSON-RPC response and ignores notifications', () => {
+    const parsed = parseSseResponse([
+      'data: {"jsonrpc":"2.0","method":"notifications/progress"}',
+      '',
+      'data: {"jsonrpc":"2.0","id":1,"result":{"tools":[]}}',
+      '',
+    ].join('\n')) as Record<string, unknown>;
+    expect(parsed.id).toBe(1);
+    expect(parsed).toHaveProperty('result');
+  });
+
+  it('joins multiple data lines within one SSE event', () => {
+    const parsed = parseSseResponse([
+      'data: {"jsonrpc":"2.0",',
+      'data: "id":1,"result":{"tools":[]}}',
+      '',
+    ].join('\n')) as Record<string, unknown>;
+    expect(parsed.id).toBe(1);
   });
 });

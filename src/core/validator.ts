@@ -22,7 +22,7 @@ import { analyzeTools } from '../llm/analyzer.js';
 import { VERSION as VALIDATOR_VERSION } from '../version.js';
 
 /** Spec version reported/validated when the config does not set one. */
-const DEFAULT_MCP_SPEC_VERSION = '2025-11-25';
+const DEFAULT_MCP_SPEC_VERSION = '2026-07-28';
 
 /**
  * Options for validation functions.
@@ -184,6 +184,10 @@ export async function validateServer(
   serverUrl: string,
   options: ValidateOptions = {}
 ): Promise<ValidationResult> {
-  const tools = await fetchToolsFromServer({ server: serverUrl });
+  const { config } = await resolveConfig(options.configPath, options.config);
+  const tools = await fetchToolsFromServer({
+    server: serverUrl,
+    specVersion: config.specVersion,
+  });
   return validate(tools, options);
 }

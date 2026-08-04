@@ -27,6 +27,9 @@ output:
   verbose: false   # Show additional details
   color: true      # Enable colored output (terminal only)
 
+# MCP protocol revision (2026-07-28 is the current finalized specification)
+specVersion: "2026-07-28"
+
 # LLM analysis configuration (optional)
 # Enables AI-powered semantic analysis of tool definitions
 # llm:

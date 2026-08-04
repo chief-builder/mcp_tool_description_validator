@@ -20,10 +20,18 @@ const KNOWN_ICON_MIME_TYPES = new Set([
   'image/webp',
 ]);
 
-/** True when the icon src uses an allowed scheme (https:// or data:). */
+const ICON_SIZE = /^(?:any|[1-9]\d*x[1-9]\d*)$/;
+const BASE64_IMAGE_DATA_URI = /^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/]*={0,2}$/i;
+
+/** True when the icon src is a valid HTTPS URL or base64 image data URI. */
 function isSafeIconSrc(src: string): boolean {
-  const lower = src.trim().toLowerCase();
-  return lower.startsWith('https://') || lower.startsWith('data:');
+  const trimmed = src.trim();
+  if (BASE64_IMAGE_DATA_URI.test(trimmed)) return true;
+  try {
+    return new URL(trimmed).protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
 
 const rule: Rule = {
@@ -44,7 +52,7 @@ const rule: Rule = {
       issues.push({
         id: this.id,
         category: this.category,
-        severity: this.defaultSeverity,
+        severity: 'error',
         message: '`icons` must be an array of icon objects',
         tool: tool.name,
         path: 'icons',
@@ -61,7 +69,7 @@ const rule: Rule = {
         issues.push({
           id: this.id,
           category: this.category,
-          severity: this.defaultSeverity,
+          severity: 'error',
           message: `Icon entry at ${path} is not an object`,
           tool: tool.name,
           path,
@@ -76,7 +84,7 @@ const rule: Rule = {
         issues.push({
           id: this.id,
           category: this.category,
-          severity: this.defaultSeverity,
+          severity: 'error',
           message: `Icon entry at ${path} is missing a string \`src\``,
           tool: tool.name,
           path: `${path}.src`,
@@ -96,10 +104,17 @@ const rule: Rule = {
       }
 
       if (icon.mimeType !== undefined) {
-        if (
-          typeof icon.mimeType !== 'string' ||
-          !KNOWN_ICON_MIME_TYPES.has(icon.mimeType.toLowerCase())
-        ) {
+        if (typeof icon.mimeType !== 'string') {
+          issues.push({
+            id: this.id,
+            category: this.category,
+            severity: 'error',
+            message: `Icon mimeType at ${path} must be a string`,
+            tool: tool.name,
+            path: `${path}.mimeType`,
+            suggestion: 'Provide an image MIME type string or remove mimeType',
+          });
+        } else if (!KNOWN_ICON_MIME_TYPES.has(icon.mimeType.toLowerCase())) {
           issues.push({
             id: this.id,
             category: this.category,
@@ -122,6 +137,53 @@ const rule: Rule = {
               'Consider providing a raster fallback (image/png or image/jpeg) alongside the SVG',
           });
         }
+      }
+
+      if (icon.sizes !== undefined) {
+        if (
+          !Array.isArray(icon.sizes) ||
+          icon.sizes.some((size) => typeof size !== 'string')
+        ) {
+          issues.push({
+            id: this.id,
+            category: this.category,
+            severity: 'error',
+            message: `Icon sizes at ${path} must be an array of strings`,
+            tool: tool.name,
+            path: `${path}.sizes`,
+            suggestion: 'Use size strings such as ["48x48", "96x96"] or ["any"]',
+          });
+        } else {
+          icon.sizes.forEach((size, sizeIndex) => {
+            if (!ICON_SIZE.test(size)) {
+              issues.push({
+                id: this.id,
+                category: this.category,
+                severity: 'warning',
+                message: `Icon size "${size}" must use WxH format or "any"`,
+                tool: tool.name,
+                path: `${path}.sizes[${sizeIndex}]`,
+                suggestion: 'Use a positive pixel size such as "48x48" or the value "any"',
+              });
+            }
+          });
+        }
+      }
+
+      if (
+        icon.theme !== undefined &&
+        icon.theme !== 'light' &&
+        icon.theme !== 'dark'
+      ) {
+        issues.push({
+          id: this.id,
+          category: this.category,
+          severity: 'error',
+          message: `Icon theme at ${path} must be "light" or "dark"`,
+          tool: tool.name,
+          path: `${path}.theme`,
+          suggestion: 'Set theme to "light" or "dark", or remove the field',
+        });
       }
     });
 

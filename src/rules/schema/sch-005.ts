@@ -13,7 +13,8 @@ const rule: Rule = {
   category: 'schema',
   defaultSeverity: 'error',
   description: 'inputSchema.type must be "object"',
-  documentation: 'https://modelcontextprotocol.io/specification/2025-11-25#tools',
+  documentation:
+    'https://modelcontextprotocol.io/specification/2026-07-28/server/tools#tool',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];

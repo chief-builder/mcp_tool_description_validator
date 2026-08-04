@@ -62,15 +62,17 @@ const rule: Rule = {
     const issues: ValidationIssue[] = [];
 
     // Skip if description is empty (handled by LLM-001)
-    if (!tool.description || tool.description.trim() === '') {
+    if (typeof tool.description !== 'string' || tool.description.trim() === '') {
       return issues;
     }
 
+    const description = tool.description;
+
     // Check for workflow keywords (whole words, precompiled matcher)
-    const hasWorkflowKeyword = hasWorkflowKeywordMatcher(tool.description);
+    const hasWorkflowKeyword = hasWorkflowKeywordMatcher(description);
 
     // Check for workflow patterns
-    const hasWorkflowPattern = WORKFLOW_PATTERNS.some(pattern => pattern.test(tool.description));
+    const hasWorkflowPattern = WORKFLOW_PATTERNS.some(pattern => pattern.test(description));
 
     // Check for references to other tool names, matched as whole words so
     // short names like 'run' or 'get' don't match inside ordinary prose
@@ -81,7 +83,7 @@ const rule: Rule = {
           name !== tool.name && name.length >= MIN_REFERENCED_TOOL_NAME_LENGTH
       );
     const hasToolReference =
-      findWordMatches(tool.description, otherToolNames).length > 0;
+      findWordMatches(description, otherToolNames).length > 0;
 
     const hasWorkflowGuidance = hasWorkflowKeyword || hasWorkflowPattern || hasToolReference;
 

@@ -91,33 +91,33 @@ describe('BP-010: icons validation', () => {
     }
   });
 
-  it('should flag a non-array icons value at warning severity', () => {
+  it('should flag a non-array icons value at error severity', () => {
     const tool = createTool({
       icons: { src: 'https://example.com/icon.png' } as unknown as ToolDefinition['icons'],
     });
     const issues = check(tool);
     expect(issues).toHaveLength(1);
-    expect(issues[0].severity).toBe('warning');
+    expect(issues[0].severity).toBe('error');
     expect(issues[0].path).toBe('icons');
   });
 
-  it('should flag a non-object entry at warning severity', () => {
+  it('should flag a non-object entry at error severity', () => {
     const tool = createTool({
       icons: ['https://example.com/icon.png'] as unknown as ToolDefinition['icons'],
     });
     const issues = check(tool);
     expect(issues).toHaveLength(1);
-    expect(issues[0].severity).toBe('warning');
+    expect(issues[0].severity).toBe('error');
     expect(issues[0].path).toBe('icons[0]');
   });
 
-  it('should flag a missing src at warning severity', () => {
+  it('should flag a missing src at error severity', () => {
     const tool = createTool({
       icons: [{ mimeType: 'image/png' }] as unknown as ToolDefinition['icons'],
     });
     const issues = check(tool);
     expect(issues).toHaveLength(1);
-    expect(issues[0].severity).toBe('warning');
+    expect(issues[0].severity).toBe('error');
     expect(issues[0].path).toBe('icons[0].src');
   });
 
@@ -153,5 +153,24 @@ describe('BP-010: icons validation', () => {
     const issues = check(tool);
     expect(issues).toHaveLength(2);
     expect(issues.map((i) => i.severity).sort()).toEqual(['error', 'suggestion']);
+  });
+
+  it('should validate sizes and theme shapes', () => {
+    const tool = createTool({
+      icons: [{
+        src: 'https://example.com/icon.png',
+        sizes: ['48', '0x48'],
+        theme: 'system' as 'light',
+      }],
+    });
+    const issues = check(tool);
+    expect(issues.filter((issue) => issue.path?.includes('sizes'))).toHaveLength(2);
+    expect(issues.find((issue) => issue.path?.endsWith('theme'))?.severity).toBe('error');
+  });
+
+  it('should reject malformed data URIs', () => {
+    const issues = check(createTool({ icons: [{ src: 'data:text/html,hello' }] }));
+    expect(issues).toHaveLength(1);
+    expect(issues[0].severity).toBe('error');
   });
 });

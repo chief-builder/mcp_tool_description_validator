@@ -228,7 +228,6 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should handle undefined description', () => {
       const tool = createTool();
-      // @ts-expect-error - testing undefined description
       tool.description = undefined;
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);

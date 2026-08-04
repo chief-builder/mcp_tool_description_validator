@@ -12,7 +12,7 @@ import { RULES } from '../rules/index.js';
 /**
  * Default MCP spec version rules are loaded for when none is given.
  */
-const DEFAULT_SPEC_VERSION = '2025-11-25';
+const DEFAULT_SPEC_VERSION = '2026-07-28';
 
 /**
  * Load rules based on configuration.

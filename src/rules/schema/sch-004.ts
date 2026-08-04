@@ -1,8 +1,7 @@
 /**
- * SCH-004: `inputSchema` must be valid JSON Schema
+ * SCH-004: Tool schemas must be valid JSON Schema
  *
- * Validates that the inputSchema field is a valid JSON Schema document
- * that can be compiled by Ajv.
+ * Validates inputSchema and, when present, outputSchema as JSON Schema.
  *
  * Per the MCP spec, the default dialect (no $schema field) is JSON Schema
  * 2020-12. An explicit $schema may select draft-07 instead. Unknown
@@ -14,6 +13,12 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
+import {
+  isSchemaObject,
+  MAX_SCHEMA_DEPTH,
+  MAX_SCHEMA_NODES,
+  walkSchema,
+} from '../utils/schema-walker.js';
 
 // Lenient settings; addUsedSchema:false so two tools sharing an $id do not
 // collide in Ajv's schema cache ("schema with key or id already exists").
@@ -43,68 +48,115 @@ const DRAFT_07_URIS = new Set([
   'https://json-schema.org/draft-07/schema',
 ]);
 
+type SchemaField = 'inputSchema' | 'outputSchema';
+
+function validateSchema(
+  field: SchemaField,
+  value: unknown,
+  toolName: string
+): ValidationIssue[] {
+  const documentation =
+    'https://modelcontextprotocol.io/specification/2026-07-28/basic/index#json-schema-usage';
+
+  if (!isSchemaObject(value)) {
+    return [{
+      id: 'SCH-004',
+      category: 'schema',
+      severity: 'error',
+      message: `${field} must be a JSON Schema object`,
+      tool: toolName,
+      path: field,
+      suggestion: `Provide ${field} as a valid JSON Schema object`,
+      documentation,
+    }];
+  }
+
+  const declaredDialect = value.$schema;
+  const withinResourceBounds = walkSchema(value, () => {}, {
+    rootPath: field,
+    maxDepth: MAX_SCHEMA_DEPTH,
+    maxNodes: MAX_SCHEMA_NODES,
+  });
+  if (!withinResourceBounds) {
+    return [{
+      id: 'SCH-004',
+      category: 'schema',
+      severity: 'error',
+      message: `${field} exceeds validator resource limits (${MAX_SCHEMA_DEPTH} levels or ${MAX_SCHEMA_NODES} subschemas)`,
+      tool: toolName,
+      path: field,
+      suggestion: 'Reduce schema nesting or the number of composed subschemas',
+      documentation,
+    }];
+  }
+
+  let validator: Ajv;
+  if (declaredDialect === undefined) {
+    validator = ajv2020;
+  } else if (
+    typeof declaredDialect === 'string' &&
+    DRAFT_2020_12_URIS.has(declaredDialect)
+  ) {
+    validator = ajv2020;
+  } else if (
+    typeof declaredDialect === 'string' &&
+    DRAFT_07_URIS.has(declaredDialect)
+  ) {
+    validator = ajvDraft07;
+  } else {
+    return [{
+      id: 'SCH-004',
+      category: 'schema',
+      severity: 'error',
+      message: `${field} declares unsupported JSON Schema dialect: ${JSON.stringify(declaredDialect)}`,
+      tool: toolName,
+      path: `${field}.$schema`,
+      suggestion:
+        'Use JSON Schema 2020-12 (the MCP default; omit $schema) or draft-07 (http://json-schema.org/draft-07/schema#)',
+      documentation,
+    }];
+  }
+
+  try {
+    validator.compile(value);
+    return [];
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown schema error';
+    return [{
+      id: 'SCH-004',
+      category: 'schema',
+      severity: 'error',
+      message: `${field} is not valid JSON Schema: ${errorMessage}`,
+      tool: toolName,
+      path: field,
+      suggestion: 'Review the JSON Schema specification and fix the schema syntax errors',
+      documentation,
+    }];
+  }
+}
+
 const rule: Rule = {
   id: 'SCH-004',
   category: 'schema',
   defaultSeverity: 'error',
-  description: 'inputSchema must be valid JSON Schema',
-  documentation: 'https://json-schema.org/draft/2020-12/json-schema-core',
+  description: 'inputSchema and outputSchema must be valid JSON Schema',
+  documentation:
+    'https://modelcontextprotocol.io/specification/2026-07-28/basic/index#json-schema-usage',
 
   check(tool, _ctx) {
+    const toolName = typeof tool.name === 'string' && tool.name
+      ? tool.name
+      : '(unnamed)';
     const issues: ValidationIssue[] = [];
 
-    // Skip if inputSchema is missing (caught by SCH-003)
-    if (!tool.inputSchema || typeof tool.inputSchema !== 'object') {
-      return issues;
+    // SCH-003 owns missing/non-object inputSchema diagnostics.
+    if (isSchemaObject(tool.inputSchema)) {
+      issues.push(...validateSchema('inputSchema', tool.inputSchema, toolName));
     }
 
-    const schema = tool.inputSchema as Record<string, unknown>;
-    const declaredDialect = schema.$schema;
-
-    // Pick the validator for the declared dialect (default: 2020-12).
-    let validator: Ajv;
-    if (declaredDialect === undefined) {
-      validator = ajv2020;
-    } else if (
-      typeof declaredDialect === 'string' &&
-      DRAFT_2020_12_URIS.has(declaredDialect)
-    ) {
-      validator = ajv2020;
-    } else if (
-      typeof declaredDialect === 'string' &&
-      DRAFT_07_URIS.has(declaredDialect)
-    ) {
-      validator = ajvDraft07;
-    } else {
-      issues.push({
-        id: 'SCH-004',
-        category: 'schema',
-        severity: this.defaultSeverity,
-        message: `inputSchema declares unsupported JSON Schema dialect: ${JSON.stringify(declaredDialect)}`,
-        tool: tool.name || '(unnamed)',
-        path: 'inputSchema.$schema',
-        suggestion:
-          'Use JSON Schema 2020-12 (the MCP default; omit $schema) or draft-07 (http://json-schema.org/draft-07/schema#)',
-        documentation: this.documentation,
-      });
-      return issues;
-    }
-
-    try {
-      // Attempt to compile the schema - this validates its structure
-      validator.compile(schema);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown schema error';
-      issues.push({
-        id: 'SCH-004',
-        category: 'schema',
-        severity: this.defaultSeverity,
-        message: `inputSchema is not valid JSON Schema: ${errorMessage}`,
-        tool: tool.name || '(unnamed)',
-        path: 'inputSchema',
-        suggestion: 'Review the JSON Schema specification and fix the schema syntax errors',
-        documentation: this.documentation,
-      });
+    const raw = tool as unknown as Record<string, unknown>;
+    if (raw.outputSchema !== undefined) {
+      issues.push(...validateSchema('outputSchema', raw.outputSchema, toolName));
     }
 
     return issues;

@@ -107,6 +107,16 @@ describe('File Parser', () => {
       expect(tools[0].source.location).toBe('/path/to/tool.json');
     });
 
+    it('should accept a tool without the optional description field', () => {
+      const tools = normalizeToToolDefinitions(
+        { name: 'ping', inputSchema: { type: 'object' } },
+        '/path/to/tool.json'
+      );
+
+      expect(tools).toHaveLength(1);
+      expect(tools[0].description).toBeUndefined();
+    });
+
     it('should normalize array format with tools property', () => {
       const data = {
         tools: [
@@ -156,7 +166,7 @@ describe('File Parser', () => {
     });
 
     it('should throw error for invalid single tool', () => {
-      const data = { name: 'incomplete' }; // Missing description and inputSchema
+      const data = { name: 'incomplete' }; // Missing inputSchema
 
       expect(() => normalizeToToolDefinitions(data, '/path/to/bad.json')).toThrow(
         'Invalid tool definition'
@@ -167,7 +177,7 @@ describe('File Parser', () => {
       const data = {
         tools: [
           { name: 'good', description: 'Valid', inputSchema: {} },
-          { name: 'bad' }, // Missing description and inputSchema
+          { name: 'bad' }, // Missing inputSchema
         ],
       };
 

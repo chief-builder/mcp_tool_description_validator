@@ -6,7 +6,7 @@ A governance validator for Model Context Protocol (MCP) tool definitions that en
 
 ### Goals
 
-1. **Quality Assurance**: Ensure tool definitions follow MCP specification (2025-11-25) and best practices
+1. **Quality Assurance**: Ensure tool definitions follow the finalized MCP specification (2026-07-28) and best practices
 2. **Security Validation**: Detect input validation gaps, scope issues, and data exposure risks
 3. **LLM Compatibility**: Verify tool descriptions are clear, unambiguous, and optimized for LLM understanding
 4. **CI/CD Integration**: Provide machine-readable output for automated validation pipelines
@@ -17,7 +17,7 @@ A governance validator for Model Context Protocol (MCP) tool definitions that en
 - MCP server implementation validation (beyond tool definitions)
 - Custom plugin system for user-defined rules
 - Category-specific validation rules (file system, database, etc.)
-- Multi-version protocol support (validates against 2025-11-25 only)
+- Multi-version protocol support beyond 2026-07-28 and legacy 2025-11-25
 
 ---
 
@@ -151,7 +151,7 @@ type IssueSeverity = 'error' | 'warning' | 'suggestion';
 
 interface ValidationMetadata {
   validatorVersion: string;
-  mcpSpecVersion: string;       // Always "2025-11-25"
+  mcpSpecVersion: string;       // "2026-07-28" by default
   timestamp: string;
   duration: number;             // Milliseconds
   configUsed: string;           // Path to config file if any
@@ -551,7 +551,7 @@ Validation failed with 2 errors.
   "tools": [...],
   "metadata": {
     "validatorVersion": "1.0.0",
-    "mcpSpecVersion": "2025-11-25",
+    "mcpSpecVersion": "2026-07-28",
     "timestamp": "2025-01-07T12:00:00Z",
     "duration": 145,
     "configUsed": "mcp-validate.config.yaml",
@@ -728,7 +728,7 @@ mcp-tool-validator/
 
 ## Open Questions
 
-1. **Schema version pinning**: Should we embed the MCP 2025-11-25 JSON Schema or fetch dynamically?
+1. **Schema version pinning**: Keep behavior pinned to the finalized MCP 2026-07-28 schema and prose requirements.
    - *Recommendation*: Embed for offline use, with option to update
 
 2. **Rule documentation**: Where should detailed rule documentation live?
@@ -753,8 +753,8 @@ mcp-tool-validator/
 
 ## References
 
-- [MCP Specification 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25)
-- [MCP Security Best Practices](https://modelcontextprotocol.io/specification/draft/basic/security_best_practices)
+- [MCP Specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28)
+- [MCP Security Best Practices](https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices)
 - [MCP Tools Documentation](https://modelcontextprotocol.info/docs/concepts/tools/)
 - [JSON Schema Specification](https://json-schema.org/specification)
 - [SARIF Specification](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html)

@@ -28,7 +28,7 @@ describe('SCH-009: $ref must not resolve to a network URI', () => {
     expect(rule.category).toBe('schema');
     expect(rule.defaultSeverity).toBe('error');
     expect(rule.documentation).toBe(
-      'https://modelcontextprotocol.io/specification/draft/basic/index#ref-resolution'
+      'https://modelcontextprotocol.io/specification/2026-07-28/basic/index#ref-resolution'
     );
   });
 

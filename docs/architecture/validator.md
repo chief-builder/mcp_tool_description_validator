@@ -15,7 +15,7 @@
 | Config | Cosmiconfig 9.x | Active | Standard config loading, YAML/JSON/JS |
 | Testing | Vitest 4.x | 1.5M/week | Zero-config TS, 30-70% faster than Jest |
 | Build | tsup 8.x | Active | Zero-config, esbuild-based, fast |
-| MCP Client | @modelcontextprotocol/sdk 1.x | Official | Stable, spec 2025-11-25 support |
+| MCP Client | Native 2026 transport + @modelcontextprotocol/sdk 1.30+ | Active | Finalized stateless protocol plus legacy compatibility |
 | LLM | Vercel AI SDK 6.x | Active | Unified API for OpenAI/Anthropic/Ollama |
 
 ## Decisions
@@ -38,11 +38,10 @@
 **Why**: Single unified API for OpenAI, Anthropic, and Ollama. Active maintenance, streaming support, good TypeScript types. Avoids writing our own abstraction layer.
 **Rejected**: Direct SDK imports (more code to maintain), LangChain (too heavy for our needs)
 
-### 4. MCP SDK v1.x
+### 4. Version-aware MCP client
 
-**Choice**: @modelcontextprotocol/sdk v1.x stable branch
-**Why**: Production-ready, supports MCP spec 2025-11-25. v2 is pre-alpha until Q1 2026.
-**Monitor**: Upgrade to v2 when stable release ships
+**Choice**: Native stateless HTTP/stdio requests for 2026-07-28, with @modelcontextprotocol/sdk v1.30+ retained for explicit 2025-11-25 compatibility
+**Why**: The stable SDK client still initializes using the legacy protocol flow. The finalized revision removes initialization and requires protocol metadata on every request, so the validator uses a small version-pinned transport path for modern live-server discovery.
 
 ### 5. Single Package Distribution
 
@@ -310,7 +309,7 @@ LLM provider SDKs (only needed if using LLM analysis):
 
 | Library | Concern | Check By |
 |---------|---------|----------|
-| @modelcontextprotocol/sdk | v2 release | Q1 2026 |
+| @modelcontextprotocol/sdk | Modern-protocol and future major-version changes | As released |
 | Hono | Maturity vs Fastify | Q2 2026 |
 | Vercel AI SDK | Breaking changes in v7 | As released |
 
@@ -318,7 +317,7 @@ LLM provider SDKs (only needed if using LLM analysis):
 
 Resolved from spec:
 
-1. **Schema version pinning**: Embed MCP 2025-11-25 JSON Schema for offline use
+1. **Schema version pinning**: Keep validation behavior pinned to the finalized MCP 2026-07-28 schema and prose requirements
 2. **Rule documentation**: Markdown in `docs/rules/`, linked from issue output
 3. **LLM cost management**: Content-hash-based caching (optional)
 

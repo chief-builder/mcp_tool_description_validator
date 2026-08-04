@@ -1,5 +1,5 @@
 /**
- * LLM-001: Tool description must be non-empty
+ * LLM-001: Tool description should be non-empty
  *
  * Validates that every tool has a meaningful description
  * that helps LLMs understand the tool's purpose.
@@ -11,13 +11,13 @@ import type { ValidationIssue } from '../../types/index.js';
 const rule: Rule = {
   id: 'LLM-001',
   category: 'llm-compatibility',
-  defaultSeverity: 'error',
-  description: 'Tool description must be non-empty',
+  defaultSeverity: 'warning',
+  description: 'Tool description should be non-empty',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
 
-    if (!tool.description || tool.description.trim() === '') {
+    if (typeof tool.description !== 'string' || tool.description.trim() === '') {
       issues.push({
         id: this.id,
         category: this.category,

@@ -8,12 +8,12 @@ The MCP Tool Description Validator analyzes MCP tool definitions and provides ac
 
 - **LLM Compatibility**: Ensure tools are easy for language models to understand and use correctly
 - **Security**: Identify potential vulnerabilities in input handling and parameter design
-- **Spec Compliance**: Validate against the MCP specification, including the draft revision (tool-name grammar, JSON Schema 2020-12, `x-mcp-header`, icons)
+- **Spec Compliance**: Validate against the finalized MCP 2026-07-28 specification (tool metadata, JSON Schema 2020-12, `x-mcp-header`, icons)
 - **Agent Ergonomics**: Apply evolved tool-design guidance (pagination, response-format controls, namespacing, overlap detection)
 
 ## Features
 
-- **56 validation rules** across 5 categories (3 rules are draft-spec-only and activate with `--spec-version draft`)
+- **57 validation rules** across 5 categories (3 rules require MCP 2026-07-28 and are skipped for the legacy target)
 - **Maturity scoring** (0-100, per-tool averaged) with level classification
 - **CLI** for local validation and CI pipelines
 - **HTTP service** (`mcp-validate serve`) for validation as an API
@@ -42,6 +42,11 @@ Every input is normalized into a common tool shape before rules run. Static
 rules always produce a result; optional LLM analysis enriches it but cannot
 discard static findings if a provider is unavailable.
 
+For live servers, the default 2026-07-28 path uses stateless per-request
+metadata and follows `tools/list` pagination over either Streamable HTTP or
+stdio. The `2025-11-25` target uses the official SDK's legacy initialization
+flow.
+
 ## Installation
 
 ```bash
@@ -60,8 +65,11 @@ mcp-validate tools.json
 mcp-validate --server "node ./my-server.js"
 mcp-validate --server "http://localhost:3000/mcp"
 
-# Validate against the draft MCP spec (enables SCH-009, SCH-010, SEC-011)
-mcp-validate tools.json --spec-version draft
+# Legacy initialization-based servers require the legacy target
+mcp-validate --server "node ./legacy-server.js" --spec-version 2025-11-25
+
+# 2026-07-28 is the default; target the legacy revision when needed
+mcp-validate tools.json --spec-version 2025-11-25
 
 # Output JSON or SARIF for CI/CD integration
 mcp-validate tools.json --format json
@@ -89,7 +97,7 @@ mcp-validate serve --port 8080
 | `-f, --format <format>` | Output format: `human` (default), `json`, `sarif` |
 | `-c, --config <path>` | Explicit config file path (otherwise auto-discovered) |
 | `-r, --rule <RULE-ID=setting>` | Override a rule: `on`, `off`, `error`, `warning`, `suggestion` (repeatable) |
-| `--spec-version <version>` | MCP spec revision to validate against: `2025-11-25` (default) or `draft` |
+| `--spec-version <version>` | MCP spec revision to validate against: `2026-07-28` (default) or `2025-11-25` |
 | `--llm` | Enable LLM-assisted analysis |
 | `--llm-provider <provider>` | `anthropic` (default), `openai`, or `ollama` |
 | `-v, --verbose` | Show suggestions and LLM detail |
@@ -117,7 +125,7 @@ for (const issue of result.issues) {
 const direct = await validate(tools, {
   config: {
     rules: { 'SEC-001': false },
-    specVersion: 'draft',
+    specVersion: '2026-07-28',
   },
 });
 ```
@@ -155,18 +163,18 @@ sequenceDiagram
 
 ## Validation Rules
 
-56 rules across 5 categories:
+57 rules across 5 categories:
 
 | Category | Prefix | Count | Description |
 |----------|--------|-------|-------------|
-| Schema Validation | SCH | 10 | MCP protocol compliance and JSON Schema validity (2020-12 by default) |
+| Schema Validation | SCH | 11 | MCP Tool-shape compliance and JSON Schema validity (2020-12 by default) |
 | Naming Conventions | NAM | 7 | Spec name grammar, uniqueness, descriptive and consistent naming |
 | Security Constraints | SEC | 11 | Input bounds, sensitive-data handling, header-exposure checks |
 | LLM Compatibility | LLM | 13 | Optimizing tool definitions for LLM understanding |
 | Best Practices | BP | 15 | Annotations, icons, output schemas, pagination, agent ergonomics |
 
-Three rules only apply when validating against the draft spec (`--spec-version draft`):
-`SCH-009` (network `$ref` ban), `SCH-010` (`x-mcp-header` constraints), and `SEC-011` (sensitive parameters exposed as headers).
+Three rules apply only to MCP 2026-07-28 and are skipped with `--spec-version 2025-11-25`:
+`SCH-009` (network `$ref` handling), `SCH-010` (`x-mcp-header` constraints), and `SEC-011` (sensitive parameters exposed as headers).
 
 See [docs/RULES.md](docs/RULES.md) for the complete rule reference with examples.
 
@@ -202,7 +210,7 @@ output:
   format: human          # human | json | sarif
   verbose: false
   color: true
-specVersion: 2025-11-25  # or "draft"
+specVersion: "2026-07-28"  # default; use "2025-11-25" for legacy validation
 llm:                     # optional LLM-assisted analysis
   enabled: false
   provider: anthropic    # anthropic | openai | ollama

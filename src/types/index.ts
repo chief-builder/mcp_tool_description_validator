@@ -29,8 +29,8 @@ export interface ToolDefinition {
   /** Optional human-readable display name (takes precedence over annotations.title) */
   title?: string;
 
-  /** Human-readable description for LLM understanding */
-  description: string;
+  /** Optional human-readable description for LLM understanding */
+  description?: string;
 
   /** Optional icons for display in user interfaces */
   icons?: ToolIcon[];
@@ -250,7 +250,7 @@ export interface ValidationMetadata {
   /** Version of the validator */
   validatorVersion: string;
 
-  /** MCP specification version validated against (e.g. "2025-11-25" or "draft") */
+  /** MCP specification version validated against */
   mcpSpecVersion: string;
 
   /** ISO 8601 timestamp when validation started */
@@ -276,7 +276,7 @@ export interface ValidationMetadata {
 /**
  * MCP specification versions the validator can target.
  */
-export type MCPSpecVersion = '2025-11-25' | 'draft';
+export type MCPSpecVersion = '2025-11-25' | '2026-07-28';
 
 /**
  * Complete validator configuration.
@@ -288,7 +288,7 @@ export interface ValidatorConfig {
   /** Output configuration */
   output: OutputConfig;
 
-  /** MCP spec version to validate against (default: '2025-11-25') */
+  /** MCP spec version to validate against (default: '2026-07-28') */
   specVersion?: MCPSpecVersion;
 
   /** Optional LLM analysis configuration */

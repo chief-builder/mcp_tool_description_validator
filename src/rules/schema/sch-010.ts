@@ -1,7 +1,7 @@
 /**
- * SCH-010: x-mcp-header values must satisfy the DRAFT spec constraints
+ * SCH-010: x-mcp-header values must satisfy the MCP spec constraints
  *
- * The DRAFT MCP spec allows a property's JSON Schema to carry an
+ * The MCP 2026-07-28 spec allows a property's JSON Schema to carry an
  * `x-mcp-header` extension: its value is the name portion of a
  * Mcp-Param-{name} HTTP header. Constraints:
  * - MUST NOT be empty
@@ -34,9 +34,10 @@ const rule: Rule = {
   id: 'SCH-010',
   category: 'schema',
   defaultSeverity: 'error',
-  specVersions: ['draft'],
-  description: 'x-mcp-header values must satisfy the MCP draft constraints',
-  documentation: 'https://modelcontextprotocol.io/specification/draft',
+  specVersions: ['2026-07-28'],
+  description: 'x-mcp-header values must satisfy the MCP constraints',
+  documentation:
+    'https://modelcontextprotocol.io/specification/2026-07-28/server/tools#x-mcp-header',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
@@ -62,10 +63,18 @@ const rule: Rule = {
     // First occurrence of each header value (lowercased) for uniqueness
     const seen = new Map<string, string>();
 
-    walkSchema(tool.inputSchema, ({ schema, path }) => {
+    walkSchema(tool.inputSchema, ({ schema, path, staticallyReachable }) => {
       if (!(X_MCP_HEADER in schema)) return;
       const value = schema[X_MCP_HEADER];
       const headerPath = `${path}.${X_MCP_HEADER}`;
+
+      if (!staticallyReachable) {
+        emit(
+          headerPath,
+          `x-mcp-header at ${path} is not statically reachable from the schema root through properties keys only`,
+          'Move the annotation to a property reachable solely through nested properties (not items, composition, conditionals, $defs, or $ref)'
+        );
+      }
 
       if (typeof value !== 'string') {
         emit(

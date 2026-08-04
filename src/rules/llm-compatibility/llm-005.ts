@@ -44,11 +44,12 @@ const rule: Rule = {
     const issues: ValidationIssue[] = [];
 
     // Skip if description is empty (handled by LLM-001)
-    if (!tool.description || tool.description.trim() === '') {
+    if (typeof tool.description !== 'string' || tool.description.trim() === '') {
       return issues;
     }
 
-    const descLower = tool.description.toLowerCase();
+    const description = tool.description;
+    const descLower = description.toLowerCase();
 
     // Check for phrase patterns
     const hasExamplePhrase = EXAMPLE_PATTERNS.some(pattern =>
@@ -57,7 +58,7 @@ const rule: Rule = {
 
     // Check for regex patterns
     const hasExamplePattern = EXAMPLE_REGEXES.some(regex =>
-      regex.test(tool.description)
+      regex.test(description)
     );
 
     if (!hasExamplePhrase && !hasExamplePattern) {

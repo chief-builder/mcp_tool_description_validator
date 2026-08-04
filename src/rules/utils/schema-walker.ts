@@ -10,6 +10,8 @@
 
 /** Maximum schema nesting depth any rule will traverse. */
 export const MAX_SCHEMA_DEPTH = 50;
+/** Maximum number of subschemas a bounded traversal will process. */
+export const MAX_SCHEMA_NODES = 10000;
 
 /** True when the value is a plain object (a candidate JSON Schema node). */
 export function isSchemaObject(
@@ -81,10 +83,13 @@ export interface SchemaVisit {
   depth: number;
   /** Set when this node is the schema of a named property */
   propertyName?: string;
+  /** True when this property is reachable from the root using only properties keys. */
+  staticallyReachable: boolean;
 }
 
 export interface WalkOptions {
   maxDepth?: number;
+  maxNodes?: number;
   /** Path prefix for reported paths (default: "inputSchema") */
   rootPath?: string;
 }
@@ -113,43 +118,62 @@ export function walkSchema(
   options: WalkOptions = {}
 ): boolean {
   const maxDepth = options.maxDepth ?? MAX_SCHEMA_DEPTH;
+  const maxNodes = options.maxNodes ?? MAX_SCHEMA_NODES;
   let truncated = false;
+  let visitedNodes = 0;
 
   const walk = (
     node: unknown,
     path: string,
     depth: number,
-    propertyName?: string
+    propertyName?: string,
+    propertiesOnly = true
   ): void => {
-    if (!isSchemaObject(node)) return;
-    if (depth > maxDepth) {
+    if (truncated || !isSchemaObject(node)) return;
+    if (depth > maxDepth || visitedNodes >= maxNodes) {
       truncated = true;
       return;
     }
+    visitedNodes++;
 
-    visit({ schema: node, path, depth, propertyName });
+    visit({
+      schema: node,
+      path,
+      depth,
+      propertyName,
+      staticallyReachable: propertyName !== undefined && propertiesOnly,
+    });
 
     if (isSchemaObject(node.properties)) {
       for (const [name, child] of Object.entries(node.properties)) {
-        walk(child, `${path}.properties.${name}`, depth + 1, name);
+        if (truncated) break;
+        walk(
+          child,
+          `${path}.properties.${name}`,
+          depth + 1,
+          name,
+          propertiesOnly
+        );
       }
     }
     for (const key of SINGLE_SUBSCHEMA_KEYS) {
+      if (truncated) break;
       if (key in node) {
-        walk(node[key], `${path}.${key}`, depth + 1);
+        walk(node[key], `${path}.${key}`, depth + 1, undefined, false);
       }
     }
     for (const key of LIST_SUBSCHEMA_KEYS) {
       const list = node[key];
       if (Array.isArray(list)) {
-        list.forEach((child, index) =>
-          walk(child, `${path}.${key}[${index}]`, depth + 1)
-        );
+        for (let index = 0; index < list.length && !truncated; index++) {
+          walk(list[index], `${path}.${key}[${index}]`, depth + 1, undefined, false);
+        }
       }
     }
     if (isSchemaObject(node.$defs)) {
       for (const [name, child] of Object.entries(node.$defs)) {
-        walk(child, `${path}.$defs.${name}`, depth + 1);
+        if (truncated) break;
+        walk(child, `${path}.$defs.${name}`, depth + 1, undefined, false);
       }
     }
   };

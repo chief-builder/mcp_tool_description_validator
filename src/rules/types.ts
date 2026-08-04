@@ -37,7 +37,7 @@ export interface Rule {
   /** Documentation URL (optional) */
   documentation?: string;
   /**
-   * MCP spec versions this rule applies to (e.g. ['draft']).
+   * MCP spec versions this rule applies to (e.g. ['2026-07-28']).
    * Absent means the rule applies to all spec versions.
    */
   specVersions?: string[];

@@ -263,7 +263,7 @@ describe('CLI', () => {
     });
 
     it('should validate against the requested spec version', async () => {
-      // Network $ref: only the draft-gated SCH-009 rule flags this
+      // Network $ref: the finalized 2026 SCH-009 rule flags this
       const toolJson = {
         name: 'spec-version-tool',
         description: 'A tool used to verify spec-version gating in the CLI.',
@@ -280,21 +280,21 @@ describe('CLI', () => {
 
       const defaultRun = await runCLI([filePath, '--format', 'json']);
       const defaultResult = JSON.parse(defaultRun.stdout);
-      expect(defaultResult.metadata.mcpSpecVersion).toBe('2025-11-25');
+      expect(defaultResult.metadata.mcpSpecVersion).toBe('2026-07-28');
       expect(
         defaultResult.issues.filter((i: { id: string }) => i.id === 'SCH-009')
-      ).toHaveLength(0);
+      ).toHaveLength(1);
 
-      const draftRun = await runCLI([
+      const legacyRun = await runCLI([
         filePath,
-        '--spec-version', 'draft',
+        '--spec-version', '2025-11-25',
         '--format', 'json',
       ]);
-      const draftResult = JSON.parse(draftRun.stdout);
-      expect(draftResult.metadata.mcpSpecVersion).toBe('draft');
+      const legacyResult = JSON.parse(legacyRun.stdout);
+      expect(legacyResult.metadata.mcpSpecVersion).toBe('2025-11-25');
       expect(
-        draftResult.issues.filter((i: { id: string }) => i.id === 'SCH-009')
-      ).toHaveLength(1);
+        legacyResult.issues.filter((i: { id: string }) => i.id === 'SCH-009')
+      ).toHaveLength(0);
     });
 
     it('should reject an invalid --spec-version value', async () => {

@@ -54,10 +54,10 @@ describe('Configuration System', () => {
       expect(config.llm).toBeUndefined();
     });
 
-    it('should default specVersion to 2025-11-25', () => {
+    it('should default specVersion to 2026-07-28', () => {
       const config = getDefaultConfig();
 
-      expect(config.specVersion).toBe('2025-11-25');
+      expect(config.specVersion).toBe('2026-07-28');
     });
 
     it('should return a new object each time (no mutation)', () => {
@@ -191,8 +191,8 @@ describe('Configuration System', () => {
     });
 
     it('should preserve a user specVersion and default otherwise', () => {
-      expect(mergeConfig({}).specVersion).toBe('2025-11-25');
-      expect(mergeConfig({ specVersion: 'draft' }).specVersion).toBe('draft');
+      expect(mergeConfig({}).specVersion).toBe('2026-07-28');
+      expect(mergeConfig({ specVersion: '2025-11-25' }).specVersion).toBe('2025-11-25');
     });
   });
 
@@ -470,18 +470,18 @@ describe('resolveConfig()', () => {
     const tmpBase = join(tmpdir(), `mcp-resolve-spec-${Date.now()}`);
     await mkdir(tmpBase, { recursive: true });
     const configPath = join(tmpBase, 'mcp-validate.config.yaml');
-    await writeFile(configPath, ['specVersion: draft'].join('\n'));
+    await writeFile(configPath, ['specVersion: "2025-11-25"'].join('\n'));
 
     try {
       // File value survives when no override is given
       const fromFile = await resolveConfig(configPath);
-      expect(fromFile.config.specVersion).toBe('draft');
+      expect(fromFile.config.specVersion).toBe('2025-11-25');
 
       // Explicit override wins over the file
       const overridden = await resolveConfig(configPath, {
-        specVersion: '2025-11-25',
+        specVersion: '2026-07-28',
       });
-      expect(overridden.config.specVersion).toBe('2025-11-25');
+      expect(overridden.config.specVersion).toBe('2026-07-28');
 
       // Invalid values are rejected
       const badPath = join(tmpBase, 'bad.config.yaml');

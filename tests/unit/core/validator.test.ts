@@ -123,7 +123,7 @@ describe('Core Validator', () => {
       // Disable all rules
       const disabledRules: Record<string, boolean> = {};
       const ruleIds = [
-        'SCH-001', 'SCH-002', 'SCH-003', 'SCH-004', 'SCH-005', 'SCH-006', 'SCH-007', 'SCH-008', 'SCH-009', 'SCH-010',
+        'SCH-001', 'SCH-002', 'SCH-003', 'SCH-004', 'SCH-005', 'SCH-006', 'SCH-007', 'SCH-008', 'SCH-009', 'SCH-010', 'SCH-011',
         'NAM-002', 'NAM-003', 'NAM-004', 'NAM-005', 'NAM-006', 'NAM-007',
         'SEC-001', 'SEC-002', 'SEC-003', 'SEC-004', 'SEC-005', 'SEC-006', 'SEC-007', 'SEC-008', 'SEC-009', 'SEC-010', 'SEC-011',
         'LLM-001', 'LLM-002', 'LLM-003', 'LLM-004', 'LLM-005', 'LLM-006', 'LLM-007', 'LLM-008', 'LLM-009', 'LLM-010', 'LLM-011', 'LLM-012', 'LLM-013',
@@ -147,7 +147,7 @@ describe('Core Validator', () => {
       const result = await validate(tools);
 
       expect(result.metadata.validatorVersion).toBe('0.1.0');
-      expect(result.metadata.mcpSpecVersion).toBe('2025-11-25');
+      expect(result.metadata.mcpSpecVersion).toBe('2026-07-28');
       expect(result.metadata.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
       expect(result.metadata.duration).toBeGreaterThanOrEqual(0);
       expect(result.metadata.llmAnalysisUsed).toBe(false);
@@ -157,14 +157,14 @@ describe('Core Validator', () => {
       const tools = [createValidTool()];
 
       const result = await validate(tools, {
-        config: { specVersion: 'draft' },
+        config: { specVersion: '2025-11-25' },
       });
 
-      expect(result.metadata.mcpSpecVersion).toBe('draft');
+      expect(result.metadata.mcpSpecVersion).toBe('2025-11-25');
     });
 
-    it('should only run draft-gated rules when targeting the draft spec', async () => {
-      // SCH-009 (network $ref) is draft-only
+    it('should only run 2026-gated rules when targeting the finalized spec', async () => {
+      // SCH-009 (network $ref) was finalized in 2026-07-28
       const tool = createValidTool({
         inputSchema: {
           type: 'object',
@@ -175,12 +175,12 @@ describe('Core Validator', () => {
       });
 
       const defaultResult = await validate([tool]);
-      expect(defaultResult.issues.filter((i) => i.id === 'SCH-009')).toHaveLength(0);
+      expect(defaultResult.issues.filter((i) => i.id === 'SCH-009')).toHaveLength(1);
 
-      const draftResult = await validate([tool], {
-        config: { specVersion: 'draft' },
+      const legacyResult = await validate([tool], {
+        config: { specVersion: '2025-11-25' },
       });
-      expect(draftResult.issues.filter((i) => i.id === 'SCH-009')).toHaveLength(1);
+      expect(legacyResult.issues.filter((i) => i.id === 'SCH-009')).toHaveLength(0);
     });
 
     it('should include per-tool results', async () => {

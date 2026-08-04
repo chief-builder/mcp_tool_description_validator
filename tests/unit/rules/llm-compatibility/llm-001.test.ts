@@ -28,7 +28,7 @@ describe('LLM-001: Tool description must be non-empty', () => {
   it('should have correct metadata', () => {
     expect(rule.id).toBe('LLM-001');
     expect(rule.category).toBe('llm-compatibility');
-    expect(rule.defaultSeverity).toBe('error');
+    expect(rule.defaultSeverity).toBe('warning');
   });
 
   it('should pass for tool with valid description', () => {
@@ -42,7 +42,7 @@ describe('LLM-001: Tool description must be non-empty', () => {
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(1);
     expect(issues[0].id).toBe('LLM-001');
-    expect(issues[0].severity).toBe('error');
+    expect(issues[0].severity).toBe('warning');
     expect(issues[0].tool).toBe('test-tool');
   });
 
@@ -55,7 +55,6 @@ describe('LLM-001: Tool description must be non-empty', () => {
 
   it('should fail for tool with undefined description', () => {
     const tool = createTool();
-    // @ts-expect-error - testing undefined description
     tool.description = undefined;
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(1);

@@ -1,6 +1,6 @@
 # MCP Tool Definition Best Practices
 
-This document outlines best practices for creating effective MCP (Model Context Protocol) tool definitions. These practices form the foundation for the MCP Tool Description Validator's 56 validation rules.
+This document outlines best practices for creating effective MCP (Model Context Protocol) tool definitions. These practices form the foundation for the MCP Tool Description Validator's 57 validation rules.
 
 ## Core Principles
 
@@ -75,16 +75,16 @@ The server maturity score is the **average of individual tool scores**. This ens
 
 ## Validation Rule Categories
 
-The validator implements 56 rules organized into 5 categories:
+The validator implements 57 rules organized into 5 categories:
 
-### 1. Schema Validation (SCH-001 to SCH-010)
+### 1. Schema Validation (SCH-001 to SCH-011)
 
 Ensures MCP protocol compliance and valid JSON Schema structure.
 
-- Tool must have name, description, and inputSchema
-- inputSchema must be valid JSON Schema (2020-12 by default, or an explicitly declared draft-07) with type "object"
+- Tool must have a name and inputSchema; description is optional but must be a string when present
+- inputSchema and outputSchema must be valid JSON Schema (2020-12 by default, or an explicitly declared draft-07); inputSchema must have type "object"
 - Required parameters must be listed in the required array
-- Draft spec only: no network `$ref` URIs (SCH-009), valid `x-mcp-header` values (SCH-010)
+- MCP 2026-07-28: safe network `$ref` handling (SCH-009), valid `x-mcp-header` values and static reachability (SCH-010), and valid optional metadata shapes (SCH-011)
 
 ### 2. Naming Conventions (NAM-002 to NAM-008)
 
@@ -104,7 +104,7 @@ Identifies potential vulnerabilities in input handling, checking nested schemas 
 - Array parameters must have `maxItems`
 - File paths must have validation patterns
 - Sensitive parameters should not have default values
-- Draft spec only: sensitive parameters must not be exposed as HTTP headers via `x-mcp-header` (SEC-011)
+- MCP 2026-07-28: sensitive parameters must not be exposed as HTTP headers via `x-mcp-header` (SEC-011)
 
 ### 4. LLM Compatibility (LLM-001 to LLM-013)
 

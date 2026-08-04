@@ -214,7 +214,7 @@ program
     new Option(
       '--spec-version <version>',
       'MCP spec version to validate against'
-    ).choices(['2025-11-25', 'draft'])
+    ).choices(['2025-11-25', '2026-07-28'])
   )
   .option(
     '-r, --rule <rule>',
