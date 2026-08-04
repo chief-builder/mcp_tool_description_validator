@@ -4,7 +4,6 @@
 **Architecture**: `docs/architecture/validator.md`
 **Created**: 2025-01-07
 **Approach**: Horizontal (layer by layer)
-**Beads**: Integrated (use /auto to implement)
 
 ## Progress
 
@@ -29,7 +28,6 @@
 - `vitest.config.ts` - Test configuration
 **Size**: L
 **Risk**: None
-**Beads**: #bqk
 
 ### [ ] CHUNK-02: Configuration System
 **Goal**: Cosmiconfig-based config loading working, default config file in place
@@ -38,7 +36,6 @@
 - `mcp-validate.config.yaml` - Default configuration file
 **Size**: M
 **Risk**: None
-**Beads**: #ng5
 
 ---
 
@@ -51,7 +48,6 @@
 - `tests/fixtures/` - Sample valid/invalid tool definition files
 **Size**: L
 **Risk**: None
-**Beads**: #0z8
 
 ### [ ] CHUNK-04: MCP Client
 **Goal**: Can connect to live MCP servers (STDIO and HTTP transport), retrieve tool definitions
@@ -59,7 +55,6 @@
 - `src/parsers/mcp-client.ts` - connectToServer(), getToolDefinitions(), disconnect()
 **Size**: L
 **Risk**: MCP SDK integration - first external dependency usage
-**Beads**: #byr
 
 ---
 
@@ -74,7 +69,6 @@
 - `src/core/rule-engine.ts` - executeRules(), aggregateResults()
 **Size**: L
 **Risk**: None
-**Beads**: #2kj
 
 ### [ ] CHUNK-06: Schema Rules (SCH-*)
 **Goal**: All 8 schema validation rules implemented with tests
@@ -83,7 +77,6 @@
 - `tests/unit/rules/schema/` - Rule tests
 **Size**: L
 **Risk**: None
-**Beads**: #1ye
 
 ### [ ] CHUNK-07: Naming Rules (NAM-*)
 **Goal**: All 6 naming convention rules implemented with tests
@@ -92,7 +85,6 @@
 - `tests/unit/rules/naming/` - Rule tests
 **Size**: L
 **Risk**: None
-**Beads**: #ass
 
 ### [ ] CHUNK-08: Security Rules (SEC-*)
 **Goal**: All 10 security validation rules implemented with tests
@@ -101,7 +93,6 @@
 - `tests/unit/rules/security/` - Rule tests
 **Size**: L
 **Risk**: None
-**Beads**: #1xi
 
 ### [ ] CHUNK-09: LLM Compatibility Rules (LLM-*)
 **Goal**: All 12 LLM compatibility rules implemented with tests
@@ -110,7 +101,6 @@
 - `tests/unit/rules/llm/` - Rule tests
 **Size**: L
 **Risk**: None
-**Beads**: #54w
 
 ### [ ] CHUNK-10: Best Practice Rules (BP-*)
 **Goal**: All 8 best practice rules implemented with tests
@@ -119,7 +109,6 @@
 - `tests/unit/rules/best-practice/` - Rule tests
 **Size**: L
 **Risk**: None
-**Beads**: #uju
 
 ---
 
@@ -133,7 +122,6 @@
 - `src/reporters/sarif.ts` - formatSarifOutput(), SARIF 2.1.0 compliance
 **Size**: L
 **Risk**: None
-**Beads**: #67c
 
 ---
 
@@ -146,7 +134,6 @@
 - `src/index.ts` - Library entry point and exports
 **Size**: L
 **Risk**: None
-**Beads**: #i2g
 
 ### [ ] CHUNK-13: CLI Application
 **Goal**: mcp-validate CLI working with all commands and options
@@ -155,7 +142,6 @@
 - `bin/mcp-validate.js` - CLI binary shim
 **Size**: L
 **Risk**: None
-**Beads**: #xe8
 
 ### [ ] CHUNK-14: HTTP Service
 **Goal**: Hono server working with /validate and /health endpoints
@@ -163,7 +149,6 @@
 - `src/service/server.ts` - Hono app, POST /validate, GET /health
 **Size**: M
 **Risk**: None
-**Beads**: #3wf
 
 ---
 
@@ -176,7 +161,6 @@
 - Vercel AI SDK integration with all three providers
 **Size**: L
 **Risk**: LLM API integration - external service dependency, cost management
-**Beads**: #sgn
 
 ---
 
