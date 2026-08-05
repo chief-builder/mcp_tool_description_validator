@@ -163,6 +163,52 @@ describe('Core Validator', () => {
       expect(result.metadata.mcpSpecVersion).toBe('2025-11-25');
     });
 
+    it('records live discovery context independently from validation', async () => {
+      const result = await validate([createValidTool()], {
+        config: { specVersion: '2026-07-28', profile: 'compliance' },
+        runContext: {
+          serverEndpoint: 'https://example.com/mcp',
+          discoverySpecVersion: '2025-11-25',
+          authenticationScope: 'none',
+          toolExecutionPerformed: false,
+        },
+      });
+      expect(result.metadata.mcpSpecVersion).toBe('2026-07-28');
+      expect(result.metadata.discoverySpecVersion).toBe('2025-11-25');
+      expect(result.metadata.validationProfile).toBe('compliance');
+      expect(result.metadata.serverEndpoint).toBe('https://example.com/mcp');
+      expect(result.metadata.authenticationScope).toBe('none');
+      expect(result.metadata.toolExecutionPerformed).toBe(false);
+      expect(result.compliant).toBe(true);
+    });
+
+    it('keeps policy findings but separates compliance from governance validity', async () => {
+      const tool = createValidTool({
+        inputSchema: {
+          type: 'object',
+          properties: {
+            userId: { type: 'string', description: 'User identifier' },
+          },
+          required: ['userId'],
+        },
+      });
+      const governance = await validate([tool]);
+      expect(governance.valid).toBe(false);
+      expect(governance.compliant).toBe(true);
+      expect(
+        governance.issues.find((issue) => issue.id === 'SEC-001')?.provenance
+      ).toBe('governance');
+
+      const compliance = await validate([tool], {
+        config: { profile: 'compliance' },
+      });
+      expect(compliance.valid).toBe(true);
+      expect(compliance.compliant).toBe(true);
+      expect(
+        compliance.issues.find((issue) => issue.id === 'SEC-001')?.severity
+      ).toBe('warning');
+    });
+
     it('should only run 2026-gated rules when targeting the finalized spec', async () => {
       // SCH-009 (network $ref) was finalized in 2026-07-28
       const tool = createValidTool({

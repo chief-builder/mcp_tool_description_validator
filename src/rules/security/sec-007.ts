@@ -9,7 +9,7 @@
 import type { Rule } from '../types.js';
 import type { ValidationIssue } from '../../types/index.js';
 import { getAllPropertyEntries } from '../utils/schema-walker.js';
-import { makeWordMatcher } from '../utils/text.js';
+import { makeWordMatcher, tokenizeIdentifier } from '../utils/text.js';
 
 /**
  * Terms that suggest a parameter contains sensitive data. Matched as
@@ -33,6 +33,14 @@ const SENSITIVE_NAME_TERMS = [
 const matchesSensitiveTerm = makeWordMatcher(SENSITIVE_NAME_TERMS);
 
 export function isSensitiveParameter(name: string): boolean {
+  const tokens = tokenizeIdentifier(name);
+  // Pagination tokens are opaque continuation cursors, not credentials.
+  if (
+    tokens.includes('cursor') ||
+    (tokens.includes('page') && tokens.includes('token'))
+  ) {
+    return false;
+  }
   return matchesSensitiveTerm(name);
 }
 

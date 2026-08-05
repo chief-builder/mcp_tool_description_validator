@@ -201,6 +201,12 @@ async function fetchModernToolsOverHttp(
     });
     const body = await response.text();
     if (!response.ok) {
+      if (/unsupported protocol version/i.test(body)) {
+        throw new Error(
+          `MCP server rejected discovery protocol ${MODERN_PROTOCOL_VERSION}: ${body}. ` +
+          'Retry explicitly with --discovery-spec-version 2025-11-25; the validator will not silently downgrade.'
+        );
+      }
       throw new Error(`MCP server returned HTTP ${response.status}: ${body}`);
     }
     const contentType = response.headers.get('content-type') ?? '';

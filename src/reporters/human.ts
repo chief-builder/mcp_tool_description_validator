@@ -54,6 +54,11 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
 
   // Source info
   lines.push(`Validating: ${result.tools.length} tool(s)`);
+  lines.push(`Profile: ${result.metadata.validationProfile ?? 'governance'}`);
+  lines.push(`Validation spec: ${result.metadata.mcpSpecVersion}`);
+  if (result.metadata.discoverySpecVersion) {
+    lines.push(`Discovery spec: ${result.metadata.discoverySpecVersion}`);
+  }
   lines.push('');
 
   // Per-tool results
@@ -67,7 +72,10 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
                            issue.severity === 'warning' ? c.yellow : c.blue;
       const severityLabel = issue.severity.toUpperCase();
 
-      lines.push(`  ${severityColor(severityLabel)} [${issue.id}] ${issue.message}`);
+      const provenance = (issue.provenance ?? 'governance').toUpperCase();
+      lines.push(
+        `  ${severityColor(severityLabel)} [${issue.id}] [${provenance}] ${issue.message}`
+      );
 
       if (issue.path) {
         lines.push(`    ${c.gray('at:')} ${issue.path}`);
@@ -101,6 +109,15 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
   lines.push(`  Errors:      ${result.summary.issuesBySeverity.error}`);
   lines.push(`  Warnings:    ${result.summary.issuesBySeverity.warning}`);
   lines.push(`  Suggestions: ${result.summary.issuesBySeverity.suggestion}`);
+  if (result.summary.issuesByProvenance) {
+    lines.push('');
+    lines.push('  By Provenance:');
+    for (const [provenance, count] of Object.entries(
+      result.summary.issuesByProvenance
+    )) {
+      lines.push(`    ${provenance}: ${count}`);
+    }
+  }
   lines.push('');
 
   lines.push('  By Category:');
@@ -126,10 +143,19 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
   }
 
   // Final status
+  lines.push(
+    result.compliant === false
+      ? c.red('MCP specification compliance failed.')
+      : c.green('MCP specification compliance passed.')
+  );
   if (result.valid) {
-    lines.push(c.green('Validation passed.'));
+    lines.push(c.green('Governance threshold passed.'));
   } else {
-    lines.push(c.red(`Validation failed with ${result.summary.issuesBySeverity.error} error(s).`));
+    lines.push(
+      c.red(
+        `Governance threshold failed with ${result.summary.issuesBySeverity.error} error(s).`
+      )
+    );
   }
 
   return lines.join('\n');

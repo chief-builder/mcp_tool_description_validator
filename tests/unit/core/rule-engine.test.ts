@@ -10,6 +10,7 @@ import {
   aggregateResults,
   flattenIssues,
   getMaturityLevel,
+  getRuleProvenance,
 } from '../../../src/core/rule-engine.js';
 import { getEffectiveSeverity } from '../../../src/core/rule-loader.js';
 import type { Rule, RuleContext, ToolRuleResults } from '../../../src/rules/types.js';
@@ -664,5 +665,37 @@ describe('hostile tool definitions', () => {
 
     const overridden = executeRules([createMockTool()], [escalatingRule], { 'TEST-ESC': 'error' });
     expect(overridden[0].issues.map((i) => i.severity)).toEqual(['error', 'error']);
+  });
+
+  it('labels every finding with its provenance', () => {
+    const rule: Rule = {
+      ...emptyNameRule,
+      provenance: 'specification',
+    };
+    const result = executeRules([createMockTool('')], [rule], {});
+    expect(result[0].issues[0].provenance).toBe('specification');
+    expect(getRuleProvenance(securityRule)).toBe('governance');
+  });
+
+  it('downgrades policy errors in compliance profile but honors overrides', () => {
+    const policyRule: Rule = {
+      ...emptyNameRule,
+      provenance: 'governance',
+    };
+    const compliance = executeRules(
+      [createMockTool('')],
+      [policyRule],
+      {},
+      'compliance'
+    );
+    expect(compliance[0].issues[0].severity).toBe('warning');
+
+    const overridden = executeRules(
+      [createMockTool('')],
+      [policyRule],
+      { 'TEST-001': 'error' },
+      'compliance'
+    );
+    expect(overridden[0].issues[0].severity).toBe('error');
   });
 });

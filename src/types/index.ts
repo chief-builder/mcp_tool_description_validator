@@ -113,6 +113,9 @@ export interface ValidationResult {
   /** Whether all tools passed validation without errors */
   valid: boolean;
 
+  /** Whether no MCP specification finding has error severity */
+  compliant?: boolean;
+
   /** Summary statistics for the validation run */
   summary: ValidationSummary;
 
@@ -142,6 +145,9 @@ export interface ValidationSummary {
   /** Count of issues grouped by severity */
   issuesBySeverity: Record<IssueSeverity, number>;
 
+  /** Count of issues grouped by finding provenance */
+  issuesByProvenance?: Record<IssueProvenance, number>;
+
   /** Maturity score (0-100), per-tool averaged */
   maturityScore: number;
 
@@ -161,6 +167,9 @@ export interface ValidationIssue {
 
   /** Severity level */
   severity: IssueSeverity;
+
+  /** Whether the finding comes from the MCP spec, policy, or a heuristic */
+  provenance?: IssueProvenance;
 
   /** Human-readable issue description */
   message: string;
@@ -192,6 +201,9 @@ export type IssueCategory =
  * Severity levels for validation issues.
  */
 export type IssueSeverity = 'error' | 'warning' | 'suggestion';
+
+/** Origin and authority of a validation finding. */
+export type IssueProvenance = 'specification' | 'governance' | 'heuristic';
 
 /**
  * Maturity levels for tool definitions based on validation score.
@@ -253,6 +265,21 @@ export interface ValidationMetadata {
   /** MCP specification version validated against */
   mcpSpecVersion: string;
 
+  /** MCP revision used to discover tools from a live server */
+  discoverySpecVersion?: string;
+
+  /** Active validation policy profile */
+  validationProfile?: ValidationProfile;
+
+  /** Live server endpoint or stdio command, when applicable */
+  serverEndpoint?: string;
+
+  /** Authentication scope used for discovery */
+  authenticationScope?: 'none' | 'unknown';
+
+  /** Whether the validator executed a server tool (always false today) */
+  toolExecutionPerformed?: boolean;
+
   /** ISO 8601 timestamp when validation started */
   timestamp: string;
 
@@ -278,6 +305,9 @@ export interface ValidationMetadata {
  */
 export type MCPSpecVersion = '2025-11-25' | '2026-07-28';
 
+/** Built-in severity policy profiles. */
+export type ValidationProfile = 'compliance' | 'governance';
+
 /**
  * Complete validator configuration.
  */
@@ -290,6 +320,12 @@ export interface ValidatorConfig {
 
   /** MCP spec version to validate against (default: '2026-07-28') */
   specVersion?: MCPSpecVersion;
+
+  /** MCP revision used for live discovery (defaults to specVersion) */
+  discoverySpecVersion?: MCPSpecVersion;
+
+  /** Validation policy profile (default: governance) */
+  profile?: ValidationProfile;
 
   /** Optional LLM analysis configuration */
   llm?: LLMConfig;

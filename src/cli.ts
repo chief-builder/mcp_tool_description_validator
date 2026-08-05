@@ -21,6 +21,7 @@ import type {
   OutputConfig,
   IssueSeverity,
   MCPSpecVersion,
+  ValidationProfile,
 } from './types/index.js';
 
 const program = new Command();
@@ -80,6 +81,8 @@ export interface CLIOptions {
   format: 'human' | 'json' | 'sarif';
   config?: string;
   specVersion?: MCPSpecVersion;
+  discoverySpecVersion?: MCPSpecVersion;
+  profile?: ValidationProfile;
   rule: Record<string, string>;
   llm?: boolean;
   llmProvider?: string;
@@ -126,6 +129,12 @@ async function runValidation(
   // so a config-file specVersion survives (default comes from config)
   if (program.getOptionValueSource('specVersion') === 'cli') {
     overrides.specVersion = options.specVersion;
+  }
+  if (program.getOptionValueSource('discoverySpecVersion') === 'cli') {
+    overrides.discoverySpecVersion = options.discoverySpecVersion;
+  }
+  if (program.getOptionValueSource('profile') === 'cli') {
+    overrides.profile = options.profile;
   }
 
   // Resolve effective config (explicit path or discovery + overrides)
@@ -179,6 +188,8 @@ async function runValidation(
         line.includes('Errors:') ||
         line.includes('Validation failed') ||
         line.includes('Validation passed') ||
+        line.includes('MCP specification compliance') ||
+        line.includes('Governance threshold') ||
         line.match(/^[^\s]/) || // Tool names (start of line)
         line.trim() === '' ||
         line.includes('─')
@@ -215,6 +226,18 @@ program
       '--spec-version <version>',
       'MCP spec version to validate against'
     ).choices(['2025-11-25', '2026-07-28'])
+  )
+  .addOption(
+    new Option(
+      '--discovery-spec-version <version>',
+      'MCP revision used to discover tools from a live server'
+    ).choices(['2025-11-25', '2026-07-28'])
+  )
+  .addOption(
+    new Option(
+      '--profile <profile>',
+      'Validation policy profile'
+    ).choices(['compliance', 'governance'])
   )
   .option(
     '-r, --rule <rule>',

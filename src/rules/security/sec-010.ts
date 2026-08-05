@@ -21,7 +21,6 @@ const CODE_NAME_PATTERNS = [
   /^cmd$/i,
   /^shell$/i,
   /^expression$/i,
-  /^query$/i,
   /^sql$/i,
   /^javascript$/i,
   /^python$/i,

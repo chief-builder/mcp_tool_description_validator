@@ -496,6 +496,22 @@ describe('MCP Client', () => {
       })).rejects.toThrow('expected 1');
     });
 
+    it('should explain unsupported discovery versions without downgrading', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({ error: { message: 'Unsupported protocol version' } }),
+          { status: 400, headers: { 'content-type': 'application/json' } }
+        )
+      );
+      vi.stubGlobal('fetch', fetchMock);
+
+      await expect(fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      })).rejects.toThrow('--discovery-spec-version 2025-11-25');
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
     it('should follow nextCursor across modern tools/list pages', async () => {
       const fetchMock = vi
         .fn()

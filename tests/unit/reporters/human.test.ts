@@ -97,10 +97,11 @@ describe('Human Reporter', () => {
       expect(ansiRegex.test(output)).toBe(false);
     });
 
-    it('should show validation failed message for invalid results', () => {
+    it('should distinguish compliance from a failed governance threshold', () => {
       const output = formatHumanOutput(mockResult, { color: false });
 
-      expect(output).toContain('Validation failed with 1 error(s).');
+      expect(output).toContain('MCP specification compliance passed.');
+      expect(output).toContain('Governance threshold failed with 1 error(s).');
     });
 
     it('should show validation passed message for valid results', () => {
@@ -117,7 +118,7 @@ describe('Human Reporter', () => {
 
       const output = formatHumanOutput(validResult, { color: false });
 
-      expect(output).toContain('Validation passed.');
+      expect(output).toContain('Governance threshold passed.');
     });
 
     it('should include issue path when present', () => {

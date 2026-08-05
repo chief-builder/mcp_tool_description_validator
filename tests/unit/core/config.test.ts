@@ -60,6 +60,12 @@ describe('Configuration System', () => {
       expect(config.specVersion).toBe('2026-07-28');
     });
 
+    it('should default to governance and inherit discovery from specVersion', () => {
+      const config = getDefaultConfig();
+      expect(config.profile).toBe('governance');
+      expect(config.discoverySpecVersion).toBeUndefined();
+    });
+
     it('should return a new object each time (no mutation)', () => {
       const config1 = getDefaultConfig();
       const config2 = getDefaultConfig();
@@ -487,6 +493,28 @@ describe('resolveConfig()', () => {
       const badPath = join(tmpBase, 'bad.config.yaml');
       await writeFile(badPath, ['specVersion: 2099-01-01'].join('\n'));
       await expect(resolveConfig(badPath)).rejects.toThrow(/Invalid configuration/);
+    } finally {
+      await rm(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  it('loads independent discovery revision and validation profile', async () => {
+    const tmpBase = join(tmpdir(), `mcp-resolve-live-${Date.now()}`);
+    await mkdir(tmpBase, { recursive: true });
+    const configPath = join(tmpBase, 'mcp-validate.config.yaml');
+    await writeFile(
+      configPath,
+      [
+        'specVersion: "2026-07-28"',
+        'discoverySpecVersion: "2025-11-25"',
+        'profile: compliance',
+      ].join('\n')
+    );
+    try {
+      const { config } = await resolveConfig(configPath);
+      expect(config.specVersion).toBe('2026-07-28');
+      expect(config.discoverySpecVersion).toBe('2025-11-25');
+      expect(config.profile).toBe('compliance');
     } finally {
       await rm(tmpBase, { recursive: true, force: true });
     }

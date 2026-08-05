@@ -71,6 +71,15 @@ describe('SEC-004: File path parameters must use pattern for path validation', (
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(0);
     });
+
+    it('should treat opaque Drive-style IDs as identifiers, not paths', () => {
+      const tool = createTool({
+        fileId: { type: 'string' },
+        parentId: { type: 'string' },
+        folder_id: { type: 'string' },
+      });
+      expect(rule.check(tool, createContext())).toHaveLength(0);
+    });
   });
 
   describe('failing cases', () => {

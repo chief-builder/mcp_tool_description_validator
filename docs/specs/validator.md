@@ -133,6 +133,7 @@ interface ValidationIssue {
   id: string;                    // Unique rule ID (e.g., "SEC-001")
   category: IssueCategory;
   severity: IssueSeverity;
+  provenance: IssueProvenance;  // specification | governance | heuristic
   message: string;
   tool: string;                  // Tool name
   path?: string;                 // JSON path to problematic field
@@ -148,10 +149,16 @@ type IssueCategory =
   | 'best-practice';   // Recommended improvements
 
 type IssueSeverity = 'error' | 'warning' | 'suggestion';
+type IssueProvenance = 'specification' | 'governance' | 'heuristic';
 
 interface ValidationMetadata {
   validatorVersion: string;
   mcpSpecVersion: string;       // "2026-07-28" by default
+  discoverySpecVersion?: string;
+  validationProfile: 'compliance' | 'governance';
+  serverEndpoint?: string;
+  authenticationScope?: 'none' | 'unknown';
+  toolExecutionPerformed?: boolean;
   timestamp: string;
   duration: number;             // Milliseconds
   configUsed: string;           // Path to config file if any
@@ -165,6 +172,9 @@ interface ValidationMetadata {
 interface ValidatorConfig {
   rules: RuleConfig;
   output: OutputConfig;
+  specVersion?: '2025-11-25' | '2026-07-28';
+  discoverySpecVersion?: '2025-11-25' | '2026-07-28';
+  profile?: 'compliance' | 'governance';
   llm?: LLMConfig;
 }
 
@@ -730,17 +740,16 @@ mcp-tool-validator/
 
 The 2026-08-05
 [Google Drive MCP case study](../case-studies/google-drive.md) exposed the
-following requirements. These are requirements for follow-up implementation;
-documenting them does not imply that they are already supported.
+following requirements. All six are implemented and covered by automated tests.
 
-| ID | Requirement | Acceptance criteria |
-|---|---|---|
-| LIVE-001 | Decouple discovery and validation revisions | CLI, library, and configuration APIs can select a live-server discovery protocol independently from the rule-set `specVersion`; reports record both values |
-| LIVE-002 | Report finding provenance | Every finding is identifiable as MCP specification compliance, configurable governance policy, or heuristic advice; the overall report does not describe policy-only failures as MCP noncompliance |
-| LIVE-003 | Add context-aware security classification | Opaque identifiers such as `fileId` do not trigger path traversal rules without path evidence; pagination tokens are not automatically classified as credentials; documented structured query languages are not automatically treated as executable code |
-| LIVE-004 | Improve version diagnostics | An unsupported protocol response names the attempted revision and suggests an explicit compatible-revision retry; the validator never silently downgrades |
-| LIVE-005 | Support validation profiles | A base compliance profile and a strict governance profile can assign different severities to recommendations such as string bounds while preserving the underlying finding |
-| LIVE-006 | Capture reproducibility metadata | Real-server reports can record endpoint, timestamp, validator version, discovery revision, validation revision, authentication scope, tool count, and whether tool execution occurred |
+| ID | Status | Requirement | Acceptance criteria |
+|---|---|---|---|
+| LIVE-001 | Implemented | Decouple discovery and validation revisions | CLI, library, and configuration APIs can select a live-server discovery protocol independently from the rule-set `specVersion`; reports record both values |
+| LIVE-002 | Implemented | Report finding provenance | Every finding is identifiable as MCP specification compliance, configurable governance policy, or heuristic advice; the overall report does not describe policy-only failures as MCP noncompliance |
+| LIVE-003 | Implemented | Add context-aware security classification | Opaque identifiers such as `fileId` do not trigger path traversal rules without path evidence; pagination tokens are not automatically classified as credentials; documented structured query languages are not automatically treated as executable code |
+| LIVE-004 | Implemented | Improve version diagnostics | An unsupported protocol response names the attempted revision and suggests an explicit compatible-revision retry; the validator never silently downgrades |
+| LIVE-005 | Implemented | Support validation profiles | A base compliance profile and a strict governance profile can assign different severities to recommendations such as string bounds while preserving the underlying finding |
+| LIVE-006 | Implemented | Capture reproducibility metadata | Real-server reports can record endpoint, timestamp, validator version, discovery revision, validation revision, authentication scope, tool count, and whether tool execution occurred |
 
 These requirements preserve an important boundary: the validator assesses tool
 definitions and discovery interoperability, not the correctness of remote tool

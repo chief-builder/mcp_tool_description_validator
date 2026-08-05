@@ -51,8 +51,9 @@ flow.
 
 On 2026-08-05, the validator was run against Google's managed Drive MCP server.
 It discovered and analyzed eight public tool definitions without requesting
-Drive authorization or executing a tool. The run scored 77/100 (Mature) and
-exposed both useful governance findings and several heuristic false positives.
+Drive authorization or executing a tool. The initial run exposed several
+heuristic false positives; after implementing the derived requirements, the
+same server passed the compliance profile at 87/100 (Mature).
 
 See the reproducible
 [Google Drive MCP server case study](docs/case-studies/google-drive.md) for the
@@ -78,6 +79,12 @@ mcp-validate --server "http://localhost:3000/mcp"
 
 # Legacy initialization-based servers require the legacy target
 mcp-validate --server "node ./legacy-server.js" --spec-version 2025-11-25
+
+# Discover through a legacy server, but validate against finalized rules
+mcp-validate --server "https://example.com/mcp" \
+  --discovery-spec-version 2025-11-25 \
+  --spec-version 2026-07-28 \
+  --profile compliance
 
 # 2026-07-28 is the default; target the legacy revision when needed
 mcp-validate tools.json --spec-version 2025-11-25
@@ -109,6 +116,8 @@ mcp-validate serve --port 8080
 | `-c, --config <path>` | Explicit config file path (otherwise auto-discovered) |
 | `-r, --rule <RULE-ID=setting>` | Override a rule: `on`, `off`, `error`, `warning`, `suggestion` (repeatable) |
 | `--spec-version <version>` | MCP spec revision to validate against: `2026-07-28` (default) or `2025-11-25` |
+| `--discovery-spec-version <version>` | MCP revision used for live discovery; defaults to `--spec-version` |
+| `--profile <profile>` | `governance` (default, strict policy) or `compliance` (non-specification errors become warnings) |
 | `--llm` | Enable LLM-assisted analysis |
 | `--llm-provider <provider>` | `anthropic` (default), `openai`, or `ollama` |
 | `-v, --verbose` | Show suggestions and LLM detail |
@@ -189,6 +198,12 @@ Three rules apply only to MCP 2026-07-28 and are skipped with `--spec-version 20
 
 See [docs/RULES.md](docs/RULES.md) for the complete rule reference with examples.
 
+Every finding reports its provenance as `specification`, `governance`, or
+`heuristic`. The result exposes separate `compliant` and `valid` statuses so a
+strict project policy is not presented as MCP noncompliance. Use the
+`compliance` profile to preserve policy findings while downgrading non-spec
+errors to warnings; explicit `--rule` severity overrides still win.
+
 ## Maturity Scoring
 
 The validator calculates a **per-tool averaged** maturity score (0-100). Each tool starts at 100 points, deductions apply per issue, and the server score is the average across all tools.
@@ -222,6 +237,8 @@ output:
   verbose: false
   color: true
 specVersion: "2026-07-28"  # default; use "2025-11-25" for legacy validation
+discoverySpecVersion: "2025-11-25" # optional; defaults to specVersion
+profile: governance        # governance | compliance
 llm:                     # optional LLM-assisted analysis
   enabled: false
   provider: anthropic    # anthropic | openai | ollama

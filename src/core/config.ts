@@ -12,6 +12,7 @@ import type {
   RuleConfig,
   OutputConfig,
   MCPSpecVersion,
+  ValidationProfile,
 } from '../types/index.js';
 
 // ============================================================================
@@ -31,6 +32,7 @@ const DEFAULT_OUTPUT: OutputConfig = {
  * Default MCP spec version to validate against
  */
 const DEFAULT_SPEC_VERSION: MCPSpecVersion = '2026-07-28';
+const DEFAULT_PROFILE: ValidationProfile = 'governance';
 
 /**
  * Default rule configurations (all rules enabled with default severities)
@@ -111,6 +113,7 @@ const DEFAULT_CONFIG: ValidatorConfig = {
   rules: DEFAULT_RULES,
   output: DEFAULT_OUTPUT,
   specVersion: DEFAULT_SPEC_VERSION,
+  profile: DEFAULT_PROFILE,
 };
 
 // ============================================================================
@@ -190,6 +193,8 @@ const userConfigSchema = z.strictObject({
   rules: nullableSection(z.record(z.string(), ruleSettingSchema)),
   output: nullableSection(outputSchema),
   specVersion: z.enum(['2025-11-25', '2026-07-28']).optional(),
+  discoverySpecVersion: z.enum(['2025-11-25', '2026-07-28']).optional(),
+  profile: z.enum(['compliance', 'governance']).optional(),
   llm: nullableSection(llmSchema),
 });
 
@@ -201,6 +206,8 @@ export interface ConfigOverrides {
   rules?: RuleConfig;
   output?: Partial<OutputConfig>;
   specVersion?: MCPSpecVersion;
+  discoverySpecVersion?: MCPSpecVersion;
+  profile?: ValidationProfile;
   llm?: ValidatorConfig['llm'];
 }
 
@@ -297,6 +304,9 @@ export async function resolveConfig(
     rules: { ...config.rules, ...(overrides.rules ?? {}) },
     output: { ...config.output, ...(overrides.output ?? {}) },
     specVersion: overrides.specVersion ?? config.specVersion,
+    discoverySpecVersion:
+      overrides.discoverySpecVersion ?? config.discoverySpecVersion,
+    profile: overrides.profile ?? config.profile,
   };
   const llm = overrides.llm ?? config.llm;
   if (llm) {
@@ -341,6 +351,8 @@ export function mergeConfig(userConfig: Partial<ValidatorConfig>): ValidatorConf
     rules: mergedRules,
     output: mergedOutput,
     specVersion: userConfig.specVersion ?? defaultConfig.specVersion,
+    discoverySpecVersion: userConfig.discoverySpecVersion,
+    profile: userConfig.profile ?? defaultConfig.profile,
   };
 
   // Only include LLM config if user provides it
@@ -365,6 +377,7 @@ export function getDefaultConfig(): ValidatorConfig {
     rules: { ...DEFAULT_RULES },
     output: { ...DEFAULT_OUTPUT },
     specVersion: DEFAULT_SPEC_VERSION,
+    profile: DEFAULT_PROFILE,
   };
 }
 

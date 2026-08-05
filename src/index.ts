@@ -23,6 +23,8 @@ export type {
   ValidationIssue,
   IssueCategory,
   IssueSeverity,
+  IssueProvenance,
+  ValidationProfile,
   ToolValidationResult,
   ValidationMetadata,
   ValidatorConfig,

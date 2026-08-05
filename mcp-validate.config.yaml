@@ -30,6 +30,13 @@ output:
 # MCP protocol revision (2026-07-28 is the current finalized specification)
 specVersion: "2026-07-28"
 
+# Optional live-discovery revision. Omit to inherit specVersion.
+# discoverySpecVersion: "2025-11-25"
+
+# governance preserves strict policy severities; compliance downgrades
+# non-specification errors to warnings while retaining the findings.
+profile: governance
+
 # LLM analysis configuration (optional)
 # Enables AI-powered semantic analysis of tool definitions
 # llm:

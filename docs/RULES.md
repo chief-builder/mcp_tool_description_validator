@@ -27,6 +27,16 @@ This document provides a comprehensive reference for all 57 validation rules imp
 
 The validator defaults to the finalized **2026-07-28** specification. SCH-009, SCH-010, and SEC-011 cover features introduced in that revision and are skipped only when the legacy `2025-11-25` target is explicitly selected.
 
+Every emitted finding includes a provenance value:
+
+- `specification` — a requirement derived from the targeted MCP revision
+- `governance` — configurable project policy or defensive guidance
+- `heuristic` — a name- or text-based signal that may require human review
+
+The default `governance` profile preserves all configured severities. The
+`compliance` profile retains every finding but downgrades non-specification
+errors to warnings, unless an explicit rule override sets another severity.
+
 ---
 
 ## Severity Levels

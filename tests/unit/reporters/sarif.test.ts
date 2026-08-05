@@ -89,6 +89,23 @@ describe('SARIF Reporter', () => {
       expect(warningResult?.level).toBe('warning');
     });
 
+    it('should preserve finding provenance in SARIF properties', () => {
+      const result: ValidationResult = {
+        ...mockResult,
+        tools: [{
+          ...mockResult.tools[0],
+          issues: [{
+            ...mockResult.tools[0].issues[0],
+            provenance: 'specification',
+          }],
+        }],
+      };
+      const parsed: SarifLog = JSON.parse(formatSarifOutput(result));
+      expect(parsed.runs[0].results[0].properties?.provenance).toBe(
+        'specification'
+      );
+    });
+
     it('should map severity suggestion to SARIF level note', () => {
       const resultWithSuggestion: ValidationResult = {
         ...mockResult,

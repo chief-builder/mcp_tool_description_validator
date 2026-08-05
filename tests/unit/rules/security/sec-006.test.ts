@@ -90,12 +90,12 @@ describe('SEC-006: Command/query parameters should use enum when values are know
       expect(issues[0].path).toBe('inputSchema.properties.command');
     });
 
-    it('should fail for query without enum', () => {
+    it('should not assume a free-form query has a closed enum', () => {
       const tool = createTool({
         query: { type: 'string' },
       });
       const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(1);
+      expect(issues).toHaveLength(0);
     });
 
     it('should fail for action without enum', () => {

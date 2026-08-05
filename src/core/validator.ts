@@ -11,6 +11,7 @@ import type {
   ValidatorConfig,
   ValidationMetadata,
   ToolValidationResult,
+  MCPSpecVersion,
 } from '../types/index.js';
 import { resolveConfig, type ConfigOverrides } from './config.js';
 import { loadRules } from './rule-loader.js';
@@ -32,6 +33,13 @@ export interface ValidateOptions {
   config?: ConfigOverrides;
   /** Load config from file path */
   configPath?: string;
+  /** Reproducibility context for live-server discovery. */
+  runContext?: {
+    serverEndpoint: string;
+    discoverySpecVersion: MCPSpecVersion;
+    authenticationScope: 'none' | 'unknown';
+    toolExecutionPerformed: boolean;
+  };
 }
 
 /**
@@ -79,7 +87,12 @@ export async function validate(
   const rules = await loadRules(config.rules, specVersion);
 
   // Execute rules against all tools
-  const toolResults = executeRules(tools, rules, config.rules);
+  const toolResults = executeRules(
+    tools,
+    rules,
+    config.rules,
+    config.profile ?? 'governance'
+  );
 
   // Build per-tool results
   const toolValidationResults: ToolValidationResult[] = toolResults.map((tr) => ({
@@ -112,20 +125,34 @@ export async function validate(
   // Aggregate summary statistics
   const summary = aggregateResults(toolResults);
   const allIssues = flattenIssues(toolResults);
+  const compliant = !allIssues.some(
+    (issue) =>
+      issue.provenance === 'specification' && issue.severity === 'error'
+  );
 
   // Build metadata
   const metadata: ValidationMetadata = {
     validatorVersion: VALIDATOR_VERSION,
     mcpSpecVersion: specVersion,
+    validationProfile: config.profile ?? 'governance',
     timestamp: new Date().toISOString(),
     duration: Date.now() - startTime,
     configUsed: filepath ?? '',
     llmAnalysisUsed,
+    ...(options.runContext
+      ? {
+          discoverySpecVersion: options.runContext.discoverySpecVersion,
+          serverEndpoint: options.runContext.serverEndpoint,
+          authenticationScope: options.runContext.authenticationScope,
+          toolExecutionPerformed: options.runContext.toolExecutionPerformed,
+        }
+      : {}),
     ...(llmAnalysisError !== undefined ? { llmAnalysisError } : {}),
   };
 
   return {
     valid: summary.issuesBySeverity.error === 0,
+    compliant,
     summary,
     issues: allIssues,
     tools: toolValidationResults,
@@ -185,9 +212,23 @@ export async function validateServer(
   options: ValidateOptions = {}
 ): Promise<ValidationResult> {
   const { config } = await resolveConfig(options.configPath, options.config);
+  const discoverySpecVersion =
+    config.discoverySpecVersion ?? config.specVersion ?? DEFAULT_MCP_SPEC_VERSION;
   const tools = await fetchToolsFromServer({
     server: serverUrl,
-    specVersion: config.specVersion,
+    specVersion: discoverySpecVersion,
   });
-  return validate(tools, options);
+  return validate(tools, {
+    ...options,
+    config,
+    runContext: {
+      serverEndpoint: serverUrl,
+      discoverySpecVersion,
+      authenticationScope:
+        serverUrl.startsWith('http://') || serverUrl.startsWith('https://')
+          ? 'none'
+          : 'unknown',
+      toolExecutionPerformed: false,
+    },
+  });
 }

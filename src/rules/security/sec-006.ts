@@ -13,7 +13,6 @@ import { getAllPropertyEntries } from '../utils/schema-walker.js';
 /** Patterns that suggest a parameter represents a command or action */
 const COMMAND_NAME_PATTERNS = [
   /^command$/i,
-  /^query$/i,
   /^action$/i,
   /^method$/i,
   /^operation$/i,

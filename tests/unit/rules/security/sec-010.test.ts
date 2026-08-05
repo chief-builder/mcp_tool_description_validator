@@ -195,12 +195,12 @@ describe('SEC-010: Parameters accepting code/scripts should be documented as dan
       expect(issues).toHaveLength(1);
     });
 
-    it('should fail for query parameter without security warning', () => {
+    it('should not assume a structured query is executable code', () => {
       const tool = createTool({
         query: { type: 'string' },
       });
       const issues = rule.check(tool, createContext());
-      expect(issues).toHaveLength(1);
+      expect(issues).toHaveLength(0);
     });
 
     it('should fail for sql parameter without security warning', () => {

@@ -167,6 +167,8 @@ describe('CLI', () => {
       expect(stdout).toContain('--server');
       expect(stdout).toContain('--config');
       expect(stdout).toContain('--rule');
+      expect(stdout).toContain('--discovery-spec-version');
+      expect(stdout).toContain('--profile');
     });
 
     it('should show version with --version', async () => {

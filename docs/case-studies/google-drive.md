@@ -53,11 +53,10 @@ node ./dist/cli.js \
   --verbose --no-color
 ```
 
-Because the current option couples live discovery and rule targeting, the
-definitions returned by Google's documented `tools/list` request were also
-passed directly to the library's `validate()` function with
-`specVersion: "2026-07-28"`. This allowed the same public definitions to be
-checked with the finalized rule set without executing a Drive tool.
+The initial validator version coupled live discovery and rule targeting, so the
+first finalized-rule pass used the library's `validate()` function directly.
+That limitation led to LIVE-001 and is now resolved with independent CLI and
+configuration options.
 
 ## Results
 
@@ -131,3 +130,36 @@ This run produced six follow-up requirements for the validator:
 
 These requirements are specified with acceptance criteria in
 [the validator specification](../specs/validator.md#live-server-validation-requirements).
+
+## Post-implementation verification
+
+After implementing LIVE-001 through LIVE-006, the same endpoint was checked
+again with one reproducible command:
+
+```bash
+node ./dist/cli.js \
+  --server 'https://drivemcp.googleapis.com/mcp/v1' \
+  --discovery-spec-version 2025-11-25 \
+  --spec-version 2026-07-28 \
+  --profile compliance \
+  --format json --no-color
+```
+
+| Measure | Follow-up result |
+|---|---:|
+| Tools analyzed | 8 |
+| MCP compliant | Yes |
+| Tools passing the compliance profile | 8 |
+| Errors | 0 |
+| Warnings | 43 |
+| Suggestions | 22 |
+| Specification findings | 0 |
+| Governance findings | 38 |
+| Heuristic findings | 27 |
+| Maturity score | 87/100 |
+| Maturity level | Mature |
+
+The follow-up report recorded the endpoint, both MCP revisions, compliance
+profile, authentication scope (`none`), and `toolExecutionPerformed: false`.
+The original findings remain above as a baseline demonstrating why the new
+requirements were needed.

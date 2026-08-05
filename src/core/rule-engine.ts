@@ -13,7 +13,29 @@ import type {
   IssueCategory,
   IssueSeverity,
   MaturityLevel,
+  IssueProvenance,
+  ValidationProfile,
 } from '../types/index.js';
+
+const SPECIFICATION_RULES = new Set([
+  'SCH-001', 'SCH-002', 'SCH-003', 'SCH-004', 'SCH-005',
+  'SCH-009', 'SCH-010', 'SCH-011',
+]);
+
+const HEURISTIC_RULES = new Set([
+  'NAM-003', 'NAM-004', 'NAM-005', 'NAM-006', 'NAM-008',
+  'SEC-004', 'SEC-006', 'SEC-007', 'SEC-010',
+]);
+
+/** Classify a rule's authority when it does not declare one explicitly. */
+export function getRuleProvenance(rule: Rule): IssueProvenance {
+  if (rule.provenance) return rule.provenance;
+  if (SPECIFICATION_RULES.has(rule.id)) return 'specification';
+  if (rule.id.startsWith('LLM-') || HEURISTIC_RULES.has(rule.id)) {
+    return 'heuristic';
+  }
+  return 'governance';
+}
 
 /**
  * Execute all loaded rules against a set of tools.
@@ -21,7 +43,8 @@ import type {
 export function executeRules(
   tools: ToolDefinition[],
   rules: Rule[],
-  config: RuleConfig
+  config: RuleConfig,
+  profile: ValidationProfile = 'governance'
 ): ToolRuleResults[] {
   const results: ToolRuleResults[] = [];
 
@@ -36,6 +59,7 @@ export function executeRules(
         allTools: tools,
         ruleConfig: config[rule.id] ?? true,
       };
+      const provenance = getRuleProvenance(rule);
 
       // Rules run over untrusted tool definitions; one pathological tool
       // must not abort the whole run. A crash becomes a finding instead.
@@ -48,6 +72,7 @@ export function executeRules(
           id: rule.id,
           category: rule.category,
           severity: 'error',
+          provenance: 'governance',
           message: `Rule ${rule.id} failed to execute: ${message}`,
           tool: tool.name,
           suggestion:
@@ -63,9 +88,18 @@ export function executeRules(
       const severityOverride =
         typeof configured === 'string' ? configured : undefined;
       for (const issue of ruleIssues) {
-        issues.push(
-          severityOverride ? { ...issue, severity: severityOverride } : issue
-        );
+        const issueProvenance = issue.provenance ?? provenance;
+        const profileSeverity =
+          profile === 'compliance' &&
+          issueProvenance !== 'specification' &&
+          issue.severity === 'error'
+            ? 'warning'
+            : issue.severity;
+        issues.push({
+          ...issue,
+          provenance: issueProvenance,
+          severity: severityOverride ?? profileSeverity,
+        });
       }
     }
 
@@ -127,6 +161,11 @@ export function aggregateResults(results: ToolRuleResults[]): ValidationSummary 
     'warning': 0,
     'suggestion': 0,
   };
+  const issuesByProvenance: Record<IssueProvenance, number> = {
+    specification: 0,
+    governance: 0,
+    heuristic: 0,
+  };
 
   let validTools = 0;
   let totalToolScore = 0;
@@ -141,6 +180,7 @@ export function aggregateResults(results: ToolRuleResults[]): ValidationSummary 
     for (const issue of result.issues) {
       issuesByCategory[issue.category]++;
       issuesBySeverity[issue.severity]++;
+      issuesByProvenance[issue.provenance ?? 'governance']++;
     }
   }
 
@@ -155,6 +195,7 @@ export function aggregateResults(results: ToolRuleResults[]): ValidationSummary 
     validTools,
     issuesByCategory,
     issuesBySeverity,
+    issuesByProvenance,
     maturityScore,
     maturityLevel,
   };

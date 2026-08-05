@@ -27,7 +27,10 @@ const PATH_NAME_TOKENS = new Set([
  * are not mistaken for "file"/"dir" substrings.
  */
 function isFilePathParameter(name: string): boolean {
-  return tokenizeIdentifier(name).some((token) => PATH_NAME_TOKENS.has(token));
+  const tokens = tokenizeIdentifier(name);
+  // Opaque resource identifiers such as fileId and folder_id are not paths.
+  if (tokens.at(-1) === 'id' || tokens.at(-1) === 'identifier') return false;
+  return tokens.some((token) => PATH_NAME_TOKENS.has(token));
 }
 
 const rule: Rule = {

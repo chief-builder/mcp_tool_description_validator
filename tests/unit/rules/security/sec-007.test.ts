@@ -39,6 +39,12 @@ describe('SEC-007: Sensitive parameter names should be flagged', () => {
       expect(isSensitiveParameter('authToken')).toBe(true);
     });
 
+    it('should not treat pagination tokens as credentials', () => {
+      expect(isSensitiveParameter('pageToken')).toBe(false);
+      expect(isSensitiveParameter('nextPageToken')).toBe(false);
+      expect(isSensitiveParameter('cursor')).toBe(false);
+    });
+
     it('should detect secret', () => {
       expect(isSensitiveParameter('secret')).toBe(true);
       expect(isSensitiveParameter('clientSecret')).toBe(true);

@@ -9,6 +9,7 @@ import type {
   ValidationIssue,
   IssueCategory,
   IssueSeverity,
+  IssueProvenance,
 } from '../types/index.js';
 
 /**
@@ -32,6 +33,8 @@ export interface Rule {
   category: IssueCategory;
   /** Default severity if not overridden by config */
   defaultSeverity: IssueSeverity;
+  /** Authority for findings emitted by this rule. Inferred when omitted. */
+  provenance?: IssueProvenance;
   /** Human-readable description of what the rule checks */
   description: string;
   /** Documentation URL (optional) */

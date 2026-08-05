@@ -29,12 +29,14 @@ export interface SarifRule {
   defaultConfiguration?: {
     level: 'error' | 'warning' | 'note';
   };
+  properties?: Record<string, unknown>;
 }
 
 export interface SarifResult {
   ruleId: string;
   level: 'error' | 'warning' | 'note';
   message: { text: string };
+  properties?: Record<string, unknown>;
   locations?: Array<{
     physicalLocation?: {
       artifactLocation?: { uri?: string };
@@ -79,6 +81,7 @@ export function formatSarifOutput(result: ValidationResult): string {
     defaultConfiguration: {
       level: severityToSarifLevel(issue.severity),
     },
+    properties: { provenance: issue.provenance ?? 'governance' },
   }));
 
   const results: SarifResult[] = [];
@@ -88,6 +91,7 @@ export function formatSarifOutput(result: ValidationResult): string {
         ruleId: issue.id,
         level: severityToSarifLevel(issue.severity),
         message: { text: issue.message },
+        properties: { provenance: issue.provenance ?? 'governance' },
         locations: [{
           logicalLocations: [{
             name: issue.tool,
