@@ -726,6 +726,28 @@ mcp-tool-validator/
 
 ---
 
+## Live-server validation requirements
+
+The 2026-08-05
+[Google Drive MCP case study](../case-studies/google-drive.md) exposed the
+following requirements. These are requirements for follow-up implementation;
+documenting them does not imply that they are already supported.
+
+| ID | Requirement | Acceptance criteria |
+|---|---|---|
+| LIVE-001 | Decouple discovery and validation revisions | CLI, library, and configuration APIs can select a live-server discovery protocol independently from the rule-set `specVersion`; reports record both values |
+| LIVE-002 | Report finding provenance | Every finding is identifiable as MCP specification compliance, configurable governance policy, or heuristic advice; the overall report does not describe policy-only failures as MCP noncompliance |
+| LIVE-003 | Add context-aware security classification | Opaque identifiers such as `fileId` do not trigger path traversal rules without path evidence; pagination tokens are not automatically classified as credentials; documented structured query languages are not automatically treated as executable code |
+| LIVE-004 | Improve version diagnostics | An unsupported protocol response names the attempted revision and suggests an explicit compatible-revision retry; the validator never silently downgrades |
+| LIVE-005 | Support validation profiles | A base compliance profile and a strict governance profile can assign different severities to recommendations such as string bounds while preserving the underlying finding |
+| LIVE-006 | Capture reproducibility metadata | Real-server reports can record endpoint, timestamp, validator version, discovery revision, validation revision, authentication scope, tool count, and whether tool execution occurred |
+
+These requirements preserve an important boundary: the validator assesses tool
+definitions and discovery interoperability, not the correctness of remote tool
+execution or the security of a server implementation.
+
+---
+
 ## Open Questions
 
 1. **Schema version pinning**: Keep behavior pinned to the finalized MCP 2026-07-28 schema and prose requirements.

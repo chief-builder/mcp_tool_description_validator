@@ -47,6 +47,17 @@ metadata and follows `tools/list` pagination over either Streamable HTTP or
 stdio. The `2025-11-25` target uses the official SDK's legacy initialization
 flow.
 
+## Real-World Validation Evidence
+
+On 2026-08-05, the validator was run against Google's managed Drive MCP server.
+It discovered and analyzed eight public tool definitions without requesting
+Drive authorization or executing a tool. The run scored 77/100 (Mature) and
+exposed both useful governance findings and several heuristic false positives.
+
+See the reproducible
+[Google Drive MCP server case study](docs/case-studies/google-drive.md) for the
+commands, complete result summary, interpretation, and follow-up requirements.
+
 ## Installation
 
 ```bash
@@ -262,6 +273,7 @@ npm run llm:analyze      # LLM analysis over fixtures (needs ANTHROPIC_API_KEY)
 
 - [docs/RULES.md](docs/RULES.md) - Complete rule reference with examples
 - [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) - Best practices and maturity scoring framework
+- [docs/case-studies/google-drive.md](docs/case-studies/google-drive.md) - Real-server validation evidence and lessons learned
 
 ## License
 
