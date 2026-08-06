@@ -134,6 +134,7 @@ import { validate, validateFile, validateServer } from 'mcp-tool-validator';
 const result = await validateFile('./tools.json');
 
 console.log(`Valid: ${result.valid}`);
+console.log(`MCP compliant: ${result.compliant}`);
 console.log(
   `Maturity: ${result.summary.maturityScore}/100 (${result.summary.maturityLevel})`
 );
@@ -282,7 +283,7 @@ npm test              # build + run test suite once
 npm run test:watch    # watch mode
 npm run typecheck     # typecheck src, tests, and scripts
 npm run build         # build dist/
-npm run analyze:servers  # validate the official-server fixtures
+npm run analyze:servers  # connect to the configured official MCP servers
 npm run llm:analyze      # LLM analysis over fixtures (needs ANTHROPIC_API_KEY)
 ```
 
@@ -290,6 +291,9 @@ npm run llm:analyze      # LLM analysis over fixtures (needs ANTHROPIC_API_KEY)
 
 - [docs/RULES.md](docs/RULES.md) - Complete rule reference with examples
 - [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) - Best practices and maturity scoring framework
+- [docs/specs/validator.md](docs/specs/validator.md) - Implemented product and API specification
+- [docs/architecture/validator.md](docs/architecture/validator.md) - Current architecture and dependency decisions
+- [docs/test/test-plan.md](docs/test/test-plan.md) - Verification strategy and current 71-file / 1,023-test gate
 - [docs/case-studies/google-drive.md](docs/case-studies/google-drive.md) - Real-server validation evidence and lessons learned
 
 ## License

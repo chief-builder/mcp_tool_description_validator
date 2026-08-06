@@ -89,9 +89,13 @@ A governance validator for Model Context Protocol (MCP) tool definitions that en
 ```typescript
 interface ToolDefinition {
   name: string;
-  description: string;
+  title?: string;
+  description?: string;
+  icons?: ToolIcon[];
   inputSchema: JSONSchema;
+  outputSchema?: JSONSchema;
   annotations?: ToolAnnotations;
+  _meta?: Record<string, unknown>;
   // Metadata from parsing
   source: ToolSource;
 }
@@ -116,6 +120,7 @@ interface ToolAnnotations {
 ```typescript
 interface ValidationResult {
   valid: boolean;
+  compliant?: boolean;
   summary: ValidationSummary;
   issues: ValidationIssue[];
   tools: ToolValidationResult[];
@@ -127,13 +132,16 @@ interface ValidationSummary {
   validTools: number;
   issuesByCategory: Record<IssueCategory, number>;
   issuesBySeverity: Record<IssueSeverity, number>;
+  issuesByProvenance?: Record<IssueProvenance, number>;
+  maturityScore: number;
+  maturityLevel: MaturityLevel;
 }
 
 interface ValidationIssue {
   id: string;                    // Unique rule ID (e.g., "SEC-001")
   category: IssueCategory;
   severity: IssueSeverity;
-  provenance: IssueProvenance;  // specification | governance | heuristic
+  provenance?: IssueProvenance;  // specification | governance | heuristic
   message: string;
   tool: string;                  // Tool name
   path?: string;                 // JSON path to problematic field
@@ -155,7 +163,7 @@ interface ValidationMetadata {
   validatorVersion: string;
   mcpSpecVersion: string;       // "2026-07-28" by default
   discoverySpecVersion?: string;
-  validationProfile: 'compliance' | 'governance';
+  validationProfile?: 'compliance' | 'governance';
   serverEndpoint?: string;
   authenticationScope?: 'none' | 'unknown';
   toolExecutionPerformed?: boolean;
@@ -203,74 +211,21 @@ interface LLMConfig {
 
 ## Validation Rules
 
-### Schema Validation (SCH-*)
+The implementation contains 57 rules across five categories. The complete
+normative catalog, examples, version gates, and default severities live in
+[RULES.md](../RULES.md).
 
-| ID | Severity | Description |
-|----|----------|-------------|
-| SCH-001 | error | Tool must have a `name` field |
-| SCH-002 | error | Tool must have a `description` field |
-| SCH-003 | error | Tool must have an `inputSchema` field |
-| SCH-004 | error | `inputSchema` must be valid JSON Schema |
-| SCH-005 | error | `inputSchema.type` must be "object" |
-| SCH-006 | warning | `inputSchema.properties` should be defined (not empty object) |
-| SCH-007 | warning | Required parameters should be listed in `inputSchema.required` |
-| SCH-008 | error | Parameters in `required` must exist in `properties` |
+| Category | IDs | Count | Default purpose |
+|---|---|---:|---|
+| Schema | SCH-001–SCH-011 | 11 | MCP tool shape, JSON Schema validity, finalized metadata and header constraints |
+| Naming | NAM-002–NAM-008 | 7 | MCP name recommendations, uniqueness, consistency, and tool-set organization |
+| Security | SEC-001–SEC-011 | 11 | Defensive bounds, sensitive inputs, URL/path controls, and header exposure |
+| LLM compatibility | LLM-001–LLM-013 | 13 | Description and parameter clarity, side effects, consistency, and workflow guidance |
+| Best practice | BP-001–BP-015 | 15 | Annotations, icons, output schemas, pagination, response controls, and overlap |
 
-### Naming Rules (NAM-*)
-
-| ID | Severity | Description |
-|----|----------|-------------|
-| NAM-001 | error | Tool name must be non-empty |
-| NAM-002 | error | Tool name must use kebab-case format |
-| NAM-003 | warning | Tool name should be 3-50 characters |
-| NAM-004 | warning | Tool name should not start with numbers |
-| NAM-005 | warning | Tool name should use descriptive verbs (get, create, update, delete, list, search) |
-| NAM-006 | warning | Parameter names should use consistent casing (camelCase recommended) |
-
-### Security Rules (SEC-*)
-
-| ID | Severity | Description |
-|----|----------|-------------|
-| SEC-001 | error | String parameters must have `maxLength` constraint |
-| SEC-002 | error | Array parameters must have `maxItems` constraint |
-| SEC-003 | warning | Number parameters should have `minimum`/`maximum` constraints |
-| SEC-004 | error | File path parameters must use `pattern` for path validation |
-| SEC-005 | error | URL parameters must use `format: "uri"` |
-| SEC-006 | warning | Command/query parameters should use `enum` when values are known |
-| SEC-007 | warning | Sensitive parameter names (password, token, key, secret) should be flagged |
-| SEC-008 | error | No default values for security-sensitive parameters |
-| SEC-009 | warning | Object parameters with `additionalProperties: true` need justification |
-| SEC-010 | warning | Parameters accepting code/scripts should be documented as dangerous |
-
-### LLM Compatibility Rules (LLM-*)
-
-| ID | Severity | Description |
-|----|----------|-------------|
-| LLM-001 | error | Tool description must be non-empty |
-| LLM-002 | warning | Tool description should be 20-500 characters |
-| LLM-003 | warning | Tool description should explain WHAT the tool does |
-| LLM-004 | warning | Tool description should explain WHEN to use the tool |
-| LLM-005 | suggestion | Tool description should include example usage |
-| LLM-006 | error | Each parameter must have a `description` |
-| LLM-007 | warning | Parameter descriptions should be 10-200 characters |
-| LLM-008 | warning | Avoid ambiguous terms (e.g., "data", "value", "input") without context |
-| LLM-009 | suggestion | Include parameter constraints in description (e.g., "max 100 characters") |
-| LLM-010 | warning | Avoid jargon and abbreviations without explanation |
-| LLM-011 | suggestion | Tool description should mention side effects if any |
-| LLM-012 | warning | Related tools should have consistent description patterns |
-
-### Best Practice Rules (BP-*)
-
-| ID | Severity | Description |
-|----|----------|-------------|
-| BP-001 | suggestion | Consider adding `title` annotation for display purposes |
-| BP-002 | suggestion | Consider adding `readOnlyHint` annotation |
-| BP-003 | suggestion | Consider adding `destructiveHint` for data-modifying tools |
-| BP-004 | suggestion | Consider adding `idempotentHint` annotation |
-| BP-005 | warning | Tools with many parameters (>10) should be split |
-| BP-006 | suggestion | Use `$ref` for repeated schema patterns |
-| BP-007 | warning | Deeply nested schemas (>4 levels) hurt usability |
-| BP-008 | suggestion | Provide `examples` in inputSchema for complex parameters |
+Every emitted issue is tagged `specification`, `governance`, or `heuristic`.
+SCH-009, SCH-010, and SEC-011 run only when the validation target is
+`2026-07-28`.
 
 ---
 
@@ -317,16 +272,17 @@ Consider:
 llm:
   enabled: true
   provider: anthropic
-  model: claude-3-haiku-20240307
+  model: claude-haiku-4-5
   timeout: 30000
   # API key via ANTHROPIC_API_KEY env var
 ```
 
 Supported providers:
-- `openai`: GPT-4, GPT-3.5-turbo
-- `anthropic`: Claude 3 family
-- `ollama`: Local models (llama2, mistral, etc.)
-- Custom: Any OpenAI-compatible API via `baseUrl`
+- `openai`: `@ai-sdk/openai` (default model `gpt-4o-mini`)
+- `anthropic`: `@ai-sdk/anthropic` (default model `claude-haiku-4-5`)
+- `ollama`: `ollama-ai-provider-v2` (default model `llama3.2`)
+
+`baseUrl` can point a supported provider adapter at a compatible endpoint.
 
 ---
 
@@ -384,13 +340,17 @@ mcp-validate --server "http://localhost:3000/mcp"
 ```
 
 The validator:
-1. Establishes MCP connection
-2. Sends `initialize` request
-3. Calls `tools/list` to retrieve definitions
-4. Validates retrieved tools
-5. Closes connection
+1. Resolves the discovery revision independently from the validation revision.
+2. Uses stateless per-request metadata for `2026-07-28`, or the SDK
+   initialization flow for explicit `2025-11-25` discovery.
+3. Calls `tools/list`, follows pagination, and accepts JSON or SSE over HTTP.
+4. Validates the returned definitions using `specVersion` and the selected
+   profile.
+5. Records endpoint, both revisions, authentication scope, and the fact that no
+   tool was executed.
 
-On connection failure: immediately fail with error (no partial results).
+The client never silently downgrades. An unsupported modern revision produces
+an actionable error suggesting an explicit legacy discovery retry.
 
 ---
 
@@ -412,9 +372,14 @@ const result = await validateServer('http://localhost:3000/mcp', options);
 
 // Options
 interface ValidateOptions {
-  config?: ValidatorConfig;      // Override default config
-  configPath?: string;           // Load config from file
-  format?: 'result' | 'json' | 'sarif';  // Return format
+  config?: ConfigOverrides;      // Partial validated overrides
+  configPath?: string;           // Load/discover config file
+  runContext?: {                 // Reproducibility metadata for live discovery
+    serverEndpoint: string;
+    discoverySpecVersion: MCPSpecVersion;
+    authenticationScope: 'none' | 'unknown';
+    toolExecutionPerformed: boolean;
+  };
 }
 ```
 
@@ -428,6 +393,12 @@ mcp-validate tools.json
 mcp-validate --server http://localhost:3000/mcp
 mcp-validate --server "node server.js"
 
+# Discover through a legacy server and validate with finalized rules
+mcp-validate --server https://example.com/mcp \
+  --discovery-spec-version 2025-11-25 \
+  --spec-version 2026-07-28 \
+  --profile compliance
+
 # Output formats
 mcp-validate tools.json --format json
 mcp-validate tools.json --format sarif
@@ -436,6 +407,7 @@ mcp-validate tools.json --format sarif
 mcp-validate tools.json --config mcp-validate.config.yaml
 mcp-validate tools.json --rule SEC-001=off
 mcp-validate tools.json --rule LLM-005=error
+mcp-validate tools.json --profile governance
 
 # LLM analysis
 mcp-validate tools.json --llm
@@ -481,7 +453,7 @@ Response:
 ```json
 {
   "status": "healthy",
-  "version": "1.0.0"
+  "version": "0.1.0"
 }
 ```
 
@@ -492,17 +464,19 @@ Response:
 ### Human-Readable (Default)
 
 ```
-MCP Tool Validator v1.0.0
+MCP Tool Validator v0.1.0
 ─────────────────────────────────────────────────
 
-Validating: tools.json (5 tools)
+Validating: 5 tool(s)
+Profile: governance
+Validation spec: 2026-07-28
 
 ✗ get-user
-  ERROR [SEC-001] String parameter 'userId' missing maxLength constraint
+  ERROR [SEC-001] [GOVERNANCE] String parameter 'userId' is missing maxLength constraint
     at: inputSchema.properties.userId
     suggestion: Add "maxLength": 100 or appropriate limit
 
-  WARNING [LLM-002] Description too short (15 chars, recommend 20-500)
+  WARNING [LLM-002] [HEURISTIC] Tool description is too short
     suggestion: Expand description to explain when to use this tool
 
 ✓ create-user
@@ -523,7 +497,8 @@ Summary: 3/5 tools valid
     llm-compatibility: 3
     best-practice:   4
 
-Validation failed with 2 errors.
+MCP specification compliance passed.
+Governance threshold failed with 2 error(s).
 ```
 
 ### JSON Output
@@ -531,6 +506,7 @@ Validation failed with 2 errors.
 ```json
 {
   "valid": false,
+  "compliant": true,
   "summary": {
     "totalTools": 5,
     "validTools": 3,
@@ -544,13 +520,21 @@ Validation failed with 2 errors.
       "error": 2,
       "warning": 3,
       "suggestion": 5
-    }
+    },
+    "issuesByProvenance": {
+      "specification": 0,
+      "governance": 4,
+      "heuristic": 6
+    },
+    "maturityScore": 88,
+    "maturityLevel": "mature"
   },
   "issues": [
     {
       "id": "SEC-001",
       "category": "security",
       "severity": "error",
+      "provenance": "governance",
       "message": "String parameter 'userId' missing maxLength constraint",
       "tool": "get-user",
       "path": "inputSchema.properties.userId",
@@ -560,9 +544,10 @@ Validation failed with 2 errors.
   ],
   "tools": [...],
   "metadata": {
-    "validatorVersion": "1.0.0",
+    "validatorVersion": "0.1.0",
     "mcpSpecVersion": "2026-07-28",
-    "timestamp": "2025-01-07T12:00:00Z",
+    "validationProfile": "governance",
+    "timestamp": "2026-08-05T12:00:00Z",
     "duration": 145,
     "configUsed": "mcp-validate.config.yaml",
     "llmAnalysisUsed": false
@@ -599,10 +584,14 @@ output:
   verbose: false
   color: true
 
+specVersion: "2026-07-28"
+# discoverySpecVersion: "2025-11-25" # optional; inherits specVersion
+profile: governance # governance | compliance
+
 llm:
   enabled: false
   provider: anthropic
-  model: claude-3-haiku-20240307
+  model: claude-haiku-4-5
   timeout: 30000
   # apiKey: via ANTHROPIC_API_KEY env var
   # baseUrl: for custom endpoints
@@ -624,9 +613,9 @@ llm:
 
 | Error | Description | Exit Code |
 |-------|-------------|-----------|
-| `CONNECTION_FAILED` | Cannot connect to MCP server | 3 |
-| `PROTOCOL_ERROR` | Server does not speak MCP | 3 |
-| `TIMEOUT` | Server did not respond in time | 3 |
+| `CONNECTION_FAILED` | Cannot connect to MCP server | 2 |
+| `PROTOCOL_ERROR` | Server does not speak the selected MCP revision | 2 |
+| `TIMEOUT` | Server did not respond in time | 2 |
 
 On server connection failure: immediately return error, no partial validation.
 
@@ -634,8 +623,9 @@ On server connection failure: immediately return error, no partial validation.
 
 | Exit Code | Meaning |
 |-----------|---------|
-| 0 | All validations passed |
-| 1 | Validation completed with errors |
+| 0 | Validation completed; without `--ci`, findings do not change the exit code |
+| 1 | `--ci` was supplied and the effective profile produced errors |
+| 2 | Input, configuration, connection, or protocol failure |
 
 ---
 
@@ -653,6 +643,8 @@ On server connection failure: immediately return error, no partial validation.
 - End-to-end CLI tests
 - HTTP service tests
 - Live server validation tests (mock MCP server)
+- Modern JSON/SSE pagination and real stdio fixture tests
+- Split discovery/validation revisions, profiles, provenance, and metadata
 
 ### Fixtures
 
@@ -661,49 +653,41 @@ Maintain test fixtures for:
 - Invalid definitions triggering each rule
 - Edge cases (empty, malformed, large)
 
+Current quality gate: 71 test files and 1,023 tests.
+
 ---
 
 ## Project Structure
 
 ```
-mcp-tool-validator/
+mcp_tool_description_validator/
 ├── src/
-│   ├── index.ts              # Library entry point
-│   ├── cli/
-│   │   ├── index.ts          # CLI entry point
-│   │   ├── commands/
-│   │   │   ├── validate.ts
-│   │   │   └── serve.ts
-│   │   └── output/
-│   │       ├── human.ts
-│   │       ├── json.ts
-│   │       └── sarif.ts
+│   ├── index.ts              # Library exports
+│   ├── cli.ts                # Commander CLI and serve subcommand
 │   ├── core/
 │   │   ├── validator.ts      # Main validation orchestrator
 │   │   ├── rule-engine.ts    # Rule execution
-│   │   └── config.ts         # Configuration management
+│   │   ├── rule-loader.ts    # Config/version rule selection
+│   │   └── config.ts         # Validated configuration management
 │   ├── parsers/
-│   │   ├── file-parser.ts    # JSON/YAML parsing
-│   │   └── mcp-client.ts     # Live server connection
+│   │   ├── file.ts           # JSON/YAML parsing
+│   │   └── mcp-client.ts     # Modern native + legacy SDK discovery
 │   ├── rules/
 │   │   ├── index.ts          # Rule registry
 │   │   ├── schema/           # SCH-* rules
 │   │   ├── naming/           # NAM-* rules
 │   │   ├── security/         # SEC-* rules
-│   │   ├── llm/              # LLM-* rules
+│   │   ├── llm-compatibility/# LLM-* rules
 │   │   └── best-practice/    # BP-* rules
 │   ├── llm/
-│   │   ├── analyzer.ts       # LLM analysis orchestrator
-│   │   └── providers/
-│   │       ├── openai.ts
-│   │       ├── anthropic.ts
-│   │       └── ollama.ts
+│   │   └── analyzer.ts       # AI SDK analysis + provider adapters
+│   ├── reporters/            # Human, JSON, and SARIF output
 │   ├── service/
 │   │   └── server.ts         # HTTP service
 │   └── types/
 │       └── index.ts          # Type definitions
 ├── bin/
-│   └── mcp-validate.ts       # CLI binary entry
+│   └── mcp-validate.js       # CLI binary shim
 ├── tests/
 │   ├── unit/
 │   ├── integration/
@@ -724,14 +708,14 @@ mcp-tool-validator/
 - `yaml` - YAML parsing
 - `commander` - CLI framework
 - `chalk` - Terminal colors
-- `@modelcontextprotocol/sdk` - MCP client for live server validation
-- `openai` / `@anthropic-ai/sdk` - LLM provider SDKs (optional)
+- `@modelcontextprotocol/sdk` - explicit legacy MCP discovery
+- `ai` - provider-independent LLM generation API
+- `@ai-sdk/openai`, `@ai-sdk/anthropic`, or `ollama-ai-provider-v2` - optional peer adapter
 
 ### Development
 
 - `typescript`
 - `vitest` - Testing
-- `eslint` + `prettier`
 - `tsup` - Build/bundle
 
 ---
@@ -757,16 +741,17 @@ execution or the security of a server implementation.
 
 ---
 
-## Open Questions
+## Current Boundaries and Follow-up
 
-1. **Schema version pinning**: Keep behavior pinned to the finalized MCP 2026-07-28 schema and prose requirements.
-   - *Recommendation*: Embed for offline use, with option to update
+1. **Schema version pinning**: Behavior is pinned to the finalized MCP
+   2026-07-28 schema and prose requirements; adding a revision requires an
+   explicit code and test update.
 
-2. **Rule documentation**: Where should detailed rule documentation live?
-   - *Recommendation*: Markdown files in `docs/rules/`, linked from issue output
+2. **Rule documentation**: The maintained catalog lives in
+   [`docs/RULES.md`](../RULES.md).
 
-3. **LLM cost management**: Should we cache LLM analysis results?
-   - *Recommendation*: Optional content-hash-based caching
+3. **LLM cost management**: Analysis currently runs sequentially without a
+   result cache. Optional content-hash caching remains future work.
 
 ---
 

@@ -261,7 +261,7 @@ POST /validate  { <span class="b">"tools"</span>: [...] }</pre>
         <span class="pill llm">LLM-004</span> description never says <em>when</em> to use the tool<br>
         <span class="pill bp">BP-003</span> "delete" tool missing <code class="inline">destructiveHint</code></p>
       </div>
-      <div class="card"><h3>Draft-spec rules</h3>
+      <div class="card"><h3>Finalized-version rules</h3>
         <p>Three finalized rules are skipped only with legacy <code class="inline">--spec-version 2025-11-25</code>:<br>
         <span class="pill sch">SCH-009</span> network <code class="inline">$ref</code> ban ·
         <span class="pill sch">SCH-010</span> <code class="inline">x-mcp-header</code> constraints ·
@@ -299,6 +299,7 @@ POST /validate  { <span class="b">"tools"</span>: [...] }</pre>
 <pre><span class="c"># files, live servers, CI gates</span>
 mcp-validate tools.json
 mcp-validate --server <span class="g">"node ./my-server.js"</span>
+mcp-validate --server <span class="g">https://example.com/mcp</span> <span class="b">--discovery-spec-version 2025-11-25 --spec-version 2026-07-28 --profile compliance</span>
 mcp-validate tools.json <span class="b">--format sarif --ci</span>
 mcp-validate tools.json <span class="b">--rule</span> SEC-001=off</pre>
       </div>
@@ -308,7 +309,7 @@ mcp-validate tools.json <span class="b">--rule</span> SEC-001=off</pre>
   validateServer } <span class="p">from</span> <span class="g">'mcp-tool-validator'</span>;
 
 <span class="p">const</span> r = <span class="p">await</span> validateFile(<span class="g">'./tools.json'</span>);
-r.valid; r.summary.maturityScore; r.issues;</pre>
+r.compliant; r.valid; r.summary.maturityScore; r.issues;</pre>
       </div>
       <div class="card">
         <h3>3 · HTTP service</h3>
@@ -333,20 +334,23 @@ mcp-validate -s <span class="g">"http://localhost:3000/mcp"</span></pre>
 <pre style="font-size:.9rem;">MCP Tool Validator v0.1.0
 ──────────────────────────────────────────────────
 Validating: 1 tool(s)
+Profile: governance
+Validation spec: 2026-07-28
 
 <span class="r">✗ BadName!!</span>
-  <span class="r">ERROR</span>   [NAM-002] Tool name "BadName!!" contains illegal character(s): "!".
+  <span class="y">WARNING</span> [NAM-002] [GOVERNANCE] Tool name "BadName!!" contains discouraged character(s): "!".
                      The MCP spec allows only letters, digits, underscores, dots, and hyphens
-  <span class="y">WARNING</span> [LLM-002] Tool description is too short (1 characters, minimum 20)
-  <span class="y">WARNING</span> [LLM-004] Tool description does not explain when to use this tool
-  <span class="b">SUGGESTION</span> [LLM-005] Tool description does not include usage examples
+  <span class="y">WARNING</span> [LLM-002] [HEURISTIC] Tool description is too short
+  <span class="y">WARNING</span> [LLM-004] [HEURISTIC] Description does not explain when to use this tool
+  <span class="b">SUGGESTION</span> [LLM-005] [HEURISTIC] Description does not include usage examples
 
 ──────────────────────────────────────────────────
-Summary: 0/1 tools valid   Errors: 1   Warnings: 4   Suggestions: 2
+Summary: 1/1 tools valid   Errors: 0   Warnings: 3   Suggestions: 1
 
-Maturity: <span class="y">MODERATE</span> (85/100)</pre>
+MCP specification compliance passed.
+Governance threshold passed.</pre>
     <ul class="clean" style="margin-top:1.2rem;">
-      <li>Every issue carries a rule ID, severity, the offending <strong>schema path</strong>, and a concrete <strong>fix suggestion</strong>.</li>
+      <li>Every issue carries a rule ID, severity, <strong>provenance</strong>, the offending schema path, and a concrete fix suggestion.</li>
       <li>Rules can be tuned per project: <code class="inline">--rule SEC-001=off</code>, <code class="inline">--rule LLM-005=error</code>, or the same in config.</li>
     </ul>
   </section>
@@ -364,6 +368,8 @@ Maturity: <span class="y">MODERATE</span> (85/100)</pre>
   format: human
   verbose: false
 <span class="b">specVersion:</span> "2026-07-28"   <span class="c"># or legacy "2025-11-25"</span>
+<span class="b">discoverySpecVersion:</span> "2025-11-25" <span class="c"># optional; inherits specVersion</span>
+<span class="b">profile:</span> governance              <span class="c"># governance | compliance</span>
 <span class="b">llm:</span>
   enabled: false
   provider: anthropic
@@ -375,6 +381,7 @@ Maturity: <span class="y">MODERATE</span> (85/100)</pre>
           <li><strong>Validated on load</strong> — unknown keys and invalid severities fail with a descriptive error, never silently ignored.</li>
           <li><strong>Precedence</strong>: defaults ← config file ← explicit CLI flags / HTTP overrides. Only flags you actually pass override file values.</li>
           <li><strong>HTTP parity</strong> — API request config goes through the same schema, so a bad override returns <code class="inline">400</code> with the exact field that failed.</li>
+          <li><strong>Two verdicts</strong> — <code class="inline">compliant</code> tracks specification errors; <code class="inline">valid</code> tracks effective errors under the profile.</li>
         </ul>
       </div>
     </div>
@@ -399,14 +406,14 @@ Maturity: <span class="y">MODERATE</span> (85/100)</pre>
   <section class="slide">
     <h2>Verified in this review</h2>
     <div class="grid cols-3" style="margin-bottom:1.4rem;">
-      <div class="card"><div class="big" style="color:var(--green)">988 / 988</div><p>tests passing across 70 files — one test file per rule, plus core, parsers, reporters, service, CLI, and integration suites</p></div>
-      <div class="card"><div class="big" style="color:var(--green)">93.8%</div><p>statement coverage (v8); core engine and rules near 100%, CLI wiring is the only thin spot</p></div>
+      <div class="card"><div class="big" style="color:var(--green)">1,023 / 1,023</div><p>tests passing across 71 files — rules, profiles, provenance, core, parsers, reporters, service, CLI, and integration suites</p></div>
+      <div class="card"><div class="big" style="color:var(--green)">8 / 8</div><p>Google Drive tools passed the compliance profile using legacy discovery and finalized 2026 validation</p></div>
       <div class="card"><div class="big" style="color:var(--green)">0</div><p>type errors — <code class="inline">tsc</code> clean over src, tests, and scripts</p></div>
     </div>
     <ul class="clean check">
       <li>CLI exercised end-to-end: human, JSON, and SARIF output; rule overrides; both supported spec revisions; YAML input; correct exit codes (0 / 1 with <code class="inline">--ci</code> / 2 on bad input).</li>
       <li>Malformed input handled gracefully — missing files, garbage JSON, and illegal tool names all produce descriptive errors, never stack traces.</li>
-      <li>Live validation against the official MCP memory server over STDIO: 9 tools fetched and scored 75/100.</li>
+      <li>Managed remote proof against Google Drive MCP: 8 tools, 0 specification findings, 87/100, no authorization, and no tool execution.</li>
       <li>HTTP service verified: <code class="inline">/health</code>, <code class="inline">/validate</code> (200 with full result), invalid config rejected with 400 and field-level detail.</li>
     </ul>
   </section>

@@ -1,5 +1,10 @@
 # MCP Server Tool LLM Analysis Report
 
+> **Historical snapshot.** These model-generated scores were produced with the
+> dated model and tool definitions listed below. They are preserved for project
+> history, not as current server assessments. Current validator behavior is
+> documented in the [specification](../docs/specs/validator.md).
+
 **Date:** 2026-01-09
 **Model:** claude-3-haiku-20240307
 **Analysis Type:** Semantic quality evaluation

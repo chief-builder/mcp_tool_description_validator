@@ -1,63 +1,54 @@
-# Plan: Test Validator Against Official MCP Servers
+# Validator Test Strategy
 
-## Objective
-Test the MCP Tool Definition Validator against official Anthropic MCP servers to validate its effectiveness and identify any issues with rule coverage or false positives.
+**Updated:** 2026-08-05
 
-## Target MCP Servers (Official Reference Implementations)
+## Current quality gate
 
-| Server | npm Package | Description |
-|--------|-------------|-------------|
-| Filesystem | `@modelcontextprotocol/server-filesystem` | Secure file operations |
-| Git | `@modelcontextprotocol/server-git` | Git repository operations |
-| Fetch | `@modelcontextprotocol/server-fetch` | Web content fetching |
-| Memory | `@modelcontextprotocol/server-memory` | Knowledge graph persistence |
-| Everything | `@modelcontextprotocol/server-everything` | Reference/test server |
+- 71 Vitest files
+- 1,023 tests
+- Source and test TypeScript type checking
+- ESM and declaration builds through tsup
+- CLI, library, HTTP service, file parsing, live HTTP, SSE, pagination, and stdio
+  coverage
 
-## Implementation Steps
-
-1. **Install official MCP server packages as dev dependencies**
-
-2. **Create test harness script** (`scripts/test-official-servers.ts`)
-   - Connect to each server via STDIO transport
-   - Fetch tool definitions using `listTools()`
-   - Run validator against each server's tools
-   - Generate per-server JSON reports
-   - Generate summary markdown report
-
-3. **Execute tests and commit results**
-
-## Output Structure
-```
-reports/
-  filesystem.json       # Validation results for filesystem server
-  git.json              # Validation results for git server
-  fetch.json            # Validation results for fetch server
-  memory.json           # Validation results for memory server
-  everything.json       # Validation results for everything server
-  summary.md            # Aggregated human-readable report
-```
-
-## Commands
+Run the complete gate with:
 
 ```bash
-# Install server packages
-npm install -D @modelcontextprotocol/server-filesystem \
-  @modelcontextprotocol/server-git \
-  @modelcontextprotocol/server-fetch \
-  @modelcontextprotocol/server-memory \
-  @modelcontextprotocol/server-everything
-
-# Run tests
-npx tsx scripts/test-official-servers.ts
+npm test
+npm run typecheck
 ```
 
-## Files to Create
-- `scripts/test-official-servers.ts` - Test harness script
-- `reports/*.json` - Per-server validation results
-- `reports/summary.md` - Human-readable summary
+## Coverage layers
 
-## Verification
-1. Run test harness against all 5 official servers
-2. Verify each server returns tool definitions
-3. Review validation results for accuracy
-4. Commit reports to repository
+1. **Rule units** — all 57 rules, malformed schemas, recursion/resource bounds,
+   severity overrides, version gates, provenance, and profile behavior.
+2. **Parsers** — JSON/YAML input shapes, optional descriptions, modern
+   stateless HTTP/stdio discovery, legacy SDK discovery, JSON/SSE responses,
+   pagination, response IDs, and timeouts.
+3. **Core integration** — configuration precedence, independent discovery and
+   validation revisions, maturity aggregation, LLM failure isolation, and
+   reproducibility metadata.
+4. **Reporters** — human, JSON, and SARIF output including provenance and
+   separate compliance/governance status.
+5. **Entry points** — CLI exit codes/options and Hono `/health` and `/validate`
+   behavior.
+
+## Live-server evidence
+
+The reproducible [Google Drive case study](../case-studies/google-drive.md)
+exercises a managed remote MCP endpoint without authorization or tool execution.
+It verifies legacy discovery with finalized `2026-07-28` rule targeting and the
+compliance profile.
+
+Historical official and third-party captures remain under `tests/fixtures/` and
+`reports/` as regression evidence. Their embedded counts reflect the validator
+revision that generated them and are explicitly not current certifications.
+
+## Release checklist
+
+1. Run `npm test` and `npm run typecheck`.
+2. Run `npm run validate:examples`.
+3. Verify `mcp-validate --help` matches README and specification options.
+4. Validate internal Markdown links and HTML structure.
+5. When protocol behavior changes, rerun the Google Drive workflow and update
+   its dated result rather than overwriting prior evidence.

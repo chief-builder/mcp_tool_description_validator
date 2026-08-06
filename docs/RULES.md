@@ -486,11 +486,11 @@ Validates that all parameter names in the tool's inputSchema use consistent casi
 
 ---
 
-### NAM-007: Tool names must be unique within a server
+### NAM-007: Tool names should be unique within a server
 
 **Severity:** warning
 
-The MCP specification says tool names should be unique within a server (comparison is case-sensitive). Every second and subsequent occurrence of a duplicated name is reported as an error. Additionally, two names that differ only by letter case (e.g., `getUser` vs `getuser`) are reported as a warning — technically distinct per spec, but an invitation for confusion.
+The MCP specification says tool names should be unique within a server (comparison is case-sensitive). Every second and subsequent occurrence of a duplicated name is reported as a warning. Two names that differ only by letter case (e.g., `getUser` vs `getuser`) are also reported — technically distinct per spec, but an invitation for confusion.
 
 **Good Example:**
 ```json
@@ -693,11 +693,14 @@ URL parameters without proper format validation can lead to SSRF (Server-Side Re
 
 ---
 
-### SEC-006: Command/query parameters should use enum when values are known
+### SEC-006: Command/action parameters should use enum when values are known
 
 **Severity:** warning
 
-Parameters that represent commands, actions, or queries should use enum constraints when the set of valid values is known.
+Parameters that represent commands, actions, methods, modes, operations, types,
+or kinds should use enum constraints when the set of valid values is known.
+Free-form structured `query` parameters are intentionally excluded because
+their possible values are not a closed enumeration.
 
 **Good Example:**
 ```json
@@ -728,7 +731,7 @@ Parameters that represent commands, actions, or queries should use enum constrai
 
 Parameters with names suggesting sensitive data (password, token, key, secret, auth, credential) are flagged for review to ensure proper security handling.
 
-Sensitive terms are matched as whole tokens/phrases (camelCase and snake_case aware): `apiKey` and `api_key` are flagged, but `author` does not match `auth`.
+Sensitive terms are matched as whole tokens/phrases (camelCase and snake_case aware): `apiKey` and `api_key` are flagged, but `author` does not match `auth`. Pagination names such as `pageToken`, `nextPageToken`, and `cursor` are excluded because continuation cursors are not credentials.
 
 **Note:** This is an awareness rule. It flags parameters that need special handling such as avoiding logging, using secure transmission, etc.
 

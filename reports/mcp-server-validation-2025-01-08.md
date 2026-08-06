@@ -1,5 +1,12 @@
 # MCP Server Tool Validation Report
 
+> **Historical snapshot.** The 46-rule results below are retained as dated
+> evidence and must not be read as current package certifications. The current
+> validator implements 57 rules, finding provenance, independent discovery and
+> validation revisions, and compliance/governance profiles. See the
+> [current specification](../docs/specs/validator.md) and
+> [Google Drive case study](../docs/case-studies/google-drive.md).
+
 **Date:** 2025-01-08 (Updated: 2026-01-09)
 **Validator Version:** 0.1.0
 **MCP Spec Version:** 2025-11-25

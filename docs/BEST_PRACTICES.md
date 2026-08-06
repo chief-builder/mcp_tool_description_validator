@@ -43,6 +43,22 @@ Poor descriptions (vague, buried details, or overloaded with metadata) lead to o
 
 ## Maturity Scoring Framework
 
+### Compliance, Governance, and Heuristics
+
+Each finding identifies its authority:
+
+- **Specification** findings map to requirements in the selected MCP revision.
+- **Governance** findings enforce configurable defensive or organizational
+  policy.
+- **Heuristic** findings infer likely quality problems from names and prose and
+  should be reviewed in context.
+
+The result's `compliant` field considers effective error-severity specification
+findings. `valid` considers all effective errors under the selected profile.
+The default `governance` profile preserves strict defaults; `compliance` keeps
+non-specification findings but downgrades their default errors to warnings.
+Explicit rule severity overrides take precedence over the profile.
+
 The validator calculates a maturity score (0-100) based on rule compliance. Higher scores indicate tools that are more reliable, secure, and effective for LLM agents.
 
 ### Per-Tool Averaged Scoring
@@ -105,6 +121,9 @@ Identifies potential vulnerabilities in input handling, checking nested schemas 
 - File paths must have validation patterns
 - Sensitive parameters should not have default values
 - MCP 2026-07-28: sensitive parameters must not be exposed as HTTP headers via `x-mcp-header` (SEC-011)
+- Opaque resource IDs are not filesystem paths, pagination tokens are not
+  credentials, and structured search queries are not executable code merely
+  because of their parameter names
 
 ### 4. LLM Compatibility (LLM-001 to LLM-013)
 

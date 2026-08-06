@@ -6,7 +6,7 @@
     <title>MCP Tool Validator</title>
     <meta
       name="description"
-      content="A governance validator for MCP tool definitions, with rules for schema quality, security, LLM compatibility, and best practices."
+      content="Validate MCP tool definitions against the finalized 2026-07-28 specification, governance policy, and LLM ergonomics. CLI, library, HTTP API, and live-server discovery."
     />
     <style>
       :root {
@@ -431,6 +431,7 @@
             <a href="https://github.com/chief-builder/mcp_tool_description_validator">GitHub</a>
             <a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/RULES.md">Rules</a>
             <a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/BEST_PRACTICES.md">Best Practices</a>
+            <a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/specs/validator.md">Specification</a>
             <a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/case-studies/google-drive.md">Case Study</a>
           </nav>
         </div>
@@ -443,9 +444,9 @@
               <p class="eyebrow">MCP governance for agent tool surfaces</p>
               <h1>Validate tool definitions before agents rely on them.</h1>
               <p class="lede">
-                Check MCP tools for schema correctness, secure input bounds,
-                naming consistency, LLM-friendly descriptions, annotations, and
-                maturity score.
+                Separate MCP specification compliance from governance policy
+                and heuristic advice. Validate files or live servers with 57
+                rules, provenance-aware findings, and reproducible run metadata.
               </p>
               <div class="actions">
                 <a class="button primary" href="https://github.com/chief-builder/mcp_tool_description_validator">View Source</a>
@@ -476,19 +477,49 @@
                 <div class="terminal-dots" aria-hidden="true">
                   <span></span><span></span><span></span>
                 </div>
-                <span>examples/needs-work-tools.json</span>
+                <span>Google Drive MCP · compliance profile</span>
               </div>
-              <pre class="terminal-body"><span class="muted-code">$ mcp-validate examples/needs-work-tools.json --verbose</span>
+              <pre class="terminal-body"><span class="muted-code">$ mcp-validate --server https://drivemcp.googleapis.com/mcp/v1 \</span>
+<span class="muted-code">    --discovery-spec-version 2025-11-25 --spec-version 2026-07-28 \</span>
+<span class="muted-code">    --profile compliance</span>
 MCP Tool Validator v0.1.0
 
-<span class="fail">x getData</span>
-  <span class="warn">WARNING</span> [NAM-002] Tool name must use kebab-case
-  <span class="warn">WARNING</span> [LLM-002] Description too short
-  <span class="warn">WARNING</span> [SEC-001] String parameter is missing maxLength
+Validating: 8 tool(s)
+Profile: compliance
+Validation spec: 2026-07-28
+Discovery spec: 2025-11-25
 
-Summary: 0/2 tools valid
-Maturity: <span class="warn">MODERATE</span> (59/100)</pre>
+Summary: <span class="ok">8/8 tools valid</span>
+MCP specification compliance passed.
+Governance threshold passed.
+Maturity: <span class="ok">MATURE</span> (87/100)</pre>
             </figure>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Three Signals, Clearly Separated</h2>
+          <p class="section-intro">
+            A strict project recommendation is not automatically an MCP
+            violation. Every result carries its authority and the report keeps
+            protocol compliance distinct from the active policy threshold.
+          </p>
+          <div class="flow">
+            <article class="step">
+              <span class="step-number">S</span>
+              <h3>Specification</h3>
+              <p>Finalized MCP requirements such as tool shape, JSON Schema, metadata, and <code>x-mcp-header</code>.</p>
+            </article>
+            <article class="step">
+              <span class="step-number">G</span>
+              <h3>Governance</h3>
+              <p>Configurable defensive policy such as bounded inputs, annotations, pagination, and output controls.</p>
+            </article>
+            <article class="step">
+              <span class="step-number">H</span>
+              <h3>Heuristics</h3>
+              <p>Name- and text-based signals for model comprehension that benefit from human review.</p>
+            </article>
           </div>
         </section>
 
@@ -508,12 +539,12 @@ Maturity: <span class="warn">MODERATE</span> (59/100)</pre>
             <article class="rule">
               <code>NAM</code>
               <h3>Naming</h3>
-              <p>Kebab-case tools, camelCase parameters, descriptive verbs, and predictable identifiers.</p>
+              <p>MCP name grammar, uniqueness, consistent parameter casing, descriptive verbs, and tool-set grouping.</p>
             </article>
             <article class="rule">
               <code>SEC</code>
               <h3>Security</h3>
-              <p>Bounded strings, bounded arrays, URL and file path constraints, and sensitive defaults.</p>
+              <p>Bounded inputs, URL and path constraints, sensitive defaults, safe headers, and context-aware heuristics.</p>
             </article>
             <article class="rule">
               <code>LLM</code>
@@ -531,24 +562,24 @@ Maturity: <span class="warn">MODERATE</span> (59/100)</pre>
         <section class="section">
           <h2>Use It Three Ways</h2>
           <p class="section-intro">
-            Run it locally as a CLI, embed it in another TypeScript tool, or start
-            a small HTTP service for internal validation workflows.
+            Run it locally as a CLI, embed it in TypeScript, or start a small
+            HTTP service. File and live-server inputs use the same rule engine.
           </p>
           <div class="flow">
             <article class="step">
               <span class="step-number">1</span>
               <h3>CLI Gate</h3>
-              <p>Validate JSON or YAML files and fail CI with `--ci` when errors are present.</p>
+              <p>Validate JSON or YAML files and fail CI with <code>--ci</code> when effective-profile errors are present.</p>
             </article>
             <article class="step">
               <span class="step-number">2</span>
               <h3>Library API</h3>
-              <p>Call `validate`, `validateFile`, or `validateServer` from a custom release workflow.</p>
+              <p>Call <code>validate</code>, <code>validateFile</code>, or <code>validateServer</code> from a release workflow.</p>
             </article>
             <article class="step">
               <span class="step-number">3</span>
               <h3>HTTP Service</h3>
-              <p>Run `mcp-validate serve` and post tool definitions to `/validate`.</p>
+              <p>Run <code>mcp-validate serve</code> and post definitions plus validated configuration to <code>/validate</code>.</p>
             </article>
           </div>
         </section>
@@ -556,13 +587,38 @@ Maturity: <span class="warn">MODERATE</span> (59/100)</pre>
         <section class="section">
           <h2>Proven Against a Live MCP Server</h2>
           <p class="section-intro">
-            A documented run against Google's managed Drive MCP server
-            discovered eight public tools, exercised live protocol discovery,
-            and passed the compliance profile at 87/100 without accessing Drive
-            data or executing a tool.
+            A documented run against Google's managed Drive MCP server used
+            legacy discovery and finalized-rule validation independently. All
+            eight public tools passed the compliance profile at 87/100 without
+            accessing Drive data or executing a tool.
           </p>
           <div class="actions">
             <a class="button" href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/case-studies/google-drive.md">Read the Google Drive Case Study</a>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Documentation Map</h2>
+          <p class="section-intro">
+            The maintained documentation separates product behavior, rule
+            semantics, architecture, verification, and real-server evidence.
+          </p>
+          <div class="flow">
+            <article class="step">
+              <span class="step-number">A</span>
+              <h3>Specification</h3>
+              <p><a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/specs/validator.md">Implemented interfaces, transports, outputs, and operational behavior.</a></p>
+            </article>
+            <article class="step">
+              <span class="step-number">R</span>
+              <h3>Rules &amp; Practice</h3>
+              <p><a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/RULES.md">All 57 rules</a> plus the <a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/BEST_PRACTICES.md">maturity framework</a>.</p>
+            </article>
+            <article class="step">
+              <span class="step-number">V</span>
+              <h3>Verification</h3>
+              <p><a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/test/test-plan.md">Automated test strategy</a> and <a href="https://github.com/chief-builder/mcp_tool_description_validator/blob/master/docs/case-studies/google-drive.md">live Google Drive evidence</a>.</p>
+            </article>
           </div>
         </section>
 
@@ -571,9 +627,10 @@ Maturity: <span class="warn">MODERATE</span> (59/100)</pre>
           <div class="code-panel">
             <pre>npm install
 npm run build
-node ./dist/cli.js examples/polished-tools.json
-node ./dist/cli.js examples/needs-work-tools.json --verbose
-node ./dist/cli.js serve --port 8080</pre>
+mcp-validate examples/polished-tools.json --profile compliance
+mcp-validate examples/needs-work-tools.json --verbose
+mcp-validate --server "node ./server.js" --discovery-spec-version 2025-11-25
+mcp-validate serve --port 8080</pre>
           </div>
         </section>
       </main>

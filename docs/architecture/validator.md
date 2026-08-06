@@ -1,6 +1,6 @@
 # MCP Tool Validator Architecture
 
-**Date**: 2025-01-07
+**Updated**: 2026-08-05
 **Spec**: [docs/specs/validator.md](../specs/validator.md)
 
 ## Tech Stack
@@ -9,11 +9,11 @@
 |-------|--------|--------|-----------|
 | Runtime | Node.js 20+ | Active | LTS, ESM native |
 | Language | TypeScript 5.x | Active | Type safety, MCP SDK compatibility |
-| JSON Schema | Ajv 8.x | 170M/week | Fastest, most compliant, ESLint uses it |
-| CLI | Commander 14.x | 198M/week | Zero deps, simple API, battle-tested |
-| HTTP | Hono 4.x | 1.5M/week | Lightweight, fast, modern |
+| JSON Schema | Ajv 8.x | Active | JSON Schema 2020-12 validation |
+| CLI | Commander 14.x | Active | Small, typed command surface |
+| HTTP | Hono 4.x | Active | Lightweight validation service |
 | Config | Cosmiconfig 9.x | Active | Standard config loading, YAML/JSON/JS |
-| Testing | Vitest 4.x | 1.5M/week | Zero-config TS, 30-70% faster than Jest |
+| Testing | Vitest 4.x | Active | Fast TypeScript unit and integration tests |
 | Build | tsup 8.x | Active | Zero-config, esbuild-based, fast |
 | MCP Client | Native 2026 transport + @modelcontextprotocol/sdk 1.30+ | Active | Finalized stateless protocol plus legacy compatibility |
 | LLM | Vercel AI SDK 6.x | Active | Unified API for OpenAI/Anthropic/Ollama |
@@ -26,11 +26,12 @@
 **Why**: Lighter footprint for a simple stateless validation API. We only need 2 endpoints (`POST /validate`, `GET /health`). Hono's minimal overhead suits this better than Fastify's full feature set.
 **Rejected**: Fastify (overkill for 2 endpoints), Express (slower, dated)
 
-### 2. Config-Driven Rule Loading
+### 2. Registry-Based, Config-Driven Rule Selection
 
-**Choice**: Rules loaded dynamically based on configuration
-**Why**: Enables tree-shaking unused rules in library mode, cleaner separation between rule definitions and execution, supports future lazy loading for performance.
-**Rejected**: Static imports (loads all rules always), Registry pattern (more complex for no clear benefit)
+**Choice**: Rules are statically registered, then filtered by configuration and
+target specification revision before execution.
+**Why**: The registry keeps rule discovery deterministic while still supporting
+enable/disable settings, severity overrides, and revision-gated rules.
 
 ### 3. Vercel AI SDK for LLM Abstraction
 
@@ -48,6 +49,22 @@
 **Choice**: Publish as single npm package with CLI binary and library exports
 **Why**: Simpler versioning, easier installation. CLI via `npx mcp-validate` or global install, library via `import { validate } from 'mcp-tool-validator'`.
 **Rejected**: Monorepo with separate packages (unnecessary complexity for this scope)
+
+### 6. Separate discovery from validation policy
+
+**Choice**: `discoverySpecVersion` controls live-server interoperability while
+`specVersion` controls rule loading. `profile` independently controls effective
+policy severity.
+**Why**: A server can expose valid definitions through an older protocol
+revision. Coupling transport negotiation to rule targeting prevented finalized
+validation of Google's Drive MCP endpoint.
+
+### 7. Provenance-aware results
+
+**Choice**: Every runtime finding is labeled `specification`, `governance`, or
+`heuristic`; reports expose both `compliant` and `valid`.
+**Why**: Strict defensive policy and name/text heuristics must not be presented
+as MCP specification failures.
 
 ## Components
 
@@ -69,6 +86,8 @@ flowchart TB
     EXEC[Execute rules per tool]
     SCORE[Aggregate findings and score]
   end
+  PROFILE[Compliance / governance profile]
+  PROVENANCE[Specification / governance / heuristic]
   OUTPUT[Human / JSON / SARIF result]
 
   CLI --> INPUT
@@ -79,6 +98,8 @@ flowchart TB
   HTTP --> CONFIG
   INPUT --> EXEC
   CONFIG --> LOAD --> EXEC --> SCORE --> OUTPUT
+  PROFILE --> EXEC
+  EXEC --> PROVENANCE --> SCORE
 ```
 
 The boundary-check layer is deliberately shared: configuration files and HTTP
@@ -110,7 +131,7 @@ execution limited to `true`, `false`, or a supported severity override.
 ┌─────────────┐   ┌─────────────┐        ┌─────────────┐
 │   Parsers   │   │    Rules    │        │  Reporters  │
 ├─────────────┤   ├─────────────┤        ├─────────────┤
-│ file-parser │   │ schema/*    │        │ human.ts    │
+│ file.ts     │   │ schema/*    │        │ human.ts    │
 │ mcp-client  │   │ naming/*    │        │ json.ts     │
 │             │   │ security/*  │        │ sarif.ts    │
 │             │   │ llm/*       │        │             │
@@ -172,40 +193,32 @@ Rules are loaded based on configuration:
 
 ```typescript
 // src/core/rule-loader.ts
-const RULE_MODULES = {
-  'SEC-001': () => import('../rules/security/sec-001'),
-  'SEC-002': () => import('../rules/security/sec-002'),
-  // ...
-};
-
-export async function loadRules(config: RuleConfig): Promise<Rule[]> {
-  const enabledRules = Object.entries(config)
-    .filter(([_, value]) => value !== false)
-    .map(([id]) => id);
-
-  return Promise.all(
-    enabledRules.map(async id => {
-      const module = await RULE_MODULES[id]();
-      return module.default;
-    })
-  );
+export async function loadRules(
+  config: RuleConfig,
+  specVersion = '2026-07-28'
+): Promise<Rule[]> {
+  return Object.values(RULES).filter((rule) => {
+    if (config[rule.id] === false) return false;
+    return !rule.specVersions || rule.specVersions.includes(specVersion);
+  });
 }
 ```
 
 ## File Structure
 
 ```
-mcp-tool-validator/
+mcp_tool_description_validator/
 ├── src/
 │   ├── index.ts                 # Library exports
 │   ├── cli.ts                   # CLI entry (commander)
 │   ├── core/
 │   │   ├── validator.ts         # Main orchestrator
-│   │   ├── rule-loader.ts       # Dynamic rule loading
+│   │   ├── rule-engine.ts       # Rule execution and aggregation
+│   │   ├── rule-loader.ts       # Config/version rule selection
 │   │   └── config.ts            # Cosmiconfig wrapper
 │   ├── parsers/
 │   │   ├── file.ts              # JSON/YAML parsing
-│   │   └── mcp-client.ts        # MCP SDK client wrapper
+│   │   └── mcp-client.ts        # Native 2026 + SDK-backed legacy discovery
 │   ├── rules/
 │   │   ├── types.ts             # Rule interface
 │   │   ├── schema/
@@ -213,7 +226,7 @@ mcp-tool-validator/
 │   │   │   └── ...
 │   │   ├── naming/
 │   │   ├── security/
-│   │   ├── llm/
+│   │   ├── llm-compatibility/
 │   │   └── best-practice/
 │   ├── reporters/
 │   │   ├── human.ts
@@ -262,6 +275,9 @@ mcp-tool-validator/
 
 ```json
 {
+  "@hono/node-server": "^2.0.8",
+  "@modelcontextprotocol/sdk": "^1.30.0",
+  "ai": "^6.0.0",
   "ajv": "^8.17.0",
   "ajv-formats": "^3.0.0",
   "commander": "^14.0.0",
@@ -269,8 +285,6 @@ mcp-tool-validator/
   "chalk": "^5.0.0",
   "hono": "^4.0.0",
   "yaml": "^2.0.0",
-  "@modelcontextprotocol/sdk": "^1.0.0",
-  "ai": "^6.0.0",
   "zod": "^4.0.0"
 }
 ```
@@ -293,14 +307,14 @@ LLM provider SDKs (only needed if using LLM analysis):
 ```json
 {
   "peerDependencies": {
-    "@ai-sdk/openai": "^1.0.0",
-    "@ai-sdk/anthropic": "^1.0.0",
-    "ollama-ai-provider": "^1.0.0"
+    "@ai-sdk/openai": "^3.0.0",
+    "@ai-sdk/anthropic": "^3.0.0",
+    "ollama-ai-provider-v2": "^3.0.0"
   },
   "peerDependenciesMeta": {
     "@ai-sdk/openai": { "optional": true },
     "@ai-sdk/anthropic": { "optional": true },
-    "ollama-ai-provider": { "optional": true }
+    "ollama-ai-provider-v2": { "optional": true }
   }
 }
 ```
@@ -310,16 +324,15 @@ LLM provider SDKs (only needed if using LLM analysis):
 | Library | Concern | Check By |
 |---------|---------|----------|
 | @modelcontextprotocol/sdk | Modern-protocol and future major-version changes | As released |
-| Hono | Maturity vs Fastify | Q2 2026 |
+| Live interoperability | Run version-split discovery checks against managed and reference servers | Before protocol-target changes |
+| Heuristic precision | Re-run real-server case studies and regression fixtures | With rule changes |
 | Vercel AI SDK | Breaking changes in v7 | As released |
 
-## Open Questions
-
-Resolved from spec:
+## Current Boundaries and Follow-up
 
 1. **Schema version pinning**: Keep validation behavior pinned to the finalized MCP 2026-07-28 schema and prose requirements
-2. **Rule documentation**: Markdown in `docs/rules/`, linked from issue output
-3. **LLM cost management**: Content-hash-based caching (optional)
+2. **Rule documentation**: Consolidated in `docs/RULES.md`, linked from issue output
+3. **LLM cost management**: Content-hash-based caching remains optional future work
 
 ## References
 
