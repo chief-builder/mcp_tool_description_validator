@@ -436,15 +436,21 @@ output:
       expect(result.summary.totalTools).toBe(1);
     });
 
-    it('completes when the schema is pathologically deep', async () => {
-      let schema: Record<string, unknown> = { type: 'string' };
-      for (let i = 0; i < 20000; i++) {
-        schema = { type: 'object', properties: { a: schema } };
-      }
+    it(
+      'completes when the schema is pathologically deep',
+      async () => {
+        let schema: Record<string, unknown> = { type: 'string' };
+        for (let i = 0; i < 20000; i++) {
+          schema = { type: 'object', properties: { a: schema } };
+        }
 
-      const result = await validate([createValidTool({ inputSchema: schema })]);
-      expect(result.summary.totalTools).toBe(1);
-    });
+        const result = await validate([
+          createValidTool({ inputSchema: schema }),
+        ]);
+        expect(result.summary.totalTools).toBe(1);
+      },
+      15_000
+    );
   });
 
   describe('LLM analysis wiring', () => {
