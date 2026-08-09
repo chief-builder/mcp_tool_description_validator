@@ -344,9 +344,21 @@ The validator:
 2. Uses stateless per-request metadata for `2026-07-28`, or the SDK
    initialization flow for explicit `2025-11-25` discovery.
 3. Calls `tools/list`, follows pagination, and accepts JSON or SSE over HTTP.
-4. Validates the returned definitions using `specVersion` and the selected
+   It does not call `server/discover`.
+4. For modern discovery, validates the JSON-RPC 2.0 marker, matching response
+   ID, mutually exclusive `result`/`error`, supported `resultType`, and Tool
+   result shape. An absent `resultType` is interpreted as `complete` for the
+   backward-compatibility behavior required by the finalized specification.
+5. Requires a non-negative integer `ttlMs` and `public` or `private`
+   `cacheScope` on every completed `tools/list` page. Paginated results must
+   keep the same cache scope across all pages.
+6. Parses well-formed error objects into `MCPProtocolError`; protocol errors
+   `-32020` and `-32022` become `HeaderMismatchError` and
+   `UnsupportedProtocolVersionError`, respectively. The unsupported-version
+   error data is validated before its supported/requested revisions are used.
+7. Validates the returned definitions using `specVersion` and the selected
    profile.
-5. Records endpoint, both revisions, authentication scope, and the fact that no
+8. Records endpoint, both revisions, authentication scope, and the fact that no
    tool was executed.
 
 The client never silently downgrades. An unsupported modern revision produces
@@ -653,7 +665,7 @@ Maintain test fixtures for:
 - Invalid definitions triggering each rule
 - Edge cases (empty, malformed, large)
 
-Current quality gate: 71 test files and 1,023 tests.
+Current quality gate: 71 test files and 1,036 tests.
 
 ---
 

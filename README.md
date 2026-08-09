@@ -44,8 +44,12 @@ discard static findings if a provider is unavailable.
 
 For live servers, the default 2026-07-28 path uses stateless per-request
 metadata and follows `tools/list` pagination over either Streamable HTTP or
-stdio. The `2025-11-25` target uses the official SDK's legacy initialization
-flow.
+stdio. It validates JSON-RPC 2.0 envelopes and response IDs, requires valid
+`ttlMs` and `cacheScope` hints on every completed page, and preserves structured
+protocol errors such as `HeaderMismatchError` and
+`UnsupportedProtocolVersionError`. The `2025-11-25` target uses the official
+SDK's legacy initialization flow. The validator does not call
+`server/discover`.
 
 ## Real-World Validation Evidence
 
@@ -293,7 +297,7 @@ npm run llm:analyze      # LLM analysis over fixtures (needs ANTHROPIC_API_KEY)
 - [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) - Best practices and maturity scoring framework
 - [docs/specs/validator.md](docs/specs/validator.md) - Implemented product and API specification
 - [docs/architecture/validator.md](docs/architecture/validator.md) - Current architecture and dependency decisions
-- [docs/test/test-plan.md](docs/test/test-plan.md) - Verification strategy and current 71-file / 1,023-test gate
+- [docs/test/test-plan.md](docs/test/test-plan.md) - Verification strategy and current 71-file / 1,036-test gate
 - [docs/case-studies/google-drive.md](docs/case-studies/google-drive.md) - Real-server validation evidence and lessons learned
 
 ## License

@@ -13,6 +13,57 @@ import { spawn } from 'node:child_process';
 import type { ToolDefinition, ToolSource } from '../types/index.js';
 
 const MODERN_PROTOCOL_VERSION = '2026-07-28';
+const HEADER_MISMATCH_CODE = -32020;
+const UNSUPPORTED_PROTOCOL_VERSION_CODE = -32022;
+
+/** A structured JSON-RPC error returned by a modern MCP server. */
+export class MCPProtocolError extends Error {
+  constructor(
+    message: string,
+    public readonly code: number,
+    public readonly data?: unknown
+  ) {
+    super(message);
+    this.name = 'MCPProtocolError';
+  }
+}
+
+/** The server does not support the requested MCP protocol revision. */
+export class UnsupportedProtocolVersionError extends MCPProtocolError {
+  public readonly supportedVersions: string[];
+  public readonly requestedVersion: string;
+
+  constructor(
+    message: string,
+    data: { supported: string[]; requested: string }
+  ) {
+    const compatibilityHint = data.supported.includes('2025-11-25')
+      ? ' Retry explicitly with --discovery-spec-version 2025-11-25; the validator will not silently downgrade.'
+      : data.supported.length > 0
+        ? ` Supported versions: ${data.supported.join(', ')}.`
+        : '';
+    super(
+      `MCP server rejected discovery protocol ${data.requested}: ${message}.${compatibilityHint}`,
+      UNSUPPORTED_PROTOCOL_VERSION_CODE,
+      data
+    );
+    this.name = 'UnsupportedProtocolVersionError';
+    this.supportedVersions = data.supported;
+    this.requestedVersion = data.requested;
+  }
+}
+
+/** Mirrored HTTP request headers did not match the JSON-RPC body. */
+export class HeaderMismatchError extends MCPProtocolError {
+  constructor(message: string, data?: unknown) {
+    super(
+      `MCP server rejected request metadata: ${message}`,
+      HEADER_MISMATCH_CODE,
+      data
+    );
+    this.name = 'HeaderMismatchError';
+  }
+}
 
 /**
  * Represents an active MCP connection.
@@ -82,29 +133,111 @@ function modernListToolsRequest(id = 1, cursor?: string) {
 interface ModernToolsPage {
   tools: Record<string, unknown>[];
   nextCursor?: string;
+  ttlMs: number;
+  cacheScope: 'public' | 'private';
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function parseProtocolError(value: unknown): MCPProtocolError {
+  if (!isRecord(value)) {
+    throw new Error('MCP JSON-RPC error must be an object');
+  }
+  if (typeof value.code !== 'number' || !Number.isInteger(value.code)) {
+    throw new Error('MCP JSON-RPC error code must be an integer');
+  }
+  if (typeof value.message !== 'string' || value.message.length === 0) {
+    throw new Error('MCP JSON-RPC error message must be a non-empty string');
+  }
+
+  const code = value.code as number;
+  if (code === UNSUPPORTED_PROTOCOL_VERSION_CODE) {
+    if (!isRecord(value.data)) {
+      throw new Error(
+        'UnsupportedProtocolVersionError data must be an object'
+      );
+    }
+    if (
+      !Array.isArray(value.data.supported) ||
+      value.data.supported.some((version) => typeof version !== 'string')
+    ) {
+      throw new Error(
+        'UnsupportedProtocolVersionError data.supported must be an array of strings'
+      );
+    }
+    if (typeof value.data.requested !== 'string') {
+      throw new Error(
+        'UnsupportedProtocolVersionError data.requested must be a string'
+      );
+    }
+    return new UnsupportedProtocolVersionError(value.message, {
+      supported: value.data.supported as string[],
+      requested: value.data.requested,
+    });
+  }
+  if (code === HEADER_MISMATCH_CODE) {
+    return new HeaderMismatchError(value.message, value.data);
+  }
+  return new MCPProtocolError(
+    `MCP server returned ${code}: ${value.message}`,
+    code,
+    value.data
+  );
 }
 
 function parseModernResponse(value: unknown, expectedId: number): ModernToolsPage {
-  if (typeof value !== 'object' || value === null) {
+  if (!isRecord(value)) {
     throw new Error('MCP server returned a non-object JSON-RPC response');
   }
-  const response = value as Record<string, unknown>;
+  const response = value;
+  if (response.jsonrpc !== '2.0') {
+    throw new Error('MCP server response jsonrpc must be exactly "2.0"');
+  }
   if (response.id !== expectedId) {
     throw new Error(
       `MCP server returned response id ${String(response.id)}; expected ${expectedId}`
     );
   }
-  if (response.error && typeof response.error === 'object') {
-    const error = response.error as Record<string, unknown>;
+  const hasResult = Object.hasOwn(response, 'result');
+  const hasError = Object.hasOwn(response, 'error');
+  if (hasResult === hasError) {
     throw new Error(
-      `MCP server returned ${String(error.code ?? 'an error')}: ${String(error.message ?? 'Unknown error')}`
+      'MCP JSON-RPC response must contain exactly one of result or error'
     );
   }
+  if (hasError) {
+    throw parseProtocolError(response.error);
+  }
   const result = response.result;
-  if (typeof result !== 'object' || result === null) {
+  if (!isRecord(result)) {
     throw new Error('MCP tools/list response is missing a result object');
   }
-  const tools = (result as Record<string, unknown>).tools;
+  // The finalized specification requires current servers to include resultType,
+  // while also requiring clients to interpret an absent value as "complete"
+  // for responses produced by earlier protocol versions.
+  const resultType = result.resultType ?? 'complete';
+  if (resultType !== 'complete') {
+    throw new Error(
+      `MCP tools/list response resultType "${String(resultType)}" is not supported; expected "complete"`
+    );
+  }
+  if (
+    typeof result.ttlMs !== 'number' ||
+    !Number.isInteger(result.ttlMs) ||
+    result.ttlMs < 0
+  ) {
+    throw new Error(
+      'MCP completed tools/list response ttlMs must be a non-negative integer'
+    );
+  }
+  if (result.cacheScope !== 'public' && result.cacheScope !== 'private') {
+    throw new Error(
+      'MCP completed tools/list response cacheScope must be "public" or "private"'
+    );
+  }
+  const tools = result.tools;
   if (!Array.isArray(tools)) {
     throw new Error('MCP tools/list response is missing a tools array');
   }
@@ -115,13 +248,15 @@ function parseModernResponse(value: unknown, expectedId: number): ModernToolsPag
   ) {
     throw new Error('MCP tools/list response contains a non-object tool definition');
   }
-  const nextCursor = (result as Record<string, unknown>).nextCursor;
+  const nextCursor = result.nextCursor;
   if (nextCursor !== undefined && typeof nextCursor !== 'string') {
     throw new Error('MCP tools/list response nextCursor must be a string');
   }
   return {
     tools: tools as Record<string, unknown>[],
     ...(nextCursor !== undefined ? { nextCursor } : {}),
+    ttlMs: result.ttlMs,
+    cacheScope: result.cacheScope,
   };
 }
 
@@ -185,6 +320,7 @@ async function fetchModernToolsOverHttp(
 ): Promise<ToolDefinition[]> {
   const tools: Record<string, unknown>[] = [];
   let cursor: string | undefined;
+  let cacheScope: ModernToolsPage['cacheScope'] | undefined;
   let id = 1;
 
   do {
@@ -201,10 +337,37 @@ async function fetchModernToolsOverHttp(
     });
     const body = await response.text();
     if (!response.ok) {
+      let envelopeError: unknown;
+      let parsedErrorBody: unknown;
+      try {
+        parsedErrorBody = JSON.parse(body) as unknown;
+        parseModernResponse(parsedErrorBody, id);
+      } catch (error) {
+        if (error instanceof MCPProtocolError) {
+          throw error;
+        }
+        envelopeError = error;
+      }
+      if (
+        isRecord(parsedErrorBody) &&
+        parsedErrorBody.jsonrpc === '2.0' &&
+        envelopeError instanceof Error
+      ) {
+        throw new Error(
+          `MCP server returned HTTP ${response.status} with an invalid JSON-RPC error response: ${envelopeError.message}`
+        );
+      }
+      // Preserve an actionable diagnostic for older or non-conforming servers
+      // that return an unstructured protocol-version error body.
       if (/unsupported protocol version/i.test(body)) {
         throw new Error(
           `MCP server rejected discovery protocol ${MODERN_PROTOCOL_VERSION}: ${body}. ` +
           'Retry explicitly with --discovery-spec-version 2025-11-25; the validator will not silently downgrade.'
+        );
+      }
+      if (envelopeError instanceof Error) {
+        throw new Error(
+          `MCP server returned HTTP ${response.status} with an invalid JSON-RPC error response: ${envelopeError.message}`
         );
       }
       throw new Error(`MCP server returned HTTP ${response.status}: ${body}`);
@@ -214,6 +377,12 @@ async function fetchModernToolsOverHttp(
       ? parseSseResponse(body)
       : JSON.parse(body);
     const page = parseModernResponse(parsed, id);
+    if (cacheScope !== undefined && page.cacheScope !== cacheScope) {
+      throw new Error(
+        `MCP paginated tools/list response changed cacheScope from "${cacheScope}" to "${page.cacheScope}"`
+      );
+    }
+    cacheScope = page.cacheScope;
     tools.push(...page.tools);
     cursor = page.nextCursor;
     id++;
@@ -239,6 +408,7 @@ async function fetchModernToolsOverStdio(
     let settled = false;
     let requestId = 1;
     const tools: Record<string, unknown>[] = [];
+    let cacheScope: ModernToolsPage['cacheScope'] | undefined;
     let timer: NodeJS.Timeout | undefined;
 
     const finish = (
@@ -256,7 +426,13 @@ async function fetchModernToolsOverStdio(
       try {
         const parsed = JSON.parse(line);
         if (parsed?.id !== requestId) return;
-      const page = parseModernResponse(parsed, requestId);
+        const page = parseModernResponse(parsed, requestId);
+        if (cacheScope !== undefined && page.cacheScope !== cacheScope) {
+          throw new Error(
+            `MCP paginated tools/list response changed cacheScope from "${cacheScope}" to "${page.cacheScope}"`
+          );
+        }
+        cacheScope = page.cacheScope;
         tools.push(...page.tools);
         if (page.nextCursor !== undefined) {
           requestId++;

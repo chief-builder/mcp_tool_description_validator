@@ -42,7 +42,7 @@ enable/disable settings, severity overrides, and revision-gated rules.
 ### 4. Version-aware MCP client
 
 **Choice**: Native stateless HTTP/stdio requests for 2026-07-28, with @modelcontextprotocol/sdk v1.30+ retained for explicit 2025-11-25 compatibility
-**Why**: The stable SDK client still initializes using the legacy protocol flow. The finalized revision removes initialization and requires protocol metadata on every request, so the validator uses a small version-pinned transport path for modern live-server discovery.
+**Why**: The stable SDK client still initializes using the legacy protocol flow. The finalized revision removes initialization and requires protocol metadata on every request, so the validator uses a small version-pinned transport path for modern live-server discovery. That path calls only `tools/list`; it does not call `server/discover`. It validates JSON-RPC envelopes and IDs, completed-result cache hints on every page, one cache scope across pagination, and structured protocol errors before mapping tool definitions.
 
 ### 5. Single Package Distribution
 

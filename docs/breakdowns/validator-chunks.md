@@ -54,7 +54,7 @@ types + config
 
 ## Current verification
 
-- 71 test files / 1,023 tests
+- 71 test files / 1,036 tests
 - Build and declaration generation
 - Source and test type checking
 - Real-server proof against Google Drive MCP

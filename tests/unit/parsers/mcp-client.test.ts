@@ -59,6 +59,9 @@ import {
   fetchToolsFromServer,
   parseCommand,
   parseSseResponse,
+  MCPProtocolError,
+  UnsupportedProtocolVersionError,
+  HeaderMismatchError,
   type MCPConnection,
   type ServerConfig,
 } from '../../../src/parsers/mcp-client.js';
@@ -496,6 +499,74 @@ describe('MCP Client', () => {
       })).rejects.toThrow('expected 1');
     });
 
+    it('should require the JSON-RPC 2.0 response marker', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '1.0',
+        id: 1,
+        result: {
+          resultType: 'complete',
+          tools: [],
+          ttlMs: 0,
+          cacheScope: 'private',
+        },
+      }), { headers: { 'content-type': 'application/json' } })));
+
+      await expect(fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      })).rejects.toThrow('jsonrpc must be exactly "2.0"');
+    });
+
+    it('should treat an absent resultType as complete for backward compatibility', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        result: { tools: [], ttlMs: 0, cacheScope: 'private' },
+      }), { headers: { 'content-type': 'application/json' } })));
+
+      await expect(fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      })).resolves.toEqual([]);
+    });
+
+    it('should reject a non-complete tools/list result', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        result: {
+          resultType: 'input_required',
+          tools: [],
+          ttlMs: 0,
+          cacheScope: 'private',
+        },
+      }), { headers: { 'content-type': 'application/json' } })));
+
+      await expect(fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      })).rejects.toThrow('resultType "input_required" is not supported');
+    });
+
+    it.each([
+      [{ resultType: 'complete', tools: [], cacheScope: 'private' }, 'ttlMs'],
+      [{ resultType: 'complete', tools: [], ttlMs: -1, cacheScope: 'private' }, 'ttlMs'],
+      [{ resultType: 'complete', tools: [], ttlMs: 1.5, cacheScope: 'private' }, 'ttlMs'],
+      [{ resultType: 'complete', tools: [], ttlMs: 0 }, 'cacheScope'],
+      [{ resultType: 'complete', tools: [], ttlMs: 0, cacheScope: 'shared' }, 'cacheScope'],
+    ])('should reject invalid caching hints in a completed result', async (result, expected) => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        result,
+      }), { headers: { 'content-type': 'application/json' } })));
+
+      await expect(fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      })).rejects.toThrow(expected);
+    });
+
     it('should explain unsupported discovery versions without downgrading', async () => {
       const fetchMock = vi.fn().mockResolvedValue(
         new Response(
@@ -510,6 +581,93 @@ describe('MCP Client', () => {
         specVersion: '2026-07-28',
       })).rejects.toThrow('--discovery-spec-version 2025-11-25');
       expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should expose a structured unsupported-version error', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        error: {
+          code: -32022,
+          message: 'Unsupported protocol version',
+          data: {
+            supported: ['2026-09-01', '2025-11-25'],
+            requested: '2026-07-28',
+          },
+        },
+      }), { status: 400, headers: { 'content-type': 'application/json' } }));
+      vi.stubGlobal('fetch', fetchMock);
+
+      const error = await fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      }).catch((cause: unknown) => cause);
+
+      expect(error).toBeInstanceOf(UnsupportedProtocolVersionError);
+      expect(error).toMatchObject({
+        code: -32022,
+        requestedVersion: '2026-07-28',
+        supportedVersions: ['2026-09-01', '2025-11-25'],
+      });
+      expect((error as Error).message).toContain(
+        '--discovery-spec-version 2025-11-25'
+      );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reject malformed unsupported-version error data', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        error: {
+          code: -32022,
+          message: 'Unsupported protocol version',
+          data: { supported: ['2025-11-25'] },
+        },
+      }), { status: 400, headers: { 'content-type': 'application/json' } })));
+
+      await expect(fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      })).rejects.toThrow(
+        'UnsupportedProtocolVersionError data.requested must be a string'
+      );
+    });
+
+    it('should expose a structured header-mismatch error', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        error: {
+          code: -32020,
+          message: 'Mcp-Method does not match the request body',
+        },
+      }), { status: 400, headers: { 'content-type': 'application/json' } })));
+
+      const error = await fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      }).catch((cause: unknown) => cause);
+
+      expect(error).toBeInstanceOf(HeaderMismatchError);
+      expect(error).toMatchObject({ code: -32020 });
+      expect((error as Error).message).toContain('request metadata');
+    });
+
+    it('should expose other well-formed JSON-RPC errors structurally', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        error: { code: -32601, message: 'Method not found' },
+      }), { status: 404, headers: { 'content-type': 'application/json' } })));
+
+      const error = await fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      }).catch((cause: unknown) => cause);
+
+      expect(error).toBeInstanceOf(MCPProtocolError);
+      expect(error).toMatchObject({ code: -32601 });
     });
 
     it('should follow nextCursor across modern tools/list pages', async () => {
@@ -548,6 +706,38 @@ describe('MCP Client', () => {
       const secondBody = JSON.parse(fetchMock.mock.calls[1][1].body);
       expect(secondBody.id).toBe(2);
       expect(secondBody.params.cursor).toBe('page-2');
+    });
+
+    it('should require one cache scope across paginated results', async () => {
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(new Response(JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          result: {
+            resultType: 'complete',
+            tools: [],
+            nextCursor: 'page-2',
+            ttlMs: 1000,
+            cacheScope: 'private',
+          },
+        }), { headers: { 'content-type': 'application/json' } }))
+        .mockResolvedValueOnce(new Response(JSON.stringify({
+          jsonrpc: '2.0',
+          id: 2,
+          result: {
+            resultType: 'complete',
+            tools: [],
+            ttlMs: 500,
+            cacheScope: 'public',
+          },
+        }), { headers: { 'content-type': 'application/json' } }));
+      vi.stubGlobal('fetch', fetchMock);
+
+      await expect(fetchToolsFromServer({
+        server: 'https://example.com/mcp',
+        specVersion: '2026-07-28',
+      })).rejects.toThrow('changed cacheScope from "private" to "public"');
     });
 
     it('should retrieve tools from a stateless 2026-07-28 stdio server', async () => {

@@ -32,7 +32,10 @@ node ./dist/cli.js \
 ```
 
 For a finalized stateless server, omit `--discovery-spec-version` or set it to
-`2026-07-28`.
+`2026-07-28`. Modern fixture responses use JSON-RPC 2.0 with matching IDs and
+include valid `ttlMs` and `cacheScope` hints on every completed `tools/list`
+page. The validator also verifies that the cache scope does not change during
+pagination.
 
 Current JSON results include:
 
@@ -44,4 +47,5 @@ Current JSON results include:
 - live endpoint/command, discovery revision, authentication scope, and
   `toolExecutionPerformed: false` for live discovery runs.
 
-The validator only calls `tools/list`; it does not execute server tools.
+The validator only calls `tools/list`; it does not call `server/discover` or
+execute server tools.

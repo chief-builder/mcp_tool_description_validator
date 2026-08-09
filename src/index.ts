@@ -86,6 +86,9 @@ export {
   getToolDefinitions,
   disconnect,
   fetchToolsFromServer,
+  MCPProtocolError,
+  UnsupportedProtocolVersionError,
+  HeaderMismatchError,
 } from './parsers/mcp-client.js';
 
 // ============================================================================

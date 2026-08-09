@@ -1,11 +1,11 @@
 # Validator Test Strategy
 
-**Updated:** 2026-08-05
+**Updated:** 2026-08-09
 
 ## Current quality gate
 
 - 71 Vitest files
-- 1,023 tests
+- 1,036 tests
 - Source and test TypeScript type checking
 - ESM and declaration builds through tsup
 - CLI, library, HTTP service, file parsing, live HTTP, SSE, pagination, and stdio
@@ -24,7 +24,9 @@ npm run typecheck
    severity overrides, version gates, provenance, and profile behavior.
 2. **Parsers** — JSON/YAML input shapes, optional descriptions, modern
    stateless HTTP/stdio discovery, legacy SDK discovery, JSON/SSE responses,
-   pagination, response IDs, and timeouts.
+   pagination, strict JSON-RPC envelopes and response IDs, completed-result
+   cache hints, cache-scope consistency, structured protocol errors, and
+   timeouts.
 3. **Core integration** — configuration precedence, independent discovery and
    validation revisions, maturity aggregation, LLM failure isolation, and
    reproducibility metadata.
