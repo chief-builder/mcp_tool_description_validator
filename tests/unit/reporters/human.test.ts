@@ -3,7 +3,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { formatHumanOutput } from '../../../src/reporters/human.js';
+import {
+  formatHumanOutput,
+  sanitizeForTerminal,
+} from '../../../src/reporters/human.js';
 import type { ValidationResult } from '../../../src/types/index.js';
 
 const mockResult: ValidationResult = {
@@ -245,6 +248,56 @@ describe('Human Reporter', () => {
       expect(output).toContain('MATURE');
       expect(output).toContain('80/100');
       expect(output).toContain('Reliable for complex workflows');
+    });
+  });
+
+  describe('untrusted text', () => {
+    it('should replace control characters', () => {
+      expect(sanitizeForTerminal('a\u001b[31mred\u0007\nb\u009bc')).toBe(
+        'a\uFFFD[31mred\uFFFD\uFFFDb\uFFFDc'
+      );
+    });
+
+    it('should leave ordinary text, including non-ASCII, unchanged', () => {
+      expect(sanitizeForTerminal('get_user — café ✓')).toBe('get_user — café ✓');
+    });
+
+    it('should not emit escape sequences from tool names or messages', () => {
+      const hostile: ValidationResult = {
+        ...mockResult,
+        tools: [
+          {
+            ...mockResult.tools[0],
+            tool: { ...mockResult.tools[0].tool, name: 'evil\u001b]0;pwned\u0007' },
+            issues: [
+              {
+                ...mockResult.tools[0].issues[0],
+                message: 'msg\u001b[2J',
+                suggestion: 'fix\u001b[1A',
+              },
+            ],
+          },
+        ],
+      };
+
+      const output = formatHumanOutput(hostile, { color: false, verbose: true });
+
+      expect(output).not.toContain('\u001b');
+      expect(output).not.toContain('\u0007');
+      expect(output).toContain('evil\uFFFD]0;pwned\uFFFD');
+    });
+  });
+
+  describe('quiet mode', () => {
+    it('should show errors and status but not warnings or breakdowns', () => {
+      const output = formatHumanOutput(mockResult, { color: false, quiet: true });
+
+      expect(output).toContain('[SCH-001]');
+      expect(output).not.toContain('[LLM-002]');
+      expect(output).toContain('Errors:      1');
+      expect(output).not.toContain('Warnings:');
+      expect(output).not.toContain('Maturity:');
+      expect(output).toContain('Governance threshold failed');
     });
   });
 });

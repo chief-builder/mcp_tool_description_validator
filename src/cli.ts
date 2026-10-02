@@ -189,30 +189,8 @@ async function runValidation(
       output = formatHumanOutput(result, {
         color: config.output.color,
         verbose: config.output.verbose,
+        quiet: options.quiet,
       });
-  }
-
-  // In quiet mode with human format, filter to only errors
-  if (options.quiet && effectiveFormat === 'human') {
-    const lines = output.split('\n');
-    const filteredLines = lines.filter((line) => {
-      // Keep header lines, error lines, and summary
-      return (
-        line.includes('MCP Tool Validator') ||
-        line.includes('Validating:') ||
-        line.includes('ERROR') ||
-        line.includes('Summary:') ||
-        line.includes('Errors:') ||
-        line.includes('Validation failed') ||
-        line.includes('Validation passed') ||
-        line.includes('MCP specification compliance') ||
-        line.includes('Governance threshold') ||
-        line.match(/^[^\s]/) || // Tool names (start of line)
-        line.trim() === '' ||
-        line.includes('─')
-      );
-    });
-    output = filteredLines.join('\n');
   }
 
   console.log(output);
