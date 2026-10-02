@@ -5,6 +5,7 @@
  * rule execution, and result aggregation.
  */
 
+import { relative } from 'node:path';
 import type {
   ToolDefinition,
   ValidationResult,
@@ -148,7 +149,9 @@ export async function validate(
     validationProfile: config.profile ?? 'governance',
     timestamp: new Date().toISOString(),
     duration: Date.now() - startTime,
-    configUsed: filepath ?? '',
+    // Relative to the working directory so reports do not embed
+    // machine-specific absolute paths.
+    configUsed: filepath ? relative(process.cwd(), filepath) : '',
     llmAnalysisUsed,
     ...(options.runContext
       ? {

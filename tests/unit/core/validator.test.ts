@@ -14,6 +14,7 @@ import {
   validateServer,
 } from '../../../src/core/validator.js';
 import type { ToolDefinition } from '../../../src/types/index.js';
+import { VERSION } from '../../../src/version.js';
 
 // Mock the LLM analyzer so --llm wiring can be tested without providers
 vi.mock('../../../src/llm/analyzer.js', () => ({
@@ -198,7 +199,7 @@ describe('Core Validator', () => {
 
       const result = await validate(tools);
 
-      expect(result.metadata.validatorVersion).toBe('0.1.0');
+      expect(result.metadata.validatorVersion).toBe(VERSION);
       expect(result.metadata.mcpSpecVersion).toBe('2026-07-28');
       expect(result.metadata.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
       expect(result.metadata.duration).toBeGreaterThanOrEqual(0);
@@ -352,7 +353,7 @@ describe('Core Validator', () => {
       expect(result.summary.totalTools).toBe(1);
       expect(result.tools[0].name).toBe('file-test-tool');
       // Config discovery now finds the repo's own mcp-validate.config.yaml
-      expect(result.metadata.configUsed).toContain('mcp-validate.config.yaml');
+      expect(result.metadata.configUsed).toBe('mcp-validate.config.yaml');
     });
 
     it('should load and validate YAML file', async () => {

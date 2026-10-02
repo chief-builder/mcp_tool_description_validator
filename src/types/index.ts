@@ -286,7 +286,10 @@ export interface ValidationMetadata {
   /** Validation duration in milliseconds */
   duration: number;
 
-  /** Path to configuration file used (empty string if none) */
+  /**
+   * Configuration file used, relative to the working directory (empty
+   * string if none)
+   */
   configUsed: string;
 
   /** Whether LLM analysis was performed */
