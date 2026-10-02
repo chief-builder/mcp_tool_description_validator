@@ -6,7 +6,10 @@
  */
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import {
+  StdioClientTransport,
+  getDefaultEnvironment,
+} from '@modelcontextprotocol/sdk/client/stdio.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { spawn } from 'node:child_process';
@@ -16,6 +19,56 @@ import { PACKAGE_NAME, VERSION } from '../version.js';
 const MODERN_PROTOCOL_VERSION = '2026-07-28';
 const HEADER_MISMATCH_CODE = -32020;
 const UNSUPPORTED_PROTOCOL_VERSION_CODE = -32022;
+
+/** Default per-operation timeout for live discovery, in milliseconds. */
+export const DEFAULT_DISCOVERY_TIMEOUT_MS = 30_000;
+/** Maximum tools/list pages followed before discovery is aborted. */
+export const MAX_DISCOVERY_PAGES = 100;
+/** Maximum size of a single HTTP discovery response body, in bytes. */
+export const MAX_RESPONSE_BYTES = 10 * 1024 * 1024;
+/** Maximum characters of server output quoted in error messages. */
+const MAX_QUOTED_OUTPUT = 2000;
+
+/** Trim server-provided text before quoting it in an error message. */
+function quoteServerOutput(text: string): string {
+  const trimmed = text.trim();
+  return trimmed.length > MAX_QUOTED_OUTPUT
+    ? `…${trimmed.slice(-MAX_QUOTED_OUTPUT)}`
+    : trimmed;
+}
+
+function tooManyPagesError(): Error {
+  return new Error(
+    `MCP tools/list pagination exceeded ${MAX_DISCOVERY_PAGES} pages; aborting discovery`
+  );
+}
+
+/** Read a response body as text, refusing bodies over MAX_RESPONSE_BYTES. */
+async function readBoundedText(response: Response): Promise<string> {
+  const tooLarge = () =>
+    new Error(`MCP server response exceeded ${MAX_RESPONSE_BYTES} bytes`);
+  const declared = Number(response.headers.get('content-length'));
+  if (Number.isFinite(declared) && declared > MAX_RESPONSE_BYTES) {
+    await response.body?.cancel();
+    throw tooLarge();
+  }
+  if (!response.body) return '';
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let received = 0;
+  let text = '';
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    received += value.byteLength;
+    if (received > MAX_RESPONSE_BYTES) {
+      await reader.cancel();
+      throw tooLarge();
+    }
+    text += decoder.decode(value, { stream: true });
+  }
+  return text + decoder.decode();
+}
 
 /** A structured JSON-RPC error returned by a modern MCP server. */
 export class MCPProtocolError extends Error {
@@ -82,7 +135,7 @@ export interface MCPConnection {
 export interface ServerConfig {
   /** Server URL (http/https) or command to execute (for stdio) */
   server: string;
-  /** Optional timeout in milliseconds (default: 30000) */
+  /** Optional per-operation timeout in milliseconds (default: 30000) */
   timeout?: number;
   /** Protocol revision used to retrieve tools (default: legacy 2025-11-25). */
   specVersion?: '2025-11-25' | '2026-07-28';
@@ -325,6 +378,7 @@ async function fetchModernToolsOverHttp(
   let id = 1;
 
   do {
+    if (id > MAX_DISCOVERY_PAGES) throw tooManyPagesError();
     const response = await fetch(server, {
       method: 'POST',
       headers: {
@@ -335,8 +389,10 @@ async function fetchModernToolsOverHttp(
       },
       body: JSON.stringify(modernListToolsRequest(id, cursor)),
       signal: AbortSignal.timeout(timeout),
+      // Never replay the request (and its headers) to a redirect target.
+      redirect: 'error',
     });
-    const body = await response.text();
+    const body = await readBoundedText(response);
     if (!response.ok) {
       let envelopeError: unknown;
       let parsedErrorBody: unknown;
@@ -362,7 +418,7 @@ async function fetchModernToolsOverHttp(
       // that return an unstructured protocol-version error body.
       if (/unsupported protocol version/i.test(body)) {
         throw new Error(
-          `MCP server rejected discovery protocol ${MODERN_PROTOCOL_VERSION}: ${body}. ` +
+          `MCP server rejected discovery protocol ${MODERN_PROTOCOL_VERSION}: ${quoteServerOutput(body)}. ` +
           'Retry explicitly with --discovery-spec-version 2025-11-25; the validator will not silently downgrade.'
         );
       }
@@ -371,7 +427,9 @@ async function fetchModernToolsOverHttp(
           `MCP server returned HTTP ${response.status} with an invalid JSON-RPC error response: ${envelopeError.message}`
         );
       }
-      throw new Error(`MCP server returned HTTP ${response.status}: ${body}`);
+      throw new Error(
+        `MCP server returned HTTP ${response.status}: ${quoteServerOutput(body)}`
+      );
     }
     const contentType = response.headers.get('content-type') ?? '';
     const parsed = contentType.includes('text/event-stream')
@@ -400,9 +458,12 @@ async function fetchModernToolsOverStdio(
   if (parts.length === 0) throw new Error(`Empty server command: "${server}"`);
 
   return new Promise((resolve, reject) => {
+    // Like the SDK's stdio transport, pass only a minimal inherited
+    // environment so the server under test does not receive the caller's
+    // API keys and tokens.
     const child = spawn(parts[0], parts.slice(1), {
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: process.env,
+      env: getDefaultEnvironment(),
     });
     let stdoutBuffer = '';
     let stderr = '';
@@ -436,6 +497,7 @@ async function fetchModernToolsOverStdio(
         cacheScope = page.cacheScope;
         tools.push(...page.tools);
         if (page.nextCursor !== undefined) {
+          if (requestId >= MAX_DISCOVERY_PAGES) throw tooManyPagesError();
           requestId++;
           child.stdin.write(
             `${JSON.stringify(modernListToolsRequest(requestId, page.nextCursor))}\n`
@@ -454,7 +516,7 @@ async function fetchModernToolsOverStdio(
       finish(() =>
         reject(
           new Error(
-            `Connection to MCP server timed out after ${timeout}ms${stderr ? `: ${stderr.trim()}` : ''}`
+            `Connection to MCP server timed out after ${timeout}ms${stderr ? `: ${quoteServerOutput(stderr)}` : ''}`
           )
         )
       );
@@ -474,14 +536,15 @@ async function fetchModernToolsOverStdio(
       }
     });
     child.stderr.on('data', (chunk: string) => {
-      stderr += chunk;
+      // Keep only the tail; it is quoted in error messages.
+      stderr = (stderr + chunk).slice(-MAX_QUOTED_OUTPUT);
     });
     child.on('exit', (code) => {
       if (!settled) {
         finish(() =>
           reject(
             new Error(
-              `MCP server exited before responding (code ${String(code)})${stderr ? `: ${stderr.trim()}` : ''}`
+              `MCP server exited before responding (code ${String(code)})${stderr ? `: ${quoteServerOutput(stderr)}` : ''}`
             )
           )
         );
@@ -513,7 +576,7 @@ async function fetchModernToolsOverStdio(
  * ```
  */
 export async function connectToServer(config: ServerConfig): Promise<MCPConnection> {
-  const { server, timeout = 30000 } = config;
+  const { server, timeout = DEFAULT_DISCOVERY_TIMEOUT_MS } = config;
 
   let transport: Transport;
 
@@ -572,21 +635,34 @@ export async function connectToServer(config: ServerConfig): Promise<MCPConnecti
 }
 
 /**
- * Get tool definitions from a connected MCP server.
+ * Get tool definitions from a connected MCP server, following
+ * `nextCursor` pagination.
  *
  * @param connection - Active MCP connection
  * @param serverUrl - Server URL/command for source tracking
+ * @param timeout - Per-request timeout in milliseconds
  * @returns Array of tool definitions
  */
 export async function getToolDefinitions(
   connection: MCPConnection,
-  serverUrl: string
+  serverUrl: string,
+  timeout: number = DEFAULT_DISCOVERY_TIMEOUT_MS
 ): Promise<ToolDefinition[]> {
-  const response = await connection.client.listTools();
+  const tools: Record<string, unknown>[] = [];
+  let cursor: string | undefined;
+  let pages = 0;
 
-  return response.tools.map((tool) =>
-    toServerToolDefinition(tool as Record<string, unknown>, serverUrl)
-  );
+  do {
+    if (++pages > MAX_DISCOVERY_PAGES) throw tooManyPagesError();
+    const response = await connection.client.listTools(
+      cursor !== undefined ? { cursor } : undefined,
+      { timeout }
+    );
+    tools.push(...(response.tools as Record<string, unknown>[]));
+    cursor = response.nextCursor;
+  } while (cursor !== undefined);
+
+  return tools.map((tool) => toServerToolDefinition(tool, serverUrl));
 }
 
 /**
@@ -611,7 +687,11 @@ export async function disconnect(connection: MCPConnection): Promise<void> {
  * ```
  */
 export async function fetchToolsFromServer(config: ServerConfig): Promise<ToolDefinition[]> {
-  const { server, timeout = 30000, specVersion = '2025-11-25' } = config;
+  const {
+    server,
+    timeout = DEFAULT_DISCOVERY_TIMEOUT_MS,
+    specVersion = '2025-11-25',
+  } = config;
   if (specVersion === MODERN_PROTOCOL_VERSION) {
     return isHttpServer(server)
       ? fetchModernToolsOverHttp(server, timeout)
@@ -620,7 +700,7 @@ export async function fetchToolsFromServer(config: ServerConfig): Promise<ToolDe
 
   const connection = await connectToServer(config);
   try {
-    return await getToolDefinitions(connection, config.server);
+    return await getToolDefinitions(connection, config.server, timeout);
   } finally {
     await disconnect(connection);
   }

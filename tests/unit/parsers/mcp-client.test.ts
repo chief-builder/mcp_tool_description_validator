@@ -7,6 +7,8 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { join } from 'node:path';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import type { ToolDefinition } from '../../../src/types/index.js';
 
 // Create mock class instances
@@ -35,8 +37,12 @@ vi.mock('@modelcontextprotocol/sdk/client/index.js', () => {
   };
 });
 
-vi.mock('@modelcontextprotocol/sdk/client/stdio.js', () => {
+vi.mock('@modelcontextprotocol/sdk/client/stdio.js', async (importOriginal) => {
+  const actual = await importOriginal<
+    typeof import('@modelcontextprotocol/sdk/client/stdio.js')
+  >();
   return {
+    getDefaultEnvironment: actual.getDefaultEnvironment,
     StdioClientTransport: vi.fn().mockImplementation(function () {
       return mockStdioTransportInstance;
     }),
@@ -58,6 +64,8 @@ import {
   disconnect,
   fetchToolsFromServer,
   parseCommand,
+  MAX_DISCOVERY_PAGES,
+  MAX_RESPONSE_BYTES,
   parseSseResponse,
   MCPProtocolError,
   UnsupportedProtocolVersionError,
@@ -754,6 +762,171 @@ describe('MCP Client', () => {
       expect(tools[0].name).toBe('modern-stdio-tool');
       expect(tools[0].source.type).toBe('server');
     });
+  });
+});
+
+describe('discovery limits', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockClientInstance.connect.mockResolvedValue(undefined);
+    mockClientInstance.close.mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  const modernPage = (id: number, nextCursor?: string) =>
+    new Response(
+      JSON.stringify({
+        jsonrpc: '2.0',
+        id,
+        result: {
+          resultType: 'complete',
+          tools: [{ name: `tool-${id}`, inputSchema: { type: 'object' } }],
+          ttlMs: 0,
+          cacheScope: 'public',
+          ...(nextCursor ? { nextCursor } : {}),
+        },
+      }),
+      { headers: { 'content-type': 'application/json' } }
+    );
+
+  it('should follow legacy tools/list pagination', async () => {
+    mockClientInstance.listTools
+      .mockResolvedValueOnce({ tools: [{ name: 'a', inputSchema: { type: 'object' } }], nextCursor: 'p2' })
+      .mockResolvedValueOnce({ tools: [{ name: 'b', inputSchema: { type: 'object' } }] });
+
+    const tools = await fetchToolsFromServer({ server: 'node server.js', timeout: 1234 });
+
+    expect(tools.map((tool) => tool.name)).toEqual(['a', 'b']);
+    expect(mockClientInstance.listTools).toHaveBeenNthCalledWith(1, undefined, { timeout: 1234 });
+    expect(mockClientInstance.listTools).toHaveBeenNthCalledWith(2, { cursor: 'p2' }, { timeout: 1234 });
+  });
+
+  it('should abort legacy discovery that paginates forever', async () => {
+    let page = 0;
+    mockClientInstance.listTools.mockImplementation(async () => ({
+      tools: [],
+      nextCursor: `c${++page}`,
+    }));
+
+    await expect(fetchToolsFromServer({ server: 'node server.js' })).rejects.toThrow(
+      `exceeded ${MAX_DISCOVERY_PAGES} pages`
+    );
+    expect(mockClientInstance.listTools).toHaveBeenCalledTimes(MAX_DISCOVERY_PAGES);
+    expect(mockClientInstance.close).toHaveBeenCalled();
+  });
+
+  it('should abort modern HTTP discovery that paginates forever', async () => {
+    const fetchMock = vi.fn(async (_url: string, init: { body: string }) => {
+      const { id } = JSON.parse(init.body);
+      return modernPage(id, `cursor-${id}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      fetchToolsFromServer({ server: 'https://example.com/mcp', specVersion: '2026-07-28' })
+    ).rejects.toThrow(`exceeded ${MAX_DISCOVERY_PAGES} pages`);
+    expect(fetchMock).toHaveBeenCalledTimes(MAX_DISCOVERY_PAGES);
+  });
+
+  it('should refuse to follow HTTP redirects', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(modernPage(1));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await fetchToolsFromServer({ server: 'https://example.com/mcp', specVersion: '2026-07-28' });
+
+    expect(fetchMock.mock.calls[0][1].redirect).toBe('error');
+  });
+
+  it('should reject a response that declares an oversized body', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response('{}', {
+          headers: {
+            'content-type': 'application/json',
+            'content-length': String(MAX_RESPONSE_BYTES + 1),
+          },
+        })
+      )
+    );
+
+    await expect(
+      fetchToolsFromServer({ server: 'https://example.com/mcp', specVersion: '2026-07-28' })
+    ).rejects.toThrow(`exceeded ${MAX_RESPONSE_BYTES} bytes`);
+  });
+
+  it('should reject a streamed body that grows past the limit', async () => {
+    const chunk = new Uint8Array(1024 * 1024);
+    let sent = 0;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        if (sent > MAX_RESPONSE_BYTES) {
+          controller.close();
+          return;
+        }
+        sent += chunk.byteLength;
+        controller.enqueue(chunk);
+      },
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(stream, { headers: { 'content-type': 'application/json' } })
+      )
+    );
+
+    await expect(
+      fetchToolsFromServer({ server: 'https://example.com/mcp', specVersion: '2026-07-28' })
+    ).rejects.toThrow(`exceeded ${MAX_RESPONSE_BYTES} bytes`);
+  });
+
+  it('should truncate long error bodies quoted in messages', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(new Response('x'.repeat(50_000), { status: 502 }))
+    );
+
+    const error = await fetchToolsFromServer({
+      server: 'https://example.com/mcp',
+      specVersion: '2026-07-28',
+    }).catch((e: Error) => e);
+
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toContain('HTTP 502');
+    expect((error as Error).message.length).toBeLessThan(2100);
+  });
+
+  it('should not pass the caller environment to a stdio server', async () => {
+    // A stdio server that reports whether it can see a variable from the
+    // validator's environment.
+    const dir = await mkdtemp(join(tmpdir(), 'mcp-env-'));
+    const script = join(dir, 'env-server.mjs');
+    await writeFile(
+      script,
+      `import { createInterface } from 'node:readline';
+createInterface({ input: process.stdin }).on('line', (line) => {
+  const { id } = JSON.parse(line);
+  process.stdout.write(JSON.stringify({ jsonrpc: '2.0', id, result: {
+    resultType: 'complete', ttlMs: 0, cacheScope: 'public',
+    tools: [{ name: process.env.MCP_VALIDATOR_TEST_ONLY_SECRET ? 'leaked' : 'isolated',
+      inputSchema: { type: 'object' } }] } }) + '\\n');
+});
+`
+    );
+    process.env.MCP_VALIDATOR_TEST_ONLY_SECRET = 'test-only-value';
+    try {
+      const tools = await fetchToolsFromServer({
+        server: `${process.execPath} "${script}"`,
+        specVersion: '2026-07-28',
+      });
+      expect(tools.map((tool) => tool.name)).toEqual(['isolated']);
+    } finally {
+      delete process.env.MCP_VALIDATOR_TEST_ONLY_SECRET;
+      await rm(dir, { recursive: true, force: true });
+    }
   });
 });
 

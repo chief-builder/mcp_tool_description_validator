@@ -7,7 +7,7 @@
 
 import { realpathSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { Command, Option } from 'commander';
+import { Command, InvalidArgumentError, Option } from 'commander';
 import chalk from 'chalk';
 import { validateFile, validateServer } from './core/validator.js';
 import { resolveConfig, type ConfigOverrides } from './core/config.js';
@@ -77,6 +77,17 @@ export function parseRuleOverrides(
 }
 
 /**
+ * Parse --timeout as a positive integer number of milliseconds.
+ */
+export function parseTimeout(value: string): number {
+  const ms = Number(value);
+  if (!Number.isInteger(ms) || ms <= 0) {
+    throw new InvalidArgumentError('Must be a positive integer (milliseconds).');
+  }
+  return ms;
+}
+
+/**
  * CLI options interface.
  */
 export interface CLIOptions {
@@ -89,6 +100,7 @@ export interface CLIOptions {
   rule: Record<string, string>;
   llm?: boolean;
   llmProvider?: string;
+  timeout?: number;
   verbose?: boolean;
   quiet?: boolean;
   ci?: boolean;
@@ -160,6 +172,7 @@ async function runValidation(
     : await validateServer(options.server!, {
         config,
         configPath: options.config,
+        timeout: options.timeout,
       });
 
   // Format output
@@ -251,6 +264,11 @@ program
     'Override rule: RULE-ID=on|off|error|warning|suggestion',
     collectRules,
     {}
+  )
+  .option(
+    '--timeout <ms>',
+    'Live discovery timeout per operation, in milliseconds (default: 30000)',
+    parseTimeout
   )
   .option('--llm', 'Enable LLM-assisted analysis')
   .option(

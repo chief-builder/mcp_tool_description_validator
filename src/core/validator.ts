@@ -39,6 +39,8 @@ export interface ValidateOptions {
    * plus `config`, e.g. when the caller has already resolved its config.
    */
   discoverConfig?: boolean;
+  /** Live discovery: per-operation timeout in milliseconds (default 30000). */
+  timeout?: number;
   /** Reproducibility context for live-server discovery. */
   runContext?: {
     serverEndpoint: string;
@@ -226,6 +228,7 @@ export async function validateServer(
   const tools = await fetchToolsFromServer({
     server: serverUrl,
     specVersion: discoverySpecVersion,
+    timeout: options.timeout,
   });
   return validate(tools, {
     ...options,

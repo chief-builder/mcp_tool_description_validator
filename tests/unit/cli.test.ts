@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process';
 import { join } from 'node:path';
 import { mkdir, writeFile, rm, realpath, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { collectRules, parseRuleOverrides } from '../../src/cli.js';
+import { collectRules, parseRuleOverrides, parseTimeout } from '../../src/cli.js';
 
 describe('CLI', () => {
   describe('collectRules()', () => {
@@ -109,6 +109,16 @@ describe('CLI', () => {
     it('should handle empty input', () => {
       const result = parseRuleOverrides({});
       expect(result).toEqual({});
+    });
+  });
+
+  describe('parseTimeout()', () => {
+    it('should accept a positive integer', () => {
+      expect(parseTimeout('5000')).toBe(5000);
+    });
+
+    it.each(['0', '-1', '1.5', 'abc', ''])('should reject %j', (value) => {
+      expect(() => parseTimeout(value)).toThrow('positive integer');
     });
   });
 
