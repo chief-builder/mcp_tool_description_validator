@@ -1,5 +1,10 @@
 # Repository Audit — 2026-10-01
 
+> **Status:** this is the Phase 1 snapshot of the repository *before* the
+> hardening changes. Findings are addressed in version 0.2.0; see
+> [CHANGELOG.md](CHANGELOG.md) and the pull request for the final status of
+> each claim. Line numbers refer to the audited commit `25be713`.
+
 Audited commit: `25be713` (default branch `master`). Branch: `hardening/2026-10-01`.
 All commands were run on macOS against a fresh `git clone` of that commit unless noted.
 Version and spec facts were fetched from official sources on 2026-10-01 (sources listed in §3).
@@ -148,7 +153,7 @@ These are Wrong:
   - The SCH-009 documentation anchor `#ref-resolution` was not found on the target page.
 - **Absolute local paths in committed files:**
   - `.claude/agents/code-reviewer.md:12`
-  - `reports/filesystem.json` (14 occurrences of `/Users/chiefbuilder/...`)
+  - `reports/filesystem.json` (14 occurrences of an absolute `/Users/<name>/...` path)
   - Runtime: `metadata.configUsed` is an absolute path, and the HTTP service returns it to remote callers.
 - **Employer references:** none found. Named companies are all public vendors or products used as examples or targets: Anthropic, OpenAI, Ollama, Vercel, Google Drive MCP, GitHub, Microsoft Playwright, Asana, Stripe, Linear. One possible sensitivity for you to judge, not a finding: commit `3bbc6ba` describes the site palette as "coffeehouse", and its primary colour `#1e3932` matches a well-known coffee chain's brand green. No names, logos or fonts are used.
 
