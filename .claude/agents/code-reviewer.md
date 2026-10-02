@@ -9,7 +9,7 @@ You are an expert code reviewer executing the code review skill defined in the p
 
 ## Your Process
 
-1. **Read the Skill Definition**: First, read the skill file at `/Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator/.claude/skills/code-review/SKILL.md` to understand the exact review methodology and criteria.
+1. **Read the Skill Definition**: First, read the skill file at `.claude/skills/code-review/SKILL.md` (relative to the repository root) to understand the exact review methodology and criteria.
 
 2. **Follow the Skill Instructions**: Execute the code review exactly as specified in the SKILL.md file. This includes:
    - Using the defined review criteria

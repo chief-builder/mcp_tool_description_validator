@@ -2,8 +2,12 @@
 /**
  * Test Official MCP Servers
  *
- * Runs the MCP Tool Definition Validator against official
- * Anthropic MCP servers to evaluate validation effectiveness.
+ * Runs the MCP Tool Definition Validator against the official MCP
+ * reference servers to evaluate validation effectiveness.
+ *
+ * The reference servers use initialization-based discovery, so tools are
+ * discovered with the 2025-11-25 revision and validated against the
+ * default revision. Run from the repository root.
  */
 
 import * as fs from 'fs/promises';
@@ -27,13 +31,13 @@ interface ServerConfig {
 /**
  * Official MCP servers to test.
  *
- * Note: filesystem requires a path argument, so we use the project root.
- * Sequential-thinking may need special handling.
+ * Note: filesystem requires a path argument. A relative path keeps the
+ * generated reports free of machine-specific absolute paths.
  */
 const SERVERS: ServerConfig[] = [
   {
     name: 'filesystem',
-    command: `npx -y @modelcontextprotocol/server-filesystem ${path.join(__dirname, '..')}`,
+    command: 'npx -y @modelcontextprotocol/server-filesystem .',
     description: 'Secure file operations with configurable access controls',
   },
   {
@@ -75,9 +79,7 @@ async function testServer(config: ServerConfig): Promise<ServerTestResult> {
 
   try {
     const result = await validateServer(config.command, {
-      config: {
-        // Use default rules
-      },
+      config: { discoverySpecVersion: '2025-11-25' },
     });
 
     console.log(`   ✅ Found ${result.summary.totalTools} tools`);
