@@ -11,6 +11,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { spawn } from 'node:child_process';
 import type { ToolDefinition, ToolSource } from '../types/index.js';
+import { PACKAGE_NAME, VERSION } from '../version.js';
 
 const MODERN_PROTOCOL_VERSION = '2026-07-28';
 const HEADER_MISMATCH_CODE = -32020;
@@ -120,8 +121,8 @@ function modernListToolsRequest(id = 1, cursor?: string) {
       _meta: {
         'io.modelcontextprotocol/protocolVersion': MODERN_PROTOCOL_VERSION,
         'io.modelcontextprotocol/clientInfo': {
-          name: 'mcp-tool-validator',
-          version: '0.1.0',
+          name: PACKAGE_NAME,
+          version: VERSION,
         },
         'io.modelcontextprotocol/clientCapabilities': {},
       },
@@ -536,8 +537,8 @@ export async function connectToServer(config: ServerConfig): Promise<MCPConnecti
 
   const client = new Client(
     {
-      name: 'mcp-tool-validator',
-      version: '0.1.0',
+      name: PACKAGE_NAME,
+      version: VERSION,
     },
     {
       capabilities: {},

@@ -1,5 +1,5 @@
 {
-  "name": "mcp-tool-validator",
+  "name": "mcp-tool-description-validator",
   "version": "0.1.0",
   "description": "A governance validator for Model Context Protocol (MCP) tool definitions that ensures quality, security, and LLM-compatibility",
   "type": "module",

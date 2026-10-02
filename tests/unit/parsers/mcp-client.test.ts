@@ -158,7 +158,7 @@ describe('MCP Client', () => {
 
       expect(Client).toHaveBeenCalledWith(
         {
-          name: 'mcp-tool-validator',
+          name: 'mcp-tool-description-validator',
           version: '0.1.0',
         },
         {

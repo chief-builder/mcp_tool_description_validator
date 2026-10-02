@@ -54,7 +54,7 @@ export interface ValidateOptions {
  *
  * @example
  * ```typescript
- * import { validate } from 'mcp-tool-validator';
+ * import { validate } from 'mcp-tool-description-validator';
  *
  * const tools = [{
  *   name: 'my-tool',
@@ -172,7 +172,7 @@ export async function validate(
  *
  * @example
  * ```typescript
- * import { validateFile } from 'mcp-tool-validator';
+ * import { validateFile } from 'mcp-tool-description-validator';
  *
  * const result = await validateFile('./tools.json');
  * console.log(`Validated ${result.summary.totalTools} tools`);
@@ -198,7 +198,7 @@ export async function validateFile(
  *
  * @example
  * ```typescript
- * import { validateServer } from 'mcp-tool-validator';
+ * import { validateServer } from 'mcp-tool-description-validator';
  *
  * // HTTP server
  * const result = await validateServer('http://localhost:3000/mcp');

@@ -1,4 +1,5 @@
 import type { ValidationResult, ValidationIssue } from '../types/index.js';
+import { PACKAGE_NAME } from '../version.js';
 
 /**
  * SARIF 2.1.0 output format
@@ -104,12 +105,12 @@ export function formatSarifOutput(result: ValidationResult): string {
   }
 
   const sarif: SarifLog = {
-    $schema: 'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json',
+    $schema: 'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json',
     version: '2.1.0',
     runs: [{
       tool: {
         driver: {
-          name: 'mcp-tool-validator',
+          name: PACKAGE_NAME,
           version: result.metadata.validatorVersion,
           informationUri: 'https://github.com/chief-builder/mcp_tool_description_validator',
           rules,

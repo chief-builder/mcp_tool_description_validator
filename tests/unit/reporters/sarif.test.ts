@@ -54,7 +54,7 @@ describe('SARIF Reporter', () => {
       const output = formatSarifOutput(mockResult);
       const parsed: SarifLog = JSON.parse(output);
 
-      expect(parsed.$schema).toBe('https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json');
+      expect(parsed.$schema).toBe('https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json');
       expect(parsed.version).toBe('2.1.0');
       expect(parsed.runs).toBeDefined();
       expect(Array.isArray(parsed.runs)).toBe(true);
@@ -66,7 +66,7 @@ describe('SARIF Reporter', () => {
       const parsed: SarifLog = JSON.parse(output);
 
       const driver = parsed.runs[0].tool.driver;
-      expect(driver.name).toBe('mcp-tool-validator');
+      expect(driver.name).toBe('mcp-tool-description-validator');
       expect(driver.version).toBe('0.1.0');
       expect(driver.informationUri).toBeDefined();
     });
