@@ -303,7 +303,8 @@ export interface ValidationMetadata {
 /**
  * MCP specification versions the validator can target.
  */
-export type MCPSpecVersion = '2025-11-25' | '2026-07-28';
+export type { MCPSpecVersion } from '../core/spec-versions.js';
+import type { MCPSpecVersion } from '../core/spec-versions.js';
 
 /** Built-in severity policy profiles. */
 export type ValidationProfile = 'compliance' | 'governance';

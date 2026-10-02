@@ -12,7 +12,8 @@ import chalk from 'chalk';
 import { validateFile, validateServer } from './core/validator.js';
 import { resolveConfig, type ConfigOverrides } from './core/config.js';
 import { VERSION } from './version.js';
-import { createDefaultLLMConfig } from './llm/analyzer.js';
+import { MCP_SPEC_VERSIONS } from './core/spec-versions.js';
+import { resolveLLMConfig } from './llm/defaults.js';
 import { DEFAULT_HOST, DEFAULT_PORT, startServer } from './service/server.js';
 import {
   formatHumanOutput,
@@ -20,6 +21,7 @@ import {
   formatSarifOutput,
 } from './reporters/index.js';
 import type {
+  LLMConfig,
   ValidatorConfig,
   OutputConfig,
   IssueSeverity,
@@ -74,6 +76,25 @@ export function parseRuleOverrides(
   }
 
   return rules;
+}
+
+/**
+ * Apply --llm / --llm-provider on top of the configured LLM settings.
+ * A provider chosen on the command line also replaces the configured
+ * model, unless the config names a model for that same provider.
+ */
+export function enableLLM(
+  configured: LLMConfig | undefined,
+  provider: string | undefined
+): LLMConfig {
+  const switchingProvider =
+    provider !== undefined && provider !== configured?.provider;
+  return resolveLLMConfig({
+    ...configured,
+    enabled: true,
+    ...(provider ? { provider } : {}),
+    ...(switchingProvider ? { model: '' } : {}),
+  });
 }
 
 /**
@@ -158,12 +179,7 @@ async function runValidation(
 
   // Handle LLM options: --llm enables analysis on top of any file config
   if (options.llm) {
-    config.llm = {
-      ...createDefaultLLMConfig(),
-      ...(config.llm ?? {}),
-      enabled: true,
-      ...(options.llmProvider ? { provider: options.llmProvider } : {}),
-    };
+    config.llm = enableLLM(config.llm, options.llmProvider);
   }
 
   // Run validation with the fully-resolved config
@@ -223,13 +239,13 @@ program
     new Option(
       '--spec-version <version>',
       'MCP spec version to validate against'
-    ).choices(['2025-11-25', '2026-07-28'])
+    ).choices(MCP_SPEC_VERSIONS)
   )
   .addOption(
     new Option(
       '--discovery-spec-version <version>',
       'MCP revision used to discover tools from a live server'
-    ).choices(['2025-11-25', '2026-07-28'])
+    ).choices(MCP_SPEC_VERSIONS)
   )
   .addOption(
     new Option(

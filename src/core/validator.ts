@@ -21,9 +21,7 @@ import { fetchToolsFromServer } from '../parsers/mcp-client.js';
 import { analyzeTools } from '../llm/analyzer.js';
 
 import { VERSION as VALIDATOR_VERSION } from '../version.js';
-
-/** Spec version reported/validated when the config does not set one. */
-const DEFAULT_MCP_SPEC_VERSION = '2026-07-28';
+import { DEFAULT_MCP_SPEC_VERSION } from './spec-versions.js';
 
 /**
  * Options for validation functions.

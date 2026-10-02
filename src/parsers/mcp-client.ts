@@ -15,8 +15,14 @@ import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { spawn } from 'node:child_process';
 import type { ToolDefinition, ToolSource } from '../types/index.js';
 import { PACKAGE_NAME, VERSION } from '../version.js';
+import {
+  DEFAULT_MCP_SPEC_VERSION,
+  LEGACY_MCP_SPEC_VERSION,
+  type MCPSpecVersion,
+} from '../core/spec-versions.js';
 
-const MODERN_PROTOCOL_VERSION = '2026-07-28';
+/** Revision that uses stateless per-request metadata for discovery. */
+const MODERN_PROTOCOL_VERSION: MCPSpecVersion = DEFAULT_MCP_SPEC_VERSION;
 const HEADER_MISMATCH_CODE = -32020;
 const UNSUPPORTED_PROTOCOL_VERSION_CODE = -32022;
 
@@ -91,8 +97,8 @@ export class UnsupportedProtocolVersionError extends MCPProtocolError {
     message: string,
     data: { supported: string[]; requested: string }
   ) {
-    const compatibilityHint = data.supported.includes('2025-11-25')
-      ? ' Retry explicitly with --discovery-spec-version 2025-11-25; the validator will not silently downgrade.'
+    const compatibilityHint = data.supported.includes(LEGACY_MCP_SPEC_VERSION)
+      ? ` Retry explicitly with --discovery-spec-version ${LEGACY_MCP_SPEC_VERSION}; the validator will not silently downgrade.`
       : data.supported.length > 0
         ? ` Supported versions: ${data.supported.join(', ')}.`
         : '';
@@ -138,7 +144,7 @@ export interface ServerConfig {
   /** Optional per-operation timeout in milliseconds (default: 30000) */
   timeout?: number;
   /** Protocol revision used to retrieve tools (default: legacy 2025-11-25). */
-  specVersion?: '2025-11-25' | '2026-07-28';
+  specVersion?: MCPSpecVersion;
 }
 
 /**
@@ -690,7 +696,7 @@ export async function fetchToolsFromServer(config: ServerConfig): Promise<ToolDe
   const {
     server,
     timeout = DEFAULT_DISCOVERY_TIMEOUT_MS,
-    specVersion = '2025-11-25',
+    specVersion = LEGACY_MCP_SPEC_VERSION,
   } = config;
   if (specVersion === MODERN_PROTOCOL_VERSION) {
     return isHttpServer(server)

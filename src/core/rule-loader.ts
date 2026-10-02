@@ -8,11 +8,7 @@
 import type { Rule } from '../rules/types.js';
 import type { RuleConfig, IssueSeverity } from '../types/index.js';
 import { RULES } from '../rules/index.js';
-
-/**
- * Default MCP spec version rules are loaded for when none is given.
- */
-const DEFAULT_SPEC_VERSION = '2026-07-28';
+import { DEFAULT_MCP_SPEC_VERSION } from './spec-versions.js';
 
 /**
  * Load rules based on configuration.
@@ -21,7 +17,7 @@ const DEFAULT_SPEC_VERSION = '2026-07-28';
  */
 export async function loadRules(
   config: RuleConfig,
-  specVersion: string = DEFAULT_SPEC_VERSION
+  specVersion: string = DEFAULT_MCP_SPEC_VERSION
 ): Promise<Rule[]> {
   const rules: Rule[] = [];
 

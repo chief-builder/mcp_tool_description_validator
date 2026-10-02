@@ -9,7 +9,12 @@ import { spawn } from 'node:child_process';
 import { join } from 'node:path';
 import { mkdir, writeFile, rm, realpath, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { collectRules, parseRuleOverrides, parseTimeout } from '../../src/cli.js';
+import {
+  collectRules,
+  enableLLM,
+  parseRuleOverrides,
+  parseTimeout,
+} from '../../src/cli.js';
 
 describe('CLI', () => {
   describe('collectRules()', () => {
@@ -109,6 +114,44 @@ describe('CLI', () => {
     it('should handle empty input', () => {
       const result = parseRuleOverrides({});
       expect(result).toEqual({});
+    });
+  });
+
+  describe('enableLLM()', () => {
+    it('should enable the default provider and model without config', () => {
+      expect(enableLLM(undefined, undefined)).toMatchObject({
+        enabled: true,
+        provider: 'anthropic',
+        model: 'claude-haiku-4-5',
+      });
+    });
+
+    it('should use the new provider default model when --llm-provider switches provider', () => {
+      const configured = {
+        enabled: false,
+        provider: 'anthropic',
+        model: 'claude-haiku-4-5',
+        timeout: 30000,
+      };
+      expect(enableLLM(configured, 'openai')).toMatchObject({
+        enabled: true,
+        provider: 'openai',
+        model: 'gpt-4o-mini',
+      });
+    });
+
+    it('should keep a configured model for the same provider', () => {
+      const configured = {
+        enabled: false,
+        provider: 'openai',
+        model: 'gpt-custom',
+        timeout: 5000,
+      };
+      expect(enableLLM(configured, 'openai')).toMatchObject({
+        provider: 'openai',
+        model: 'gpt-custom',
+        timeout: 5000,
+      });
     });
   });
 

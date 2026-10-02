@@ -189,6 +189,19 @@ describe('Configuration System', () => {
       expect(merged.llm?.model).toBe('claude-3-haiku-20240307');
     });
 
+    it('should fill omitted LLM fields with provider defaults', () => {
+      const merged = mergeConfig({
+        llm: { enabled: true, provider: 'openai' } as ValidatorConfig['llm'],
+      });
+
+      expect(merged.llm).toEqual({
+        enabled: true,
+        provider: 'openai',
+        model: 'gpt-4o-mini',
+        timeout: 30000,
+      });
+    });
+
     it('should not include LLM config when not provided', () => {
       const merged = mergeConfig({
         rules: { 'SEC-001': false },

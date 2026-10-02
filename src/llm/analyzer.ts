@@ -11,6 +11,7 @@ import type {
   LLMConfig,
   LLMAnalysisResult,
 } from '../types/index.js';
+import { DEFAULT_LLM_MODELS, resolveLLMConfig } from './defaults.js';
 
 // ============================================================================
 // Types
@@ -71,7 +72,7 @@ Consider:
  * Dynamically imports the provider package to support optional peer dependencies.
  */
 async function getModel(config: LLMConfig) {
-  const model = config.model || DEFAULT_MODELS[config.provider] || '';
+  const model = config.model || DEFAULT_LLM_MODELS[config.provider] || '';
   if (!model) {
     throw new Error(
       `No model configured for LLM provider '${config.provider}'`
@@ -107,14 +108,6 @@ async function getModel(config: LLMConfig) {
   }
 }
 
-/**
- * Default model per provider, used when config.model is empty.
- */
-const DEFAULT_MODELS: Record<string, string> = {
-  anthropic: 'claude-haiku-4-5',
-  openai: 'gpt-4o-mini',
-  ollama: 'llama3.2',
-};
 
 /**
  * Format tool parameters for the prompt in a human-readable format.
@@ -255,10 +248,5 @@ export async function analyzeTools(
  * ```
  */
 export function createDefaultLLMConfig(): LLMConfig {
-  return {
-    enabled: false,
-    provider: 'anthropic',
-    model: 'claude-haiku-4-5',
-    timeout: 30000,
-  };
+  return resolveLLMConfig();
 }

@@ -14,6 +14,9 @@ import type {
   MCPSpecVersion,
   ValidationProfile,
 } from '../types/index.js';
+import { DEFAULT_MCP_SPEC_VERSION, MCP_SPEC_VERSIONS } from './spec-versions.js';
+import { resolveLLMConfig } from '../llm/defaults.js';
+import { RULES } from '../rules/index.js';
 
 // ============================================================================
 // Default Configuration
@@ -31,80 +34,16 @@ const DEFAULT_OUTPUT: OutputConfig = {
 /**
  * Default MCP spec version to validate against
  */
-const DEFAULT_SPEC_VERSION: MCPSpecVersion = '2026-07-28';
+const DEFAULT_SPEC_VERSION: MCPSpecVersion = DEFAULT_MCP_SPEC_VERSION;
 const DEFAULT_PROFILE: ValidationProfile = 'governance';
 
 /**
- * Default rule configurations (all rules enabled with default severities)
+ * Default rule configurations: every registered rule enabled with its
+ * default severity. Derived from the registry so it cannot drift.
  */
-const DEFAULT_RULES: RuleConfig = {
-  // Schema rules (SCH-xxx)
-  'SCH-001': true,
-  'SCH-002': true,
-  'SCH-003': true,
-  'SCH-004': true,
-  'SCH-005': true,
-  'SCH-006': true,
-  'SCH-007': true,
-  'SCH-008': true,
-  'SCH-009': true,
-  'SCH-010': true,
-  'SCH-011': true,
-
-  // Naming rules (NAM-xxx)
-  'NAM-002': true,
-  'NAM-003': true,
-  'NAM-004': true,
-  'NAM-005': true,
-  'NAM-006': true,
-  'NAM-007': true,
-  'NAM-008': true,
-
-  // Security rules (SEC-xxx)
-  'SEC-001': true,
-  'SEC-002': true,
-  'SEC-003': true,
-  'SEC-004': true,
-  'SEC-005': true,
-  'SEC-006': true,
-  'SEC-007': true,
-  'SEC-008': true,
-  'SEC-009': true,
-  'SEC-010': true,
-  'SEC-011': true,
-
-  // LLM compatibility rules (LLM-xxx)
-  'LLM-001': true,
-  'LLM-002': true,
-  'LLM-003': true,
-  'LLM-004': true,
-  'LLM-005': true,
-  'LLM-006': true,
-  'LLM-007': true,
-  'LLM-008': true,
-  'LLM-009': true,
-  'LLM-010': true,
-  'LLM-011': true,
-  'LLM-012': true,
-  'LLM-013': true,
-
-  // Best practice rules (BP-xxx)
-  'BP-001': true,
-  'BP-002': true,
-  'BP-003': true,
-  'BP-004': true,
-  'BP-005': true,
-  'BP-006': true,
-  'BP-007': true,
-  'BP-008': true,
-  'BP-009': true,
-  'BP-010': true,
-  'BP-011': true,
-  'BP-012': true,
-  'BP-013': true,
-  'BP-014': true,
-  'BP-015': true,
-};
+const DEFAULT_RULES: RuleConfig = Object.fromEntries(
+  Object.keys(RULES).map((ruleId) => [ruleId, true])
+);
 
 /**
  * Complete default configuration
@@ -192,8 +131,8 @@ const nullableSection = <T extends z.ZodType>(schema: T) =>
 const userConfigSchema = z.strictObject({
   rules: nullableSection(z.record(z.string(), ruleSettingSchema)),
   output: nullableSection(outputSchema),
-  specVersion: z.enum(['2025-11-25', '2026-07-28']).optional(),
-  discoverySpecVersion: z.enum(['2025-11-25', '2026-07-28']).optional(),
+  specVersion: z.enum(MCP_SPEC_VERSIONS).optional(),
+  discoverySpecVersion: z.enum(MCP_SPEC_VERSIONS).optional(),
   profile: z.enum(['compliance', 'governance']).optional(),
   llm: nullableSection(llmSchema),
 });
@@ -389,9 +328,10 @@ export function mergeConfig(userConfig: Partial<ValidatorConfig>): ValidatorConf
     profile: userConfig.profile ?? defaultConfig.profile,
   };
 
-  // Only include LLM config if user provides it
+  // Only include LLM config if user provides it; fill omitted fields
+  // (provider, model, timeout) with defaults.
   if (userConfig.llm) {
-    mergedConfig.llm = userConfig.llm;
+    mergedConfig.llm = resolveLLMConfig(userConfig.llm);
   }
 
   return mergedConfig;
