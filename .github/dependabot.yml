@@ -17,6 +17,10 @@ updates:
       # peer ranges. Remove when that upgrade is scheduled.
       - dependency-name: ai
         update-types: [version-update:semver-major]
+      # Node.js type definitions track the minimum supported Node version
+      # (engines). Raise them together with engines, not independently.
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
 
   - package-ecosystem: github-actions
     directory: /
