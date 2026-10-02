@@ -18,20 +18,6 @@ import sch009 from './sch-009.js';
 import sch010 from './sch-010.js';
 import sch011 from './sch-011.js';
 
-export {
-  sch001 as SCH_001,
-  sch002 as SCH_002,
-  sch003 as SCH_003,
-  sch004 as SCH_004,
-  sch005 as SCH_005,
-  sch006 as SCH_006,
-  sch007 as SCH_007,
-  sch008 as SCH_008,
-  sch009 as SCH_009,
-  sch010 as SCH_010,
-  sch011 as SCH_011,
-};
-
 /**
  * All schema rules as an array.
  */

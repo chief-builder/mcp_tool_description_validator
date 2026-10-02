@@ -13,8 +13,6 @@ import {
   mergeConfig,
   getDefaultConfig,
   getDefaultRules,
-  isRuleEnabled,
-  getRuleSeverity,
   resolveConfig,
   validateRequestConfig,
 } from '../../../src/core/config.js';
@@ -213,50 +211,6 @@ describe('Configuration System', () => {
     it('should preserve a user specVersion and default otherwise', () => {
       expect(mergeConfig({}).specVersion).toBe('2026-07-28');
       expect(mergeConfig({ specVersion: '2025-11-25' }).specVersion).toBe('2025-11-25');
-    });
-  });
-
-  describe('isRuleEnabled', () => {
-    it('should return true for rules set to true', () => {
-      const config = getDefaultConfig();
-      expect(isRuleEnabled(config, 'SEC-001')).toBe(true);
-    });
-
-    it('should return false for rules set to false', () => {
-      const config = mergeConfig({ rules: { 'SEC-001': false } });
-      expect(isRuleEnabled(config, 'SEC-001')).toBe(false);
-    });
-
-    it('should return true for rules with severity override', () => {
-      const config = mergeConfig({ rules: { 'LLM-005': 'error' } });
-      expect(isRuleEnabled(config, 'LLM-005')).toBe(true);
-    });
-
-    it('should return true for unknown rules (default enabled)', () => {
-      const config = getDefaultConfig();
-      expect(isRuleEnabled(config, 'UNKNOWN-999')).toBe(true);
-    });
-  });
-
-  describe('getRuleSeverity', () => {
-    it('should return default severity when not overridden', () => {
-      const config = getDefaultConfig();
-      expect(getRuleSeverity(config, 'SEC-001', 'warning')).toBe('warning');
-    });
-
-    it('should return overridden severity', () => {
-      const config = mergeConfig({ rules: { 'SEC-001': 'error' } });
-      expect(getRuleSeverity(config, 'SEC-001', 'warning')).toBe('error');
-    });
-
-    it('should return default for rules set to true', () => {
-      const config = mergeConfig({ rules: { 'SEC-001': true } });
-      expect(getRuleSeverity(config, 'SEC-001', 'suggestion')).toBe('suggestion');
-    });
-
-    it('should return default for unknown rules', () => {
-      const config = getDefaultConfig();
-      expect(getRuleSeverity(config, 'UNKNOWN-999', 'error')).toBe('error');
     });
   });
 
