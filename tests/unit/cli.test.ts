@@ -4,7 +4,7 @@
  * Tests for the CLI entry point, argument parsing, and rule collection.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { spawn } from 'node:child_process';
 import { join } from 'node:path';
 import { mkdir, writeFile, rm, realpath, symlink } from 'node:fs/promises';

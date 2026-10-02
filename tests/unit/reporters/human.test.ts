@@ -95,9 +95,8 @@ describe('Human Reporter', () => {
     it('should produce no ANSI codes when color is false', () => {
       const output = formatHumanOutput(mockResult, { color: false });
 
-      // ANSI escape codes start with \x1b[ or \u001b[
-      const ansiRegex = /\x1b\[|\u001b\[/;
-      expect(ansiRegex.test(output)).toBe(false);
+      // ANSI escape codes start with ESC [
+      expect(output).not.toContain('\u001b[');
     });
 
     it('should distinguish compliance from a failed governance threshold', () => {

@@ -16,7 +16,7 @@ import {
   resolveConfig,
   validateRequestConfig,
 } from '../../../src/core/config.js';
-import type { ValidatorConfig, RuleConfig } from '../../../src/types/index.js';
+import type { ValidatorConfig } from '../../../src/types/index.js';
 
 describe('Configuration System', () => {
   describe('getDefaultConfig', () => {

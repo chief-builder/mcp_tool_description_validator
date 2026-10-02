@@ -45,16 +45,6 @@ const DEFAULT_RULES: RuleConfig = Object.fromEntries(
   Object.keys(RULES).map((ruleId) => [ruleId, true])
 );
 
-/**
- * Complete default configuration
- */
-const DEFAULT_CONFIG: ValidatorConfig = {
-  rules: DEFAULT_RULES,
-  output: DEFAULT_OUTPUT,
-  specVersion: DEFAULT_SPEC_VERSION,
-  profile: DEFAULT_PROFILE,
-};
-
 // ============================================================================
 // Configuration Loading
 // ============================================================================

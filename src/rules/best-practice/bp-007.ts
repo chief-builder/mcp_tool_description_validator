@@ -5,7 +5,7 @@
  */
 
 import type { Rule } from '../types.js';
-import type { ValidationIssue, JSONSchema } from '../../types/index.js';
+import type { ValidationIssue } from '../../types/index.js';
 import { MAX_SCHEMA_DEPTH } from '../utils/schema-walker.js';
 
 /**

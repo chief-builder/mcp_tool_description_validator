@@ -477,7 +477,6 @@ async function fetchModernToolsOverStdio(
     let requestId = 1;
     const tools: Record<string, unknown>[] = [];
     let cacheScope: ModernToolsPage['cacheScope'] | undefined;
-    let timer: NodeJS.Timeout | undefined;
 
     const finish = (
       action: () => void
@@ -518,7 +517,7 @@ async function fetchModernToolsOverStdio(
       }
     };
 
-    timer = setTimeout(() => {
+    const timer = setTimeout(() => {
       finish(() =>
         reject(
           new Error(

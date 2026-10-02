@@ -8,7 +8,6 @@
 import type {
   ToolDefinition,
   ValidationResult,
-  ValidatorConfig,
   ValidationMetadata,
   ToolValidationResult,
   MCPSpecVersion,

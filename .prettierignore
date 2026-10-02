@@ -1,0 +1,10 @@
+dist/
+coverage/
+node_modules/
+package-lock.json
+# Authored prose, generated reports, captured fixtures and the Pages site
+# are not reformatted.
+*.md
+docs/
+reports/
+tests/fixtures/

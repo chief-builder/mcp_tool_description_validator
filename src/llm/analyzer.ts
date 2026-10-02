@@ -200,7 +200,10 @@ export async function analyzeTool(
   try {
     return parseAnalysisResponse(text);
   } catch (error) {
-    throw new Error(`Failed to parse LLM response: ${error}`);
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to parse LLM response: ${reason}`, {
+      cause: error,
+    });
   }
 }
 
