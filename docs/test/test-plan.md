@@ -24,7 +24,9 @@ npm run check
 CI runs on Node.js 22 and 24 (`.nvmrc` pins 24; `engines` requires
 `>=22.18.0`): lint, format check, typecheck, build and tests with coverage,
 `npm run validate:examples`, and `npm audit --omit=dev --audit-level=high`. A
-lychee link check and CodeQL analysis run as separate workflows.
+separate `Links` job runs the lychee link check and verifies links to this
+repository's own files. CodeQL code scanning uses GitHub's default setup
+(repository setting), not a workflow in this repository.
 
 ## Coverage layers
 

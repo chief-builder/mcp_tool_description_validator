@@ -69,8 +69,9 @@ Hardening release. See [AUDIT.md](AUDIT.md) for the findings that motivated it.
 - The `discoverConfig` option of `validate()`, and `createApp()` options for
   config, limits and a structured logger.
 - `serve -c <path>`; JSON-lines request logging without bodies or headers.
-- ESLint, Prettier, coverage thresholds, a lychee link check, CodeQL,
-  Dependabot, and a CI matrix on Node 22 and 24 with SHA-pinned actions.
+- ESLint, Prettier, coverage thresholds, a lychee link check, Dependabot,
+  and a CI matrix on Node 22 and 24 with SHA-pinned actions. Code scanning
+  is left to GitHub's CodeQL default setup.
 - LICENSE, SECURITY.md, CONTRIBUTING.md, `.editorconfig`, issue and PR
   templates.
 - Committed evidence for the Google Drive case study re-run on 2026-10-02.

@@ -367,8 +367,8 @@ reporters, the LLM analyzer (providers mocked) and the HTTP service, plus CLI
 subprocess tests, a real stdio fixture server, and file-based integration
 tests. Security-relevant paths (HTTP request limits, request configuration,
 discovery limits, environment isolation, terminal sanitization) have positive
-and negative tests. CI runs on Node 22 and 24 and also checks links and runs
-CodeQL.
+and negative tests. CI runs on Node 22 and 24 and also checks links. Code scanning uses
+GitHub's CodeQL default setup.
 
 Scripts that reach external services are not part of the test suite:
 
