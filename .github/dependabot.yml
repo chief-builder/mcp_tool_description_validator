@@ -8,6 +8,19 @@ updates:
       # One PR for routine updates; majors arrive individually.
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      # TypeScript 7 (native port) has no compiler API yet; tsup's dts build
+      # needs it. Remove after migrating the build to tsdown.
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      # AI SDK v7 needs a review of src/llm/analyzer.ts and the provider
+      # peer ranges. Remove when that upgrade is scheduled.
+      - dependency-name: ai
+        update-types: [version-update:semver-major]
+      # Node.js type definitions track the minimum supported Node version
+      # (engines). Raise them together with engines, not independently.
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
 
   - package-ecosystem: github-actions
     directory: /
