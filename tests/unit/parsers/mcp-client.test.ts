@@ -675,16 +675,14 @@ describe('MCP Client', () => {
     );
 
     it('should explain unsupported discovery versions without downgrading', async () => {
-      const fetchMock = vi
-        .fn()
-        .mockResolvedValue(
-          new Response(
-            JSON.stringify({
-              error: { message: 'Unsupported protocol version' },
-            }),
-            { status: 400, headers: { 'content-type': 'application/json' } }
-          )
-        );
+      const fetchMock = vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            error: { message: 'Unsupported protocol version' },
+          }),
+          { status: 400, headers: { 'content-type': 'application/json' } }
+        )
+      );
       vi.stubGlobal('fetch', fetchMock);
 
       await expect(
@@ -1056,13 +1054,11 @@ describe('discovery limits', () => {
     });
     vi.stubGlobal(
       'fetch',
-      vi
-        .fn()
-        .mockResolvedValue(
-          new Response(stream, {
-            headers: { 'content-type': 'application/json' },
-          })
-        )
+      vi.fn().mockResolvedValue(
+        new Response(stream, {
+          headers: { 'content-type': 'application/json' },
+        })
+      )
     );
 
     await expect(

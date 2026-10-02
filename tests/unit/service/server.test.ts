@@ -4,12 +4,23 @@
  * Tests for the Hono-based HTTP server endpoints.
  */
 
-import { describe, it, expect } from 'vitest';
-import { createApp, type LogEntry } from '../../../src/service/server.js';
+import { afterAll, describe, it, expect, vi } from 'vitest';
+import type { ServerType } from '@hono/node-server';
+import {
+  createApp,
+  jsonLineLogger,
+  startServer,
+  type LogEntry,
+} from '../../../src/service/server.js';
 import { getDefaultConfig } from '../../../src/core/config.js';
 import { VERSION } from '../../../src/version.js';
 
 const silent = () => {};
+
+const servers: ServerType[] = [];
+afterAll(() => {
+  for (const server of servers) server.close();
+});
 
 function postJson(app: ReturnType<typeof createApp>, body: unknown) {
   return app.request('/validate', {
@@ -435,5 +446,56 @@ describe('HTTP Service', () => {
       expect(serialized).not.toContain('SENTINEL-DESCRIPTION');
       expect(serialized).not.toContain('test-only-token');
     });
+  });
+});
+
+describe('startServer', () => {
+  it('should log only after the socket is listening, then serve requests', async () => {
+    const entries: LogEntry[] = [];
+    const listening = new Promise<LogEntry>((resolve) => {
+      const server = startServer({
+        port: 0,
+        host: '127.0.0.1',
+        logger: (entry) => {
+          entries.push(entry);
+          if (entry.msg === 'listening') resolve(entry);
+        },
+      });
+      servers.push(server);
+    });
+
+    const entry = await listening;
+    const url = String(entry.url);
+    expect(url).toMatch(/^http:\/\/127\.0\.0\.1:\d+$/);
+    expect(url).not.toMatch(/:0$/);
+
+    const res = await fetch(`${url}/health`);
+    expect(res.status).toBe(200);
+  });
+});
+
+describe('jsonLineLogger', () => {
+  it('should write one JSON object per line, errors to stderr', () => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      jsonLineLogger({ level: 'info', msg: 'hello', path: '/health' });
+      jsonLineLogger({ level: 'error', msg: 'boom' });
+
+      const infoLine = JSON.parse(log.mock.calls[0][0] as string);
+      expect(infoLine).toMatchObject({
+        level: 'info',
+        msg: 'hello',
+        path: '/health',
+      });
+      expect(typeof infoLine.time).toBe('string');
+      expect(JSON.parse(error.mock.calls[0][0] as string)).toMatchObject({
+        level: 'error',
+        msg: 'boom',
+      });
+    } finally {
+      log.mockRestore();
+      error.mockRestore();
+    }
   });
 });
