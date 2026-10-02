@@ -18,10 +18,21 @@ const MAX_DEPTH = 4;
  * Depth is counted by nesting levels through properties and items.
  * Traversal is hard-bounded: anything deeper than MAX_SCHEMA_DEPTH is
  * already far past the recommended limit, and unbounded recursion over an
- * untrusted schema would overflow the stack.
+ * untrusted schema would overflow the stack. `level` counts every
+ * recursive step, including composition keywords (which do not add
+ * nesting depth), so chains of oneOf/anyOf/allOf are bounded too.
  */
-function getSchemaDepth(schema: unknown, depth: number = 0): number {
-  if (!schema || typeof schema !== 'object' || depth > MAX_SCHEMA_DEPTH) {
+function getSchemaDepth(
+  schema: unknown,
+  depth: number = 0,
+  level: number = 0
+): number {
+  if (
+    !schema ||
+    typeof schema !== 'object' ||
+    depth > MAX_SCHEMA_DEPTH ||
+    level > MAX_SCHEMA_DEPTH
+  ) {
     return depth;
   }
 
@@ -31,13 +42,16 @@ function getSchemaDepth(schema: unknown, depth: number = 0): number {
   // Check properties (object type)
   if (obj.properties && typeof obj.properties === 'object') {
     for (const prop of Object.values(obj.properties)) {
-      maxDepth = Math.max(maxDepth, getSchemaDepth(prop, depth + 1));
+      maxDepth = Math.max(maxDepth, getSchemaDepth(prop, depth + 1, level + 1));
     }
   }
 
   // Check items (array type)
   if (obj.items) {
-    maxDepth = Math.max(maxDepth, getSchemaDepth(obj.items, depth + 1));
+    maxDepth = Math.max(
+      maxDepth,
+      getSchemaDepth(obj.items, depth + 1, level + 1)
+    );
   }
 
   // Check additionalProperties if it's a schema
@@ -47,7 +61,7 @@ function getSchemaDepth(schema: unknown, depth: number = 0): number {
   ) {
     maxDepth = Math.max(
       maxDepth,
-      getSchemaDepth(obj.additionalProperties, depth + 1)
+      getSchemaDepth(obj.additionalProperties, depth + 1, level + 1)
     );
   }
 
@@ -56,7 +70,10 @@ function getSchemaDepth(schema: unknown, depth: number = 0): number {
     const subSchemas = obj[key];
     if (Array.isArray(subSchemas)) {
       for (const subSchema of subSchemas) {
-        maxDepth = Math.max(maxDepth, getSchemaDepth(subSchema, depth));
+        maxDepth = Math.max(
+          maxDepth,
+          getSchemaDepth(subSchema, depth, level + 1)
+        );
       }
     }
   }
