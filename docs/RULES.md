@@ -25,7 +25,7 @@ This document provides a comprehensive reference for all 57 validation rules imp
 | LLM Compatibility | LLM | 13 | Optimizing tool definitions for LLM understanding |
 | Best Practices | BP | 15 | MCP annotations, schema design, and usability |
 
-The validator defaults to the finalized **2026-07-28** specification. SCH-009, SCH-010, and SEC-011 cover features introduced in that revision and are skipped only when the legacy `2025-11-25` target is explicitly selected.
+The validator defaults to the current (latest) **2026-07-28** specification. SCH-009, SCH-010, and SEC-011 cover features introduced in that revision and are skipped only when the legacy `2025-11-25` target is explicitly selected.
 
 Every emitted finding includes a provenance value:
 
@@ -80,7 +80,7 @@ Validates that every tool definition includes a non-empty name field.
 
 **Severity:** error
 
-The finalized MCP Tool schema makes `description` optional. When present, it must be a string. LLM-001 separately recommends providing a non-empty description for model usability.
+The 2026-07-28 MCP Tool schema makes `description` optional. When present, it must be a string. LLM-001 separately recommends providing a non-empty description for model usability.
 
 **Good Example:**
 ```json
@@ -190,7 +190,7 @@ Validates that the inputSchema has `type: "object"` as required by MCP. Tool inp
 
 **Severity:** warning
 
-Warns when a tool's inputSchema has no properties defined, which typically indicates a tool that takes no parameters.
+Warns when a tool's inputSchema has no properties defined (missing or empty `properties`), which typically indicates a tool that takes no parameters. The check looks only at the schema, not the description, so a parameterless tool still gets this warning even when its description says it takes no parameters; disable or downgrade SCH-006 in config if your server intentionally exposes parameterless tools.
 
 **Good Example:**
 ```json
@@ -204,7 +204,7 @@ Warns when a tool's inputSchema has no properties defined, which typically indic
 }
 ```
 
-**Acceptable (documented):**
+**Still warns (description is not considered):**
 ```json
 {
   "name": "get-server-status",
@@ -291,7 +291,7 @@ Validates that every parameter name listed in the `required` array corresponds t
 **Severity:** error
 **Spec version:** 2026-07-28
 
-The finalized MCP spec says implementations MUST NOT automatically dereference `$ref` values that resolve to network URIs (`http://`, `https://`, or protocol-relative `//`). Schemas relying on unresolved external references are rejected rather than silently treated as permissive. Local references are fine. Checked at any nesting depth.
+The 2026-07-28 MCP spec says implementations MUST NOT automatically dereference `$ref` values that resolve to network URIs (`http://`, `https://`, or protocol-relative `//`). Schemas relying on unresolved external references are rejected rather than silently treated as permissive. Local references are fine. Checked at any nesting depth.
 
 **Good Example:**
 ```json
@@ -327,7 +327,7 @@ The finalized MCP spec says implementations MUST NOT automatically dereference `
 **Severity:** error
 **Spec version:** 2026-07-28
 
-The finalized MCP spec allows a property's schema to carry an `x-mcp-header` extension whose value becomes the name portion of an `Mcp-Param-{name}` HTTP header. Clients MUST reject tools with invalid annotations, so each value must:
+The 2026-07-28 MCP spec allows a property's schema to carry an `x-mcp-header` extension whose value becomes the name portion of an `Mcp-Param-{name}` HTTP header. Clients MUST reject tools with invalid annotations, so each value must:
 
 - be a non-empty string
 - match RFC 9110 field-name token syntax (no spaces, colons, or separators)
@@ -363,7 +363,7 @@ The finalized MCP spec allows a property's schema to carry an `x-mcp-header` ext
 
 **Severity:** error
 
-Validates finalized Tool metadata shapes: top-level `title` and `annotations.title` must be strings, behavioral annotation hints must be booleans, and `_meta` must be an object. Icon structure and URI safety are handled by BP-010.
+Validates 2026-07-28 Tool metadata shapes: top-level `title` and `annotations.title` must be strings, behavioral annotation hints must be booleans, and `_meta` must be an object. Icon structure and URI safety are handled by BP-010.
 
 ---
 
@@ -729,7 +729,7 @@ their possible values are not a closed enumeration.
 
 **Severity:** warning
 
-Parameters with names suggesting sensitive data (password, token, key, secret, auth, credential) are flagged for review to ensure proper security handling.
+Parameters with names suggesting sensitive data are flagged for review to ensure proper security handling. The terms are `password`, `passwd`, `token`, `secret`, `api key`/`apikey`, `auth`, `credential(s)`, `private key`, and `access key`; a bare `key` is not flagged.
 
 Sensitive terms are matched as whole tokens/phrases (camelCase and snake_case aware): `apiKey` and `api_key` are flagged, but `author` does not match `auth`. Pagination names such as `pageToken`, `nextPageToken`, and `cursor` are excluded because continuation cursors are not credentials.
 
@@ -824,7 +824,7 @@ Parameters that accept executable code or scripts should clearly document the se
 **Severity:** error
 **Spec version:** 2026-07-28
 
-The finalized MCP spec's `x-mcp-header` extension maps a parameter to an `Mcp-Param-{name}` HTTP header. Header values are visible to network intermediaries (proxies, gateways, access logs), so sensitive parameters (passwords, API keys, tokens — same token-aware matching as SEC-007) must not carry an `x-mcp-header` mapping. Pass sensitive values in the request body instead.
+The 2026-07-28 MCP spec's `x-mcp-header` extension maps a parameter to an `Mcp-Param-{name}` HTTP header. Header values are visible to network intermediaries (proxies, gateways, access logs), so sensitive parameters (passwords, API keys, tokens — same token-aware matching as SEC-007) must not carry an `x-mcp-header` mapping. Pass sensitive values in the request body instead.
 
 **Good Example:**
 ```json
@@ -856,11 +856,11 @@ The finalized MCP spec's `x-mcp-header` extension maps a parameter to an `Mcp-Pa
 
 LLM compatibility rules optimize tool definitions for accurate selection and invocation by language models.
 
-### LLM-001: Tool description must be non-empty
+### LLM-001: Tool description should be non-empty
 
-**Severity:** error
+**Severity:** warning
 
-Every tool must have a meaningful description that helps LLMs understand the tool's purpose.
+Every tool should have a meaningful description that helps LLMs understand the tool's purpose.
 
 ---
 
@@ -1022,7 +1022,7 @@ When a parameter has schema constraints (minimum, maximum, minLength, maxLength,
     "type": "integer",
     "minimum": 1,
     "maximum": 100,
-    "description": "Number of results per page (1-100)"
+    "description": "Number of results per page (minimum 1, maximum 100)"
   }
 }
 ```
@@ -1087,7 +1087,7 @@ Tools with side effects (creating, deleting, modifying, sending data) should men
 ```json
 {
   "name": "delete-user",
-  "description": "Removes a user from the system."
+  "description": "Handles a user in the system."
 }
 ```
 
@@ -1097,7 +1097,7 @@ Tools with side effects (creating, deleting, modifying, sending data) should men
 
 **Severity:** warning
 
-Tools with similar names (same prefix) should use consistent description patterns for better LLM understanding.
+Tools with similar names (same prefix) should use consistent description patterns for better LLM understanding. The rule only compares a tool against at least two related tools with descriptions, and flags a tool only when it departs from what more than half of its related tools do (starting with an action verb, description length band, "when to use" context, examples).
 
 **Good Example:**
 ```json
@@ -1111,9 +1111,9 @@ Tools with similar names (same prefix) should use consistent description pattern
 **Bad Example:**
 ```json
 [
-  { "name": "user-create", "description": "Creates a new user account..." },
-  { "name": "user-update", "description": "User modification endpoint" },
-  { "name": "user-delete", "description": "This tool is for deleting..." }
+  { "name": "user-create", "description": "Creates a new user account." },
+  { "name": "user-update", "description": "Updates an existing user account." },
+  { "name": "user-delete", "description": "User removal endpoint." }
 ]
 ```
 
@@ -1279,6 +1279,8 @@ Complex parameters (objects, arrays, union types) should have `examples` to help
 
 Tools should provide an `outputSchema` when possible to define expected output structure. This improves output validation, LLM parsing of results, and client-side type safety.
 
+A missing `outputSchema`, a missing `outputSchema.description`, and `outputSchema` properties without descriptions are reported as suggestions. When an `outputSchema` is present but malformed, the finding escalates to **warning**: an `outputSchema` that is not an object, or one with no `type`.
+
 **Good Example:**
 ```json
 {
@@ -1299,9 +1301,9 @@ Tools should provide an `outputSchema` when possible to define expected output s
 
 ### BP-010: Tool icons must be well-formed and use safe sources
 
-**Severity:** warning (unsafe schemes escalate to error; MIME-type notes are suggestions)
+**Severity:** warning (unsafe sources and malformed entries escalate to error; MIME-type notes are suggestions)
 
-The MCP spec allows an optional `icons` array on tools. Each entry must be an object with a string `src` that is an `https://` URL or a `data:` URI. Clients MUST reject unsafe schemes (`javascript:`, `file:`, `ftp:`, `ws:`, plain `http:`, local app schemes), so those are reported at **error** severity. Uncommon MIME types and `image/svg+xml` (script-execution risk; some clients refuse to render SVG) get **suggestion**-severity notes — clients are only required to support `image/png` and `image/jpeg`.
+The MCP spec allows an optional `icons` array on tools. Each entry must be an object with a string `src` that is an `https://` URL or a base64-encoded image data URI (`data:image/<type>;base64,...`); other `data:` URIs are not accepted. The spec's [icon security considerations](https://modelcontextprotocol.io/specification/2026-07-28/basic/index#icons) say to ensure icon URIs are HTTPS or `data:` URIs and that clients MUST reject unsafe schemes such as `javascript:`, `file:`, `ftp:`, `ws:`, or local app URI schemes, so any other source (including plain `http:`) is reported at **error** severity. Malformed entries (non-array `icons`, non-object entries, missing `src`, non-string `mimeType`, `sizes` that is not an array of strings, `theme` other than `light`/`dark`) are also errors; size strings not in `WxH` or `any` form are warnings. MIME types other than `image/png`, `image/jpeg`, `image/jpg`, `image/svg+xml`, and `image/webp`, and `image/svg+xml` itself (script-execution risk; some clients refuse to render SVG), get **suggestion**-severity notes — the spec requires icon-rendering clients to support only `image/png` and `image/jpeg` (SHOULD for `image/svg+xml` and `image/webp`).
 
 **Good Example:**
 ```json
@@ -1372,10 +1374,20 @@ The heuristic is deliberately conservative: it fires only when a tool whose name
 
 **Bad Example:**
 ```json
-{
-  "name": "create-session",
-  "description": "Creates a session and returns a session_id."
-}
+[
+  {
+    "name": "create-session",
+    "description": "Creates a session and returns a session_id."
+  },
+  {
+    "name": "send-message",
+    "inputSchema": {
+      "type": "object",
+      "properties": { "session_id": { "type": "string" } },
+      "required": ["session_id"]
+    }
+  }
+]
 ```
 
 ---
@@ -1417,7 +1429,7 @@ Tools that return collections can blow up an agent's context window when nothing
 
 **Severity:** suggestion
 
-Tools whose responses can be verbose should let the agent choose how much detail to receive (e.g., a `response_format` enum of `"concise" | "detailed"` — Anthropic measured roughly a 3x token difference between the two). The rule fires when the description signals potentially large output (whole-word match on "full", "complete", "detailed", "everything", "entire", "history", "logs", "contents", "dump") and no input parameter name contains a format-control token (`format`, `verbosity`, `detail`, `concise`, `fields`, `include`).
+Tools whose responses can be verbose should let the agent choose how much detail to receive (e.g., a `response_format` enum of `"concise" | "detailed"` — in the example in Anthropic's [Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents) post, the concise response uses about a third of the tokens of the detailed one). The rule fires when the description signals potentially large output (whole-word match on "full", "complete", "detailed", "everything", "entire", "history", "logs", "contents", "dump") and no input parameter name contains a format-control token (`format`, `verbosity`, `detail`, `concise`, `fields`, `include`).
 
 **Good Example:**
 ```json

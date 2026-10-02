@@ -1,45 +1,59 @@
 # Validator Test Strategy
 
-**Updated:** 2026-08-09
+**Updated:** 2026-10-02
 
 ## Current quality gate
 
-- 71 Vitest files
-- 1,036 tests
+- 73 Vitest files
+- 1,086 tests
+- Coverage thresholds enforced by `npm run test:coverage`: 90% statements,
+  85% branches, 90% functions, 90% lines
+- ESLint and Prettier checks
 - Source and test TypeScript type checking
 - ESM and declaration builds through tsup
 - CLI, library, HTTP service, file parsing, live HTTP, SSE, pagination, and stdio
   coverage
 
-Run the complete gate with:
+Run the complete local gate (lint, format check, typecheck, build, and tests
+with coverage) with:
 
 ```bash
-npm test
-npm run typecheck
+npm run check
 ```
+
+CI runs on Node.js 22 and 24 (`.nvmrc` pins 24; `engines` requires
+`>=22.18.0`): lint, format check, typecheck, build and tests with coverage,
+`npm run validate:examples`, and `npm audit --omit=dev --audit-level=high`. A
+lychee link check and CodeQL analysis run as separate workflows.
 
 ## Coverage layers
 
 1. **Rule units** — all 57 rules, malformed schemas, recursion/resource bounds,
    severity overrides, version gates, provenance, and profile behavior.
+   Configuration tests reject unknown rule IDs and invalid rule settings.
 2. **Parsers** — JSON/YAML input shapes, optional descriptions, modern
    stateless HTTP/stdio discovery, legacy SDK discovery, JSON/SSE responses,
    pagination, strict JSON-RPC envelopes and response IDs, completed-result
    cache hints, cache-scope consistency, structured protocol errors, and
-   timeouts.
+   timeouts. Negative tests cover the 100-page pagination cap, the 10 MiB
+   response-body cap, refused HTTP redirects, and stdio servers not receiving
+   the caller's environment.
 3. **Core integration** — configuration precedence, independent discovery and
    validation revisions, maturity aggregation, LLM failure isolation, and
    reproducibility metadata.
 4. **Reporters** — human, JSON, and SARIF output including provenance and
-   separate compliance/governance status.
+   separate compliance/governance status, and terminal sanitization (control
+   characters and escape sequences in tool names or messages are not emitted).
 5. **Entry points** — CLI exit codes/options and Hono `/health` and `/validate`
-   behavior.
+   behavior, including request hardening (non-JSON content type, oversized
+   bodies, malformed JSON, too many or non-object tools, request `llm` config,
+   and generic 500 responses).
 
 ## Live-server evidence
 
 The reproducible [Google Drive case study](../case-studies/google-drive.md)
 exercises a managed remote MCP endpoint without authorization or tool execution.
-It verifies legacy discovery with finalized `2026-07-28` rule targeting and the
+It verifies legacy discovery with `2026-07-28` rule targeting and the
 compliance profile.
 
 Historical official and third-party captures remain under `tests/fixtures/` and
@@ -48,7 +62,7 @@ revision that generated them and are explicitly not current certifications.
 
 ## Release checklist
 
-1. Run `npm test` and `npm run typecheck`.
+1. Run `npm run check`.
 2. Run `npm run validate:examples`.
 3. Verify `mcp-validate --help` matches README and specification options.
 4. Validate internal Markdown links and HTML structure.

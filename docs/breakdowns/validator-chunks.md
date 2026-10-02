@@ -1,8 +1,8 @@
 # MCP Tool Validator Implementation Status
 
-**Original plan:** 2025-01-07
+**Original plan:** 2026-01-07
 
-**Updated:** 2026-08-05
+**Updated:** 2026-10-02
 
 **Specification:** [validator.md](../specs/validator.md)
 
@@ -26,7 +26,7 @@ the delivered capability map rather than presenting completed work as pending.
 
 ## Current cross-cutting behavior
 
-- Finalized MCP `2026-07-28` validation with explicit legacy `2025-11-25`
+- Current (latest) MCP `2026-07-28` validation with explicit legacy `2025-11-25`
   support.
 - Independent discovery and validation revisions.
 - `governance` and `compliance` profiles.
@@ -54,10 +54,11 @@ types + config
 
 ## Current verification
 
-- 71 test files / 1,036 tests
+- 73 test files / 1,086 tests, with enforced coverage thresholds
 - Build and declaration generation
-- Source and test type checking
-- Real-server proof against Google Drive MCP
+- Source and test type checking, ESLint, and Prettier
+- Real-server proof against Google Drive MCP (see the
+  [case study](../case-studies/google-drive.md))
 
 Future work should be tracked in the specification or a dedicated roadmap, not
 by reopening this completed implementation plan.

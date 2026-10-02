@@ -49,7 +49,7 @@ const rule: Rule = {
   category: 'security',
   defaultSeverity: 'warning',
   description:
-    'Sensitive parameter names (password, token, key, secret) should be flagged',
+    'Sensitive parameter names (password, token, secret, API key, credential) should be flagged',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];

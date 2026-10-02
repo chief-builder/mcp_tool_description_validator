@@ -17,10 +17,10 @@ LLM-assisted analysis of **62 tools** from **6 MCP servers**.
 
 | Server | Maintainer | Tools | Clarity | Completeness |
 |--------|------------|-------|---------|--------------|
-| filesystem | Anthropic | 14 | 7.4/10 | 7.6/10 |
-| memory | Anthropic | 9 | 6.7/10 | 6.6/10 |
-| everything | Anthropic | 11 | 7.5/10 | 7.5/10 |
-| sequential-thinking | Anthropic | 1 | 8.0/10 | 9.0/10 |
+| filesystem | MCP reference servers (modelcontextprotocol/servers) | 14 | 7.4/10 | 7.6/10 |
+| memory | MCP reference servers (modelcontextprotocol/servers) | 9 | 6.7/10 | 6.6/10 |
+| everything | MCP reference servers (modelcontextprotocol/servers) | 11 | 7.5/10 | 7.5/10 |
+| sequential-thinking | MCP reference servers (modelcontextprotocol/servers) | 1 | 8.0/10 | 9.0/10 |
 | playwright | Microsoft | 22 | 7.5/10 | 7.5/10 |
 | sqlite | Community | 5 | 7.8/10 | 7.6/10 |
 
@@ -280,6 +280,20 @@ This analysis uses Claude 3 Haiku to evaluate each tool definition for:
 3. **Ambiguities**: Vague phrases that could cause misuse
 4. **Conflicts**: Mismatches between description and schema
 5. **Suggestions**: Specific improvement recommendations
+
+---
+
+## Erratum (2026-10-02)
+
+- Maintainer attribution: the four `@modelcontextprotocol/server-*` packages
+  are MCP reference servers published from the modelcontextprotocol/servers
+  repository; the table previously listed "Anthropic".
+- Date: this run is dated 2026-01-09 (git history, commit `ab4daaa`); the
+  file was renamed from `mcp-server-validation-by-llm-2025-01-08.md`, whose
+  date was incorrect.
+- Model: checked against `scripts/llm-analyze.mjs` at commit `ab4daaa`, which
+  called `claude-3-haiku-20240307` (Claude 3 Haiku), matching the model named
+  above. No change was needed.
 
 ---
 

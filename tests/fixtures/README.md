@@ -19,7 +19,7 @@ the fixture data; do not treat old counts as the current 57-rule result.
 ## Capturing a live server
 
 For initialization-based servers, select legacy discovery independently from
-the finalized validation target:
+the `2026-07-28` validation target:
 
 ```bash
 npm run build
@@ -31,7 +31,7 @@ node ./dist/cli.js \
   --format json
 ```
 
-For a finalized stateless server, omit `--discovery-spec-version` or set it to
+For a `2026-07-28` stateless server, omit `--discovery-spec-version` or set it to
 `2026-07-28`. Modern fixture responses use JSON-RPC 2.0 with matching IDs and
 include valid `ttlMs` and `cacheScope` hints on every completed `tools/list`
 page. The validator also verifies that the cache scope does not change during
