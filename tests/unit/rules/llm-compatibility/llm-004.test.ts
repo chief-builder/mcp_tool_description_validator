@@ -33,7 +33,8 @@ describe('LLM-004: Tool description should explain WHEN to use the tool', () => 
 
   it('should pass for description with "when" clause', () => {
     const tool = createTool({
-      description: 'Creates a user account. Use this when registering new users.',
+      description:
+        'Creates a user account. Use this when registering new users.',
     });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(0);

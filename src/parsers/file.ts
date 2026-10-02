@@ -35,7 +35,8 @@ export async function parseFile(filePath: string): Promise<ToolDefinition[]> {
   } catch (error) {
     const parseError = error as Error;
     throw new Error(
-      `Failed to parse ${format.toUpperCase()} file "${filePath}": ${parseError.message}`
+      `Failed to parse ${format.toUpperCase()} file "${filePath}": ${parseError.message}`,
+      { cause: error }
     );
   }
 

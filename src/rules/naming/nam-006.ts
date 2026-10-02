@@ -12,7 +12,13 @@ import type { ValidationIssue } from '../../types/index.js';
 /**
  * Casing type detected for a parameter name.
  */
-type CasingType = 'camelCase' | 'snake_case' | 'kebab-case' | 'PascalCase' | 'SCREAMING_CASE' | 'other';
+type CasingType =
+  | 'camelCase'
+  | 'snake_case'
+  | 'kebab-case'
+  | 'PascalCase'
+  | 'SCREAMING_CASE'
+  | 'other';
 
 /**
  * Detect the casing type of a parameter name.
@@ -66,7 +72,8 @@ const rule: Rule = {
   id: 'NAM-006',
   category: 'naming',
   defaultSeverity: 'warning',
-  description: 'Parameter names should use consistent casing (camelCase recommended)',
+  description:
+    'Parameter names should use consistent casing (camelCase recommended)',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];

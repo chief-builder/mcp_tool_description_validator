@@ -13,11 +13,10 @@ import {
   mergeConfig,
   getDefaultConfig,
   getDefaultRules,
-  isRuleEnabled,
-  getRuleSeverity,
   resolveConfig,
+  validateRequestConfig,
 } from '../../../src/core/config.js';
-import type { ValidatorConfig, RuleConfig } from '../../../src/types/index.js';
+import type { ValidatorConfig } from '../../../src/types/index.js';
 
 describe('Configuration System', () => {
   describe('getDefaultConfig', () => {
@@ -188,6 +187,19 @@ describe('Configuration System', () => {
       expect(merged.llm?.model).toBe('claude-3-haiku-20240307');
     });
 
+    it('should fill omitted LLM fields with provider defaults', () => {
+      const merged = mergeConfig({
+        llm: { enabled: true, provider: 'openai' } as ValidatorConfig['llm'],
+      });
+
+      expect(merged.llm).toEqual({
+        enabled: true,
+        provider: 'openai',
+        model: 'gpt-4o-mini',
+        timeout: 30000,
+      });
+    });
+
     it('should not include LLM config when not provided', () => {
       const merged = mergeConfig({
         rules: { 'SEC-001': false },
@@ -198,51 +210,9 @@ describe('Configuration System', () => {
 
     it('should preserve a user specVersion and default otherwise', () => {
       expect(mergeConfig({}).specVersion).toBe('2026-07-28');
-      expect(mergeConfig({ specVersion: '2025-11-25' }).specVersion).toBe('2025-11-25');
-    });
-  });
-
-  describe('isRuleEnabled', () => {
-    it('should return true for rules set to true', () => {
-      const config = getDefaultConfig();
-      expect(isRuleEnabled(config, 'SEC-001')).toBe(true);
-    });
-
-    it('should return false for rules set to false', () => {
-      const config = mergeConfig({ rules: { 'SEC-001': false } });
-      expect(isRuleEnabled(config, 'SEC-001')).toBe(false);
-    });
-
-    it('should return true for rules with severity override', () => {
-      const config = mergeConfig({ rules: { 'LLM-005': 'error' } });
-      expect(isRuleEnabled(config, 'LLM-005')).toBe(true);
-    });
-
-    it('should return true for unknown rules (default enabled)', () => {
-      const config = getDefaultConfig();
-      expect(isRuleEnabled(config, 'UNKNOWN-999')).toBe(true);
-    });
-  });
-
-  describe('getRuleSeverity', () => {
-    it('should return default severity when not overridden', () => {
-      const config = getDefaultConfig();
-      expect(getRuleSeverity(config, 'SEC-001', 'warning')).toBe('warning');
-    });
-
-    it('should return overridden severity', () => {
-      const config = mergeConfig({ rules: { 'SEC-001': 'error' } });
-      expect(getRuleSeverity(config, 'SEC-001', 'warning')).toBe('error');
-    });
-
-    it('should return default for rules set to true', () => {
-      const config = mergeConfig({ rules: { 'SEC-001': true } });
-      expect(getRuleSeverity(config, 'SEC-001', 'suggestion')).toBe('suggestion');
-    });
-
-    it('should return default for unknown rules', () => {
-      const config = getDefaultConfig();
-      expect(getRuleSeverity(config, 'UNKNOWN-999', 'error')).toBe('error');
+      expect(mergeConfig({ specVersion: '2025-11-25' }).specVersion).toBe(
+        '2025-11-25'
+      );
     });
   });
 
@@ -251,7 +221,10 @@ describe('Configuration System', () => {
 
     beforeEach(async () => {
       // Create a unique temp directory for each test
-      testDir = join(tmpdir(), `mcp-validate-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+      testDir = join(
+        tmpdir(),
+        `mcp-validate-test-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      );
       await mkdir(testDir, { recursive: true });
     });
 
@@ -311,7 +284,7 @@ output:
         JSON.stringify({
           rules: {
             'BP-001': false,
-            'NAM-001': 'suggestion',
+            'NAM-002': 'suggestion',
           },
           output: {
             format: 'sarif',
@@ -325,7 +298,7 @@ output:
 
       expect(result.filepath).toBe(configPath);
       expect(result.config.rules['BP-001']).toBe(false);
-      expect(result.config.rules['NAM-001']).toBe('suggestion');
+      expect(result.config.rules['NAM-002']).toBe('suggestion');
       expect(result.config.output.format).toBe('sarif');
     });
 
@@ -492,7 +465,9 @@ describe('resolveConfig()', () => {
       // Invalid values are rejected
       const badPath = join(tmpBase, 'bad.config.yaml');
       await writeFile(badPath, ['specVersion: 2099-01-01'].join('\n'));
-      await expect(resolveConfig(badPath)).rejects.toThrow(/Invalid configuration/);
+      await expect(resolveConfig(badPath)).rejects.toThrow(
+        /Invalid configuration/
+      );
     } finally {
       await rm(tmpBase, { recursive: true, force: true });
     }
@@ -532,9 +507,77 @@ describe('resolveConfig()', () => {
 
       const badPath = join(tmpBase, 'bad.config.yaml');
       await writeFile(badPath, ['minScore: 70'].join('\n'));
-      await expect(resolveConfig(badPath)).rejects.toThrow(/Invalid configuration/);
+      await expect(resolveConfig(badPath)).rejects.toThrow(
+        /Invalid configuration/
+      );
     } finally {
       await rm(tmpBase, { recursive: true, force: true });
     }
+  });
+
+  describe('validateRequestConfig', () => {
+    it('should accept and normalize rule, output, spec and profile settings', () => {
+      expect(
+        validateRequestConfig({
+          rules: { 'SEC-001': 'off', 'LLM-005': 'error' },
+          output: { verbose: true },
+          specVersion: '2025-11-25',
+          profile: 'compliance',
+        })
+      ).toEqual({
+        rules: { 'SEC-001': false, 'LLM-005': 'error' },
+        output: { verbose: true },
+        specVersion: '2025-11-25',
+        profile: 'compliance',
+      });
+    });
+
+    it('should reject an llm section', () => {
+      expect(() =>
+        validateRequestConfig({ llm: { enabled: true, apiKey: 'test-only' } })
+      ).toThrow(/Unrecognized key.*llm/);
+    });
+
+    it('should not echo rejected values in the error', () => {
+      expect(() =>
+        validateRequestConfig({ llm: { apiKey: 'test-only-secret-value' } })
+      ).not.toThrow(/test-only-secret-value/);
+    });
+
+    it('should reject unknown rule IDs', () => {
+      expect(() =>
+        validateRequestConfig({ rules: { 'NAM-001': false } })
+      ).toThrow('Unknown rule ID "NAM-001"');
+    });
+
+    it('should reject invalid severities and unknown keys', () => {
+      expect(() =>
+        validateRequestConfig({ rules: { 'SEC-001': 'fatal' } })
+      ).toThrow('Invalid configuration in HTTP request');
+      expect(() => validateRequestConfig({ bogus: true })).toThrow(/bogus/);
+    });
+  });
+
+  describe('resolveConfig discovery', () => {
+    it('should skip filesystem discovery when discover is false', async () => {
+      // The repository root (the test cwd) contains mcp-validate.config.yaml.
+      const { config, filepath } = await resolveConfig(
+        undefined,
+        { profile: 'compliance' },
+        { discover: false }
+      );
+      expect(filepath).toBeNull();
+      expect(config.profile).toBe('compliance');
+      expect(config.rules).toEqual(getDefaultConfig().rules);
+    });
+
+    it('should still load an explicit path when discover is false', async () => {
+      const { filepath } = await resolveConfig(
+        join(process.cwd(), 'mcp-validate.config.yaml'),
+        undefined,
+        { discover: false }
+      );
+      expect(filepath).toContain('mcp-validate.config.yaml');
+    });
   });
 });

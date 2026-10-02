@@ -64,10 +64,7 @@ function isHandleLikeName(name: string): boolean {
 }
 
 /** True when the creating tool's output or description mentions the name. */
-function toolProducesHandle(
-  tool: ToolDefinition,
-  handleName: string
-): boolean {
+function toolProducesHandle(tool: ToolDefinition, handleName: string): boolean {
   // outputSchema property with the exact same name, at any depth
   const outputEntries = getAllPropertyEntries(tool.outputSchema, {
     rootPath: 'outputSchema',
@@ -88,8 +85,7 @@ const rule: Rule = {
   id: 'BP-012',
   category: 'best-practice',
   defaultSeverity: 'suggestion',
-  description:
-    'Creation tools returning a handle should document its lifetime',
+  description: 'Creation tools returning a handle should document its lifetime',
 
   check(tool, ctx) {
     const issues: ValidationIssue[] = [];

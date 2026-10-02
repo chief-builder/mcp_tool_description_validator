@@ -4,12 +4,18 @@
  * Tests for the CLI entry point, argument parsing, and rule collection.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { spawn } from 'node:child_process';
 import { join } from 'node:path';
-import { mkdir, writeFile, rm, realpath } from 'node:fs/promises';
+import { mkdir, writeFile, rm, realpath, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { collectRules, parseRuleOverrides } from '../../src/cli.js';
+import { VERSION } from '../../src/version.js';
+import {
+  collectRules,
+  enableLLM,
+  parseRuleOverrides,
+  parseTimeout,
+} from '../../src/cli.js';
 
 describe('CLI', () => {
   describe('collectRules()', () => {
@@ -51,19 +57,22 @@ describe('CLI', () => {
 
     it('should handle invalid format gracefully', () => {
       const result = collectRules('invalid', {});
-      expect(result).toEqual({ 'invalid': '' });
+      expect(result).toEqual({ invalid: '' });
     });
 
     it('should handle value containing equals sign', () => {
       // Edge case: value itself contains =
       const result = collectRules('RULE=value=with=equals', {});
-      expect(result).toEqual({ 'RULE': 'value=with=equals' });
+      expect(result).toEqual({ RULE: 'value=with=equals' });
     });
   });
 
   describe('parseRuleOverrides()', () => {
     it('should parse off/false as false', () => {
-      const result = parseRuleOverrides({ 'SEC-001': 'off', 'SEC-002': 'false' });
+      const result = parseRuleOverrides({
+        'SEC-001': 'off',
+        'SEC-002': 'false',
+      });
       expect(result).toEqual({ 'SEC-001': false, 'SEC-002': false });
     });
 
@@ -98,17 +107,75 @@ describe('CLI', () => {
       });
     });
 
-    it('should ignore invalid values', () => {
-      const result = parseRuleOverrides({
-        'SEC-001': 'invalid',
-        'SEC-002': 'error',
-      });
-      expect(result).toEqual({ 'SEC-002': 'error' });
+    it('should reject invalid values', () => {
+      expect(() =>
+        parseRuleOverrides({ 'SEC-001': 'invalid', 'SEC-002': 'error' })
+      ).toThrow('--rule SEC-001: invalid setting "invalid"');
+    });
+
+    it('should reject a missing value', () => {
+      expect(() => parseRuleOverrides(collectRules('SEC-001', {}))).toThrow(
+        'invalid setting'
+      );
+    });
+
+    it('should reject unknown rule IDs', () => {
+      expect(() => parseRuleOverrides({ 'NAM-001': 'off' })).toThrow(
+        '--rule: unknown rule ID "NAM-001"'
+      );
     });
 
     it('should handle empty input', () => {
       const result = parseRuleOverrides({});
       expect(result).toEqual({});
+    });
+  });
+
+  describe('enableLLM()', () => {
+    it('should enable the default provider and model without config', () => {
+      expect(enableLLM(undefined, undefined)).toMatchObject({
+        enabled: true,
+        provider: 'anthropic',
+        model: 'claude-haiku-4-5',
+      });
+    });
+
+    it('should use the new provider default model when --llm-provider switches provider', () => {
+      const configured = {
+        enabled: false,
+        provider: 'anthropic',
+        model: 'claude-haiku-4-5',
+        timeout: 30000,
+      };
+      expect(enableLLM(configured, 'openai')).toMatchObject({
+        enabled: true,
+        provider: 'openai',
+        model: 'gpt-4o-mini',
+      });
+    });
+
+    it('should keep a configured model for the same provider', () => {
+      const configured = {
+        enabled: false,
+        provider: 'openai',
+        model: 'gpt-custom',
+        timeout: 5000,
+      };
+      expect(enableLLM(configured, 'openai')).toMatchObject({
+        provider: 'openai',
+        model: 'gpt-custom',
+        timeout: 5000,
+      });
+    });
+  });
+
+  describe('parseTimeout()', () => {
+    it('should accept a positive integer', () => {
+      expect(parseTimeout('5000')).toBe(5000);
+    });
+
+    it.each(['0', '-1', '1.5', 'abc', ''])('should reject %j', (value) => {
+      expect(() => parseTimeout(value)).toThrow('positive integer');
     });
   });
 
@@ -128,10 +195,12 @@ describe('CLI', () => {
     /**
      * Helper to run the CLI and capture output.
      */
-    function runCLI(args: string[]): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+    function runCLI(
+      args: string[],
+      entry = join(process.cwd(), 'dist/cli.js')
+    ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
       return new Promise((resolve) => {
-        const cliPath = join(process.cwd(), 'dist/cli.js');
-        const child = spawn('node', [cliPath, ...args], {
+        const child = spawn('node', [entry, ...args], {
           cwd: process.cwd(),
           env: { ...process.env, FORCE_COLOR: '0' },
         });
@@ -175,7 +244,7 @@ describe('CLI', () => {
       const { stdout, exitCode } = await runCLI(['--version']);
 
       expect(exitCode).toBe(0);
-      expect(stdout.trim()).toBe('0.1.0');
+      expect(stdout.trim()).toBe(VERSION);
     });
 
     it('should error when no file or server provided', async () => {
@@ -186,7 +255,10 @@ describe('CLI', () => {
     });
 
     it('should validate a fixture file', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
       const { stdout, exitCode } = await runCLI([fixturePath]);
 
       expect(exitCode).toBe(0);
@@ -195,8 +267,15 @@ describe('CLI', () => {
     });
 
     it('should output JSON format', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
-      const { stdout, exitCode } = await runCLI([fixturePath, '--format', 'json']);
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
+      const { stdout, exitCode } = await runCLI([
+        fixturePath,
+        '--format',
+        'json',
+      ]);
 
       expect(exitCode).toBe(0);
 
@@ -207,8 +286,15 @@ describe('CLI', () => {
     });
 
     it('should output SARIF format', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
-      const { stdout, exitCode } = await runCLI([fixturePath, '--format', 'sarif']);
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
+      const { stdout, exitCode } = await runCLI([
+        fixturePath,
+        '--format',
+        'sarif',
+      ]);
 
       expect(exitCode).toBe(0);
 
@@ -255,12 +341,16 @@ describe('CLI', () => {
       // Disable NAM-002 rule
       const { stdout } = await runCLI([
         filePath,
-        '--rule', 'NAM-002=off',
-        '--format', 'json',
+        '--rule',
+        'NAM-002=off',
+        '--format',
+        'json',
       ]);
 
       const result = JSON.parse(stdout);
-      const nam002Issues = result.issues.filter((i: { id: string }) => i.id === 'NAM-002');
+      const nam002Issues = result.issues.filter(
+        (i: { id: string }) => i.id === 'NAM-002'
+      );
       expect(nam002Issues).toHaveLength(0);
     });
 
@@ -289,8 +379,10 @@ describe('CLI', () => {
 
       const legacyRun = await runCLI([
         filePath,
-        '--spec-version', '2025-11-25',
-        '--format', 'json',
+        '--spec-version',
+        '2025-11-25',
+        '--format',
+        'json',
       ]);
       const legacyResult = JSON.parse(legacyRun.stdout);
       expect(legacyResult.metadata.mcpSpecVersion).toBe('2025-11-25');
@@ -300,10 +392,14 @@ describe('CLI', () => {
     });
 
     it('should reject an invalid --spec-version value', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
       const { stderr, exitCode } = await runCLI([
         fixturePath,
-        '--spec-version', 'bogus',
+        '--spec-version',
+        'bogus',
       ]);
 
       expect(exitCode).not.toBe(0);
@@ -349,16 +445,82 @@ describe('CLI', () => {
       expect(stderr).toContain('Invalid port');
     });
 
+    it('should fail fast when the serve config is invalid', async () => {
+      const badConfig = join(testDir, 'bad.yaml');
+      await writeFile(badConfig, 'rules:\n  SEC-001: fatal\n');
+
+      const { stderr, exitCode } = await runCLI([
+        'serve',
+        '-c',
+        badConfig,
+        '-p',
+        '0',
+      ]);
+
+      expect(exitCode).toBe(2);
+      expect(stderr).toContain('Invalid configuration');
+    });
+
     it('should handle non-existent file gracefully', async () => {
-      const { stderr, exitCode } = await runCLI(['/nonexistent/path/tools.json']);
+      const { stderr, exitCode } = await runCLI([
+        '/nonexistent/path/tools.json',
+      ]);
 
       expect(exitCode).toBe(2);
       expect(stderr).toContain('Error:');
     });
 
+    it('should run through the bin script', async () => {
+      const binPath = join(process.cwd(), 'bin/mcp-validate.js');
+      const { stdout, exitCode } = await runCLI(['--version'], binPath);
+
+      expect(exitCode).toBe(0);
+      expect(stdout.trim()).toMatch(/^\d+\.\d+\.\d+/);
+    });
+
+    it('should run through a node_modules/.bin-style symlink', async () => {
+      // npm and npx launch the CLI through a symlink in node_modules/.bin;
+      // the entry point must not depend on the invoked path.
+      const binDir = join(testDir, 'node_modules', '.bin');
+      await mkdir(binDir, { recursive: true });
+      const link = join(binDir, 'mcp-validate');
+      await symlink(join(process.cwd(), 'bin/mcp-validate.js'), link);
+
+      const { stdout, exitCode } = await runCLI(['--version'], link);
+
+      expect(exitCode).toBe(0);
+      expect(stdout.trim()).toMatch(/^\d+\.\d+\.\d+/);
+    });
+
+    it('should flush large JSON output before exiting in CI mode', async () => {
+      const fixturePath = join(process.cwd(), 'examples/needs-work-tools.json');
+      const { stdout, exitCode } = await runCLI([
+        fixturePath,
+        '--format',
+        'json',
+        '--ci',
+      ]);
+
+      expect(exitCode).toBe(1);
+      expect(() => JSON.parse(stdout)).not.toThrow();
+    });
+
+    it('should exit 2 without a file or --server', async () => {
+      const { stderr, exitCode } = await runCLI([]);
+
+      expect(exitCode).toBe(2);
+      expect(stderr).toContain('Must provide a file path or --server option');
+    });
+
     it('should respect verbose flag', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
-      const { stdout: verboseOutput } = await runCLI([fixturePath, '--verbose']);
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
+      const { stdout: verboseOutput } = await runCLI([
+        fixturePath,
+        '--verbose',
+      ]);
       const { stdout: normalOutput } = await runCLI([fixturePath]);
 
       // Verbose output might include suggestions

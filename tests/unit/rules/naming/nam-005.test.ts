@@ -212,13 +212,13 @@ describe('NAM-005: Tool name should use descriptive verbs', () => {
   });
 
   describe('edge cases', () => {
-    it('should skip empty names (handled by NAM-001)', () => {
+    it('should skip empty names (handled by SCH-001)', () => {
       const tool = createTool('');
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(0);
     });
 
-    it('should skip whitespace-only names (handled by NAM-001)', () => {
+    it('should skip whitespace-only names (handled by SCH-001)', () => {
       const tool = createTool('   ');
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(0);
@@ -237,8 +237,12 @@ describe('NAM-005: Tool name should use descriptive verbs', () => {
     });
 
     it('should handle snake_case and camelCase verb prefixes', () => {
-      expect(rule.check(createTool('get_user'), createContext())).toHaveLength(0);
-      expect(rule.check(createTool('getUser'), createContext())).toHaveLength(0);
+      expect(rule.check(createTool('get_user'), createContext())).toHaveLength(
+        0
+      );
+      expect(rule.check(createTool('getUser'), createContext())).toHaveLength(
+        0
+      );
     });
   });
 });

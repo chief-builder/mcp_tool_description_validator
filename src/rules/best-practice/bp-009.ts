@@ -24,7 +24,10 @@ function isObject(value: unknown): value is Record<string, unknown> {
  * Check if a JSON Schema property has a description
  */
 function hasDescription(schema: Record<string, unknown>): boolean {
-  return typeof schema.description === 'string' && schema.description.trim().length > 0;
+  return (
+    typeof schema.description === 'string' &&
+    schema.description.trim().length > 0
+  );
 }
 
 /**
@@ -37,9 +40,10 @@ function hasType(schema: Record<string, unknown>): boolean {
 /**
  * Count properties with descriptions in an object schema
  */
-function countPropertiesWithDescriptions(
-  properties: Record<string, unknown>
-): { total: number; withDescriptions: number } {
+function countPropertiesWithDescriptions(properties: Record<string, unknown>): {
+  total: number;
+  withDescriptions: number;
+} {
   const entries = Object.entries(properties);
   const total = entries.length;
   const withDescriptions = entries.filter(([, prop]) => {
@@ -52,7 +56,8 @@ const rule: Rule = {
   id: 'BP-009',
   category: 'best-practice',
   defaultSeverity: 'suggestion',
-  description: 'Consider providing outputSchema for better output validation and parsing',
+  description:
+    'Consider providing outputSchema for better output validation and parsing',
   documentation:
     'https://modelcontextprotocol.io/specification/2026-07-28/server/tools#output-schema',
 
@@ -67,7 +72,8 @@ const rule: Rule = {
         id: 'BP-009',
         category: 'best-practice',
         severity: this.defaultSeverity,
-        message: 'Tool is missing outputSchema for output validation and parsing',
+        message:
+          'Tool is missing outputSchema for output validation and parsing',
         tool: tool.name,
         path: 'outputSchema',
         suggestion:
@@ -88,7 +94,8 @@ const rule: Rule = {
         message: 'outputSchema must be a valid JSON Schema object',
         tool: tool.name,
         path: 'outputSchema',
-        suggestion: 'Provide a valid JSON Schema object with type and properties',
+        suggestion:
+          'Provide a valid JSON Schema object with type and properties',
         documentation: this.documentation,
       });
       return issues;
@@ -117,7 +124,8 @@ const rule: Rule = {
         message: 'outputSchema is missing a description',
         tool: tool.name,
         path: 'outputSchema.description',
-        suggestion: 'Add a description to outputSchema explaining the output structure',
+        suggestion:
+          'Add a description to outputSchema explaining the output structure',
         documentation: this.documentation,
       });
     }
@@ -136,7 +144,8 @@ const rule: Rule = {
           message: 'outputSchema properties are missing descriptions',
           tool: tool.name,
           path: 'outputSchema.properties',
-          suggestion: 'Add descriptions to outputSchema properties for better LLM understanding',
+          suggestion:
+            'Add descriptions to outputSchema properties for better LLM understanding',
           documentation: this.documentation,
         });
       } else if (total > 0 && withDescriptions < total) {
@@ -148,7 +157,8 @@ const rule: Rule = {
           message: `${missingCount} of ${total} outputSchema properties are missing descriptions`,
           tool: tool.name,
           path: 'outputSchema.properties',
-          suggestion: 'Add descriptions to all outputSchema properties for better LLM understanding',
+          suggestion:
+            'Add descriptions to all outputSchema properties for better LLM understanding',
           documentation: this.documentation,
         });
       }

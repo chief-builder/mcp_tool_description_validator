@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import rule from '../../../../src/rules/schema/sch-008.js';
-import type { ToolDefinition, ToolSource } from '../../../../src/types/index.js';
+import type {
+  ToolDefinition,
+  ToolSource,
+} from '../../../../src/types/index.js';
 import type { RuleContext } from '../../../../src/rules/types.js';
 
 const mockSource: ToolSource = { type: 'file', location: 'test.json', raw: {} };
@@ -89,7 +92,7 @@ describe('SCH-008: Parameters in required must exist in properties', () => {
 
     const issues = rule.check(tool, createContext(tool));
     expect(issues).toHaveLength(3);
-    expect(issues.map(i => i.message)).toEqual(
+    expect(issues.map((i) => i.message)).toEqual(
       expect.arrayContaining([
         expect.stringContaining('param1'),
         expect.stringContaining('param2'),

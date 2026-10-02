@@ -8,20 +8,13 @@
 import { describe, it, expect } from 'vitest';
 import type {
   ToolDefinition,
-  ToolSource,
   ToolAnnotations,
   ValidationResult,
-  ValidationSummary,
   ValidationIssue,
   IssueCategory,
   IssueSeverity,
-  ToolValidationResult,
-  ValidationMetadata,
   ValidatorConfig,
-  RuleConfig,
-  OutputConfig,
   LLMConfig,
-  JSONSchema,
 } from '../../src/types/index.js';
 
 describe('Type Definitions', () => {
@@ -82,8 +75,8 @@ describe('Type Definitions', () => {
             warning: 0,
             suggestion: 0,
           },
-    maturityScore: 88,
-    maturityLevel: 'mature',
+          maturityScore: 88,
+          maturityLevel: 'mature',
         },
         issues: [],
         tools: [],

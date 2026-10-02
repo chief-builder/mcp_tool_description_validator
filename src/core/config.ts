@@ -14,6 +14,12 @@ import type {
   MCPSpecVersion,
   ValidationProfile,
 } from '../types/index.js';
+import {
+  DEFAULT_MCP_SPEC_VERSION,
+  MCP_SPEC_VERSIONS,
+} from './spec-versions.js';
+import { resolveLLMConfig } from '../llm/defaults.js';
+import { RULES } from '../rules/index.js';
 
 // ============================================================================
 // Default Configuration
@@ -31,90 +37,16 @@ const DEFAULT_OUTPUT: OutputConfig = {
 /**
  * Default MCP spec version to validate against
  */
-const DEFAULT_SPEC_VERSION: MCPSpecVersion = '2026-07-28';
+const DEFAULT_SPEC_VERSION: MCPSpecVersion = DEFAULT_MCP_SPEC_VERSION;
 const DEFAULT_PROFILE: ValidationProfile = 'governance';
 
 /**
- * Default rule configurations (all rules enabled with default severities)
+ * Default rule configurations: every registered rule enabled with its
+ * default severity. Derived from the registry so it cannot drift.
  */
-const DEFAULT_RULES: RuleConfig = {
-  // Schema rules (SCH-xxx)
-  'SCH-001': true,
-  'SCH-002': true,
-  'SCH-003': true,
-  'SCH-004': true,
-  'SCH-005': true,
-  'SCH-006': true,
-  'SCH-007': true,
-  'SCH-008': true,
-  'SCH-009': true,
-  'SCH-010': true,
-  'SCH-011': true,
-
-  // Naming rules (NAM-xxx)
-  'NAM-002': true,
-  'NAM-003': true,
-  'NAM-004': true,
-  'NAM-005': true,
-  'NAM-006': true,
-  'NAM-007': true,
-  'NAM-008': true,
-
-  // Security rules (SEC-xxx)
-  'SEC-001': true,
-  'SEC-002': true,
-  'SEC-003': true,
-  'SEC-004': true,
-  'SEC-005': true,
-  'SEC-006': true,
-  'SEC-007': true,
-  'SEC-008': true,
-  'SEC-009': true,
-  'SEC-010': true,
-  'SEC-011': true,
-
-  // LLM compatibility rules (LLM-xxx)
-  'LLM-001': true,
-  'LLM-002': true,
-  'LLM-003': true,
-  'LLM-004': true,
-  'LLM-005': true,
-  'LLM-006': true,
-  'LLM-007': true,
-  'LLM-008': true,
-  'LLM-009': true,
-  'LLM-010': true,
-  'LLM-011': true,
-  'LLM-012': true,
-  'LLM-013': true,
-
-  // Best practice rules (BP-xxx)
-  'BP-001': true,
-  'BP-002': true,
-  'BP-003': true,
-  'BP-004': true,
-  'BP-005': true,
-  'BP-006': true,
-  'BP-007': true,
-  'BP-008': true,
-  'BP-009': true,
-  'BP-010': true,
-  'BP-011': true,
-  'BP-012': true,
-  'BP-013': true,
-  'BP-014': true,
-  'BP-015': true,
-};
-
-/**
- * Complete default configuration
- */
-const DEFAULT_CONFIG: ValidatorConfig = {
-  rules: DEFAULT_RULES,
-  output: DEFAULT_OUTPUT,
-  specVersion: DEFAULT_SPEC_VERSION,
-  profile: DEFAULT_PROFILE,
-};
+const DEFAULT_RULES: RuleConfig = Object.fromEntries(
+  Object.keys(RULES).map((ruleId) => [ruleId, true])
+);
 
 // ============================================================================
 // Configuration Loading
@@ -157,10 +89,7 @@ function createExplorer() {
  * 'off'/'on' are accepted as aliases for false/true (common in YAML configs).
  */
 const ruleSettingSchema = z
-  .union([
-    z.boolean(),
-    z.enum(['error', 'warning', 'suggestion', 'off', 'on']),
-  ])
+  .union([z.boolean(), z.enum(['error', 'warning', 'suggestion', 'off', 'on'])])
   .transform((value) => {
     if (value === 'off') return false;
     if (value === 'on') return true;
@@ -189,14 +118,35 @@ const nullableSection = <T extends z.ZodType>(schema: T) =>
     .optional()
     .transform((value) => (value === null ? undefined : value));
 
+// Unknown rule IDs (typos, retired rules) would otherwise be silently
+// ignored, leaving the user believing a rule is configured.
+const rulesSchema = z
+  .record(z.string(), ruleSettingSchema)
+  .superRefine((rules, ctx) => {
+    for (const id of Object.keys(rules)) {
+      if (!Object.hasOwn(RULES, id)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: [id],
+          message: `Unknown rule ID "${id}"`,
+        });
+      }
+    }
+  });
+
 const userConfigSchema = z.strictObject({
-  rules: nullableSection(z.record(z.string(), ruleSettingSchema)),
+  rules: nullableSection(rulesSchema),
   output: nullableSection(outputSchema),
-  specVersion: z.enum(['2025-11-25', '2026-07-28']).optional(),
-  discoverySpecVersion: z.enum(['2025-11-25', '2026-07-28']).optional(),
+  specVersion: z.enum(MCP_SPEC_VERSIONS).optional(),
+  discoverySpecVersion: z.enum(MCP_SPEC_VERSIONS).optional(),
   profile: z.enum(['compliance', 'governance']).optional(),
   llm: nullableSection(llmSchema),
 });
+
+// Remote callers of the HTTP service may tune rules and reporting, but not
+// the LLM section: it selects a provider endpoint and credentials, which
+// would let any client send the server's API key to a host of its choice.
+const requestConfigSchema = userConfigSchema.omit({ llm: true });
 
 /**
  * Inline configuration overrides (e.g. from CLI flags). Unlike a full
@@ -224,15 +174,37 @@ export function validateUserConfig(
 ): Partial<ValidatorConfig> {
   const result = userConfigSchema.safeParse(raw);
   if (!result.success) {
-    const details = result.error.issues
-      .map((issue) => {
-        const path = issue.path.join('.') || '(root)';
-        return `  - ${path}: ${issue.message}`;
-      })
-      .join('\n');
-    throw new Error(`Invalid configuration in ${source}:\n${details}`);
+    throw new Error(formatConfigIssues(source, result.error.issues));
   }
   return result.data as Partial<ValidatorConfig>;
+}
+
+/**
+ * Validate and normalize configuration supplied by an untrusted remote
+ * caller (the HTTP service). Same rules as validateUserConfig, except the
+ * `llm` section is rejected.
+ *
+ * @throws Error with a human-readable message when the config is invalid
+ */
+export function validateRequestConfig(raw: unknown): ConfigOverrides {
+  const result = requestConfigSchema.safeParse(raw);
+  if (!result.success) {
+    throw new Error(formatConfigIssues('HTTP request', result.error.issues));
+  }
+  return result.data as ConfigOverrides;
+}
+
+function formatConfigIssues(
+  source: string,
+  issues: readonly { path: PropertyKey[]; message: string }[]
+): string {
+  const details = issues
+    .map((issue) => {
+      const path = issue.path.map(String).join('.') || '(root)';
+      return `  - ${path}: ${issue.message}`;
+    })
+    .join('\n');
+  return `Invalid configuration in ${source}:\n${details}`;
 }
 
 /**
@@ -260,7 +232,9 @@ export interface LoadConfigResult {
  * @param configPath - Optional explicit path to config file
  * @returns The loaded configuration merged with defaults, and the filepath
  */
-export async function loadConfig(configPath?: string): Promise<LoadConfigResult> {
+export async function loadConfig(
+  configPath?: string
+): Promise<LoadConfigResult> {
   const explorer = createExplorer();
 
   const result = configPath
@@ -289,12 +263,19 @@ export async function loadConfig(configPath?: string): Promise<LoadConfigResult>
  *
  * @param configPath - Optional explicit path to a config file
  * @param overrides - Inline overrides (e.g. from CLI flags)
+ * @param options.discover - Search the working directory for a config file
+ *   when no explicit path is given (default true). Pass false to start from
+ *   the built-in defaults without touching the filesystem.
  */
 export async function resolveConfig(
   configPath?: string,
-  overrides?: ConfigOverrides
+  overrides?: ConfigOverrides,
+  options: { discover?: boolean } = {}
 ): Promise<LoadConfigResult> {
-  const { config, filepath } = await loadConfig(configPath);
+  const { config, filepath } =
+    configPath !== undefined || options.discover !== false
+      ? await loadConfig(configPath)
+      : { config: getDefaultConfig(), filepath: null };
 
   if (!overrides) {
     return { config, filepath };
@@ -331,7 +312,9 @@ export async function resolveConfig(
  * @param userConfig - Partial user configuration
  * @returns Complete merged configuration
  */
-export function mergeConfig(userConfig: Partial<ValidatorConfig>): ValidatorConfig {
+export function mergeConfig(
+  userConfig: Partial<ValidatorConfig>
+): ValidatorConfig {
   const defaultConfig = getDefaultConfig();
 
   // Merge rules: start with defaults, overlay user rules
@@ -355,9 +338,10 @@ export function mergeConfig(userConfig: Partial<ValidatorConfig>): ValidatorConf
     profile: userConfig.profile ?? defaultConfig.profile,
   };
 
-  // Only include LLM config if user provides it
+  // Only include LLM config if user provides it; fill omitted fields
+  // (provider, model, timeout) with defaults.
   if (userConfig.llm) {
-    mergedConfig.llm = userConfig.llm;
+    mergedConfig.llm = resolveLLMConfig(userConfig.llm);
   }
 
   return mergedConfig;
@@ -388,56 +372,4 @@ export function getDefaultConfig(): ValidatorConfig {
  */
 export function getDefaultRules(): RuleConfig {
   return { ...DEFAULT_RULES };
-}
-
-/**
- * Check if a rule is enabled in the given configuration.
- *
- * @param config - Validator configuration
- * @param ruleId - Rule identifier (e.g., "SEC-001")
- * @returns true if the rule is enabled, false otherwise
- */
-export function isRuleEnabled(config: ValidatorConfig, ruleId: string): boolean {
-  const ruleSetting = config.rules[ruleId];
-
-  // Rule not in config means use default (enabled)
-  if (ruleSetting === undefined) {
-    return true;
-  }
-
-  // Explicit false means disabled
-  if (ruleSetting === false) {
-    return false;
-  }
-
-  // true or severity string means enabled
-  return true;
-}
-
-/**
- * Get the severity for a rule, respecting overrides.
- *
- * @param config - Validator configuration
- * @param ruleId - Rule identifier
- * @param defaultSeverity - Default severity if not overridden
- * @returns The effective severity for the rule
- */
-export function getRuleSeverity(
-  config: ValidatorConfig,
-  ruleId: string,
-  defaultSeverity: 'error' | 'warning' | 'suggestion'
-): 'error' | 'warning' | 'suggestion' {
-  const ruleSetting = config.rules[ruleId];
-
-  // If severity is explicitly set, use it
-  if (
-    ruleSetting === 'error' ||
-    ruleSetting === 'warning' ||
-    ruleSetting === 'suggestion'
-  ) {
-    return ruleSetting;
-  }
-
-  // Otherwise use default
-  return defaultSeverity;
 }

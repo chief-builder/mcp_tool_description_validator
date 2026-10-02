@@ -23,7 +23,7 @@ export type JSONSchema = Record<string, unknown>;
  * Internal representation of an MCP tool definition.
  */
 export interface ToolDefinition {
-  /** Tool name (kebab-case recommended) */
+  /** Tool name (1-128 characters of [A-Za-z0-9_.-]) */
   name: string;
 
   /** Optional human-readable display name (takes precedence over annotations.title) */
@@ -286,7 +286,10 @@ export interface ValidationMetadata {
   /** Validation duration in milliseconds */
   duration: number;
 
-  /** Path to configuration file used (empty string if none) */
+  /**
+   * Configuration file used, relative to the working directory (empty
+   * string if none)
+   */
   configUsed: string;
 
   /** Whether LLM analysis was performed */
@@ -303,7 +306,8 @@ export interface ValidationMetadata {
 /**
  * MCP specification versions the validator can target.
  */
-export type MCPSpecVersion = '2025-11-25' | '2026-07-28';
+export type { MCPSpecVersion } from '../core/spec-versions.js';
+import type { MCPSpecVersion } from '../core/spec-versions.js';
 
 /** Built-in severity policy profiles. */
 export type ValidationProfile = 'compliance' | 'governance';

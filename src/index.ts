@@ -48,11 +48,7 @@ export {
 // Configuration
 // ============================================================================
 
-export {
-  loadConfig,
-  mergeConfig,
-  getDefaultConfig,
-} from './core/config.js';
+export { loadConfig, mergeConfig, getDefaultConfig } from './core/config.js';
 
 // ============================================================================
 // Reporters
@@ -71,8 +67,12 @@ export {
 export {
   createApp,
   startServer,
+  jsonLineLogger,
+  type CreateAppOptions,
   type StartServerOptions,
   type ValidateRequest,
+  type Logger,
+  type LogEntry,
 } from './service/server.js';
 
 // ============================================================================

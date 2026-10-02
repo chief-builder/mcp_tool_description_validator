@@ -27,7 +27,8 @@ const rule: Rule = {
       return issues;
     }
 
-    const properties = schema.properties as Record<string, PropertySchema> | undefined;
+    const properties = schema.properties as
+      Record<string, PropertySchema> | undefined;
     if (!properties || typeof properties !== 'object') {
       return issues;
     }
@@ -38,7 +39,10 @@ const rule: Rule = {
       }
 
       const description = paramSchema.description;
-      if (!description || (typeof description === 'string' && description.trim() === '')) {
+      if (
+        !description ||
+        (typeof description === 'string' && description.trim() === '')
+      ) {
         issues.push({
           id: this.id,
           category: this.category,

@@ -54,7 +54,10 @@ const rule: Rule = {
     const issues: ValidationIssue[] = [];
 
     // Skip if description is empty (handled by LLM-001)
-    if (typeof tool.description !== 'string' || tool.description.trim() === '') {
+    if (
+      typeof tool.description !== 'string' ||
+      tool.description.trim() === ''
+    ) {
       return issues;
     }
 
@@ -68,7 +71,8 @@ const rule: Rule = {
         message: 'Tool description does not explain when to use this tool',
         tool: tool.name,
         path: 'description',
-        suggestion: 'Add context about when to use this tool (e.g., "Use this when...", "Useful for...")',
+        suggestion:
+          'Add context about when to use this tool (e.g., "Use this when...", "Useful for...")',
       });
     }
 

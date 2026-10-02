@@ -18,7 +18,7 @@ const rule: Rule = {
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
 
-    // Skip if name is empty (handled by NAM-001)
+    // Skip if name is empty (handled by SCH-001)
     if (!tool.name || tool.name.trim() === '') {
       return issues;
     }
@@ -31,7 +31,8 @@ const rule: Rule = {
         message: `Tool name "${tool.name}" should not start with a number`,
         tool: tool.name,
         path: 'name',
-        suggestion: 'Start the tool name with a descriptive verb or noun instead of a number',
+        suggestion:
+          'Start the tool name with a descriptive verb or noun instead of a number',
       });
     }
 

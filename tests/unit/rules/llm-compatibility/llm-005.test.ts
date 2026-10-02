@@ -49,7 +49,8 @@ describe('LLM-005: Tool description should include example usage', () => {
 
   it('should pass for description with "for instance" phrase', () => {
     const tool = createTool({
-      description: 'Queries the database. For instance, you can filter by date.',
+      description:
+        'Queries the database. For instance, you can filter by date.',
     });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(0);

@@ -1,21 +1,21 @@
 # MCP Tool Validator Architecture
 
-**Updated**: 2026-08-05
+**Updated**: 2026-10-02
 **Spec**: [docs/specs/validator.md](../specs/validator.md)
 
 ## Tech Stack
 
 | Layer | Choice | Health | Rationale |
 |-------|--------|--------|-----------|
-| Runtime | Node.js 20+ | Active | LTS, ESM native |
-| Language | TypeScript 5.x | Active | Type safety, MCP SDK compatibility |
+| Runtime | Node.js >= 22.18 (`.nvmrc`: 24) | Active | LTS, ESM native |
+| Language | TypeScript 6.0 | Active | Type safety, MCP SDK compatibility |
 | JSON Schema | Ajv 8.x | Active | JSON Schema 2020-12 validation |
-| CLI | Commander 14.x | Active | Small, typed command surface |
+| CLI | Commander 15.x | Active | Small, typed command surface |
 | HTTP | Hono 4.x | Active | Lightweight validation service |
-| Config | Cosmiconfig 9.x | Active | Standard config loading, YAML/JSON/JS |
-| Testing | Vitest 4.x | Active | Fast TypeScript unit and integration tests |
+| Config | Cosmiconfig 10.x + Zod 4.x | Active | Standard config loading (YAML/JSON, rc files, `package.json`), validated with Zod |
+| Testing | Vitest 5.x | Active | Fast TypeScript unit and integration tests |
 | Build | tsup 8.x | Active | Zero-config, esbuild-based, fast |
-| MCP Client | Native 2026 transport + @modelcontextprotocol/sdk 1.30+ | Active | Finalized stateless protocol plus legacy compatibility |
+| MCP Client | Native 2026 transport + @modelcontextprotocol/sdk 1.31+ | Active | Current stateless protocol plus legacy compatibility |
 | LLM | Vercel AI SDK 6.x | Active | Unified API for OpenAI/Anthropic/Ollama |
 
 ## Decisions
@@ -25,6 +25,15 @@
 **Choice**: Hono
 **Why**: Lighter footprint for a simple stateless validation API. We only need 2 endpoints (`POST /validate`, `GET /health`). Hono's minimal overhead suits this better than Fastify's full feature set.
 **Rejected**: Fastify (overkill for 2 endpoints), Express (slower, dated)
+**Request hardening**: The service has no authentication and treats request
+bodies as untrusted. `POST /validate` requires `Content-Type: application/json`
+(415), limits bodies to 1 MiB (413), and rejects malformed JSON, more than 1000
+tools, non-object tool elements, and invalid or `llm`-bearing request config
+(400). Internal failures return a generic 500 without details; no CORS headers
+are sent. Server config (`serve -c`) is loaded and validated once at startup,
+and each request runs `validate(…, { discoverConfig: false })`, so the working
+directory is never searched per request. Requests are logged as JSON lines
+(method, path, status, duration) without bodies or headers.
 
 ### 2. Registry-Based, Config-Driven Rule Selection
 
@@ -41,13 +50,13 @@ enable/disable settings, severity overrides, and revision-gated rules.
 
 ### 4. Version-aware MCP client
 
-**Choice**: Native stateless HTTP/stdio requests for 2026-07-28, with @modelcontextprotocol/sdk v1.30+ retained for explicit 2025-11-25 compatibility
-**Why**: The stable SDK client still initializes using the legacy protocol flow. The finalized revision removes initialization and requires protocol metadata on every request, so the validator uses a small version-pinned transport path for modern live-server discovery. That path calls only `tools/list`; it does not call `server/discover`. It validates JSON-RPC envelopes and IDs, completed-result cache hints on every page, one cache scope across pagination, and structured protocol errors before mapping tool definitions.
+**Choice**: Native stateless HTTP/stdio requests for 2026-07-28, with @modelcontextprotocol/sdk v1.31+ retained for explicit 2025-11-25 compatibility
+**Why**: The stable SDK client still initializes using the legacy protocol flow. The 2026-07-28 revision removes initialization and requires protocol metadata on every request, so the validator uses a small version-pinned transport path for modern live-server discovery. That path calls only `tools/list`; it does not call `server/discover`. It validates JSON-RPC envelopes and IDs, completed-result cache hints on every page, one cache scope across pagination, and structured protocol errors before mapping tool definitions.
 
 ### 5. Single Package Distribution
 
-**Choice**: Publish as single npm package with CLI binary and library exports
-**Why**: Simpler versioning, easier installation. CLI via `npx mcp-validate` or global install, library via `import { validate } from 'mcp-tool-validator'`.
+**Choice**: A single package (`mcp-tool-description-validator`) with CLI binary and library exports
+**Why**: Simpler versioning, easier installation. The package is not published to npm; install from source (`npm ci && npm run build`), then run `node bin/mcp-validate.js` or `npm link` to put `mcp-validate` on `PATH`. Library via `import { validate } from 'mcp-tool-description-validator'`.
 **Rejected**: Monorepo with separate packages (unnecessary complexity for this scope)
 
 ### 6. Separate discovery from validation policy
@@ -56,7 +65,7 @@ enable/disable settings, severity overrides, and revision-gated rules.
 `specVersion` controls rule loading. `profile` independently controls effective
 policy severity.
 **Why**: A server can expose valid definitions through an older protocol
-revision. Coupling transport negotiation to rule targeting prevented finalized
+revision. Coupling transport negotiation to rule targeting prevented 2026-07-28
 validation of Google's Drive MCP endpoint.
 
 ### 7. Provenance-aware results
@@ -121,9 +130,9 @@ execution limited to `true`, `false`, or a supported severity override.
 │  ┌─────────────────────────────────────────────────────────┐    │
 │  │                    validate()                            │    │
 │  │  - Load config (cosmiconfig)                            │    │
-│  │  - Parse input (file or MCP server)                     │    │
 │  │  - Run enabled rules                                    │    │
 │  │  - Aggregate results                                    │    │
+│  │  (validateFile / validateServer parse input first)      │    │
 │  └─────────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────────┘
          │                 │                      │
@@ -171,20 +180,23 @@ Each rule is a self-contained module:
 
 ```typescript
 // src/rules/security/sec-001.ts
-import type { Rule, RuleContext } from '../types';
+import type { Rule } from '../types.js';
+import type { ValidationIssue } from '../../types/index.js';
 
-export const SEC_001: Rule = {
+const rule: Rule = {
   id: 'SEC-001',
   category: 'security',
   defaultSeverity: 'error',
   description: 'String parameters must have maxLength constraint',
 
-  check(tool: ToolDefinition, ctx: RuleContext): ValidationIssue[] {
+  check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
     // ... validation logic
     return issues;
-  }
+  },
 };
+
+export default rule;
 ```
 
 ### Config-Driven Loading
@@ -195,12 +207,15 @@ Rules are loaded based on configuration:
 // src/core/rule-loader.ts
 export async function loadRules(
   config: RuleConfig,
-  specVersion = '2026-07-28'
+  specVersion: string = DEFAULT_MCP_SPEC_VERSION
 ): Promise<Rule[]> {
-  return Object.values(RULES).filter((rule) => {
-    if (config[rule.id] === false) return false;
-    return !rule.specVersions || rule.specVersions.includes(specVersion);
-  });
+  const rules: Rule[] = [];
+  for (const [ruleId, rule] of Object.entries(RULES)) {
+    if (config[ruleId] === false) continue;
+    if (rule.specVersions && !rule.specVersions.includes(specVersion)) continue;
+    rules.push(rule);
+  }
+  return rules;
 }
 ```
 
@@ -215,7 +230,7 @@ mcp_tool_description_validator/
 │   │   ├── validator.ts         # Main orchestrator
 │   │   ├── rule-engine.ts       # Rule execution and aggregation
 │   │   ├── rule-loader.ts       # Config/version rule selection
-│   │   └── config.ts            # Cosmiconfig wrapper
+│   │   └── config.ts            # Cosmiconfig loading + Zod validation
 │   ├── parsers/
 │   │   ├── file.ts              # JSON/YAML parsing
 │   │   └── mcp-client.ts        # Native 2026 + SDK-backed legacy discovery
@@ -255,16 +270,20 @@ mcp_tool_description_validator/
 
 ```json
 {
-  "name": "mcp-tool-validator",
+  "name": "mcp-tool-description-validator",
+  "version": "0.2.0",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "bin": {
     "mcp-validate": "./bin/mcp-validate.js"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   }
 }
 ```
@@ -275,17 +294,17 @@ mcp_tool_description_validator/
 
 ```json
 {
-  "@hono/node-server": "^2.0.8",
-  "@modelcontextprotocol/sdk": "^1.30.0",
-  "ai": "^6.0.0",
-  "ajv": "^8.17.0",
-  "ajv-formats": "^3.0.0",
-  "commander": "^14.0.0",
-  "cosmiconfig": "^9.0.0",
-  "chalk": "^5.0.0",
-  "hono": "^4.0.0",
-  "yaml": "^2.0.0",
-  "zod": "^4.0.0"
+  "@hono/node-server": "^2.1.3",
+  "@modelcontextprotocol/sdk": "^1.31.0",
+  "ai": "^6.0.300",
+  "ajv": "^8.20.0",
+  "ajv-formats": "^3.0.1",
+  "chalk": "^6.0.1",
+  "commander": "^15.0.0",
+  "cosmiconfig": "^10.0.1",
+  "hono": "^4.13.12",
+  "yaml": "^2.9.1",
+  "zod": "^4.6.5"
 }
 ```
 
@@ -293,10 +312,13 @@ mcp_tool_description_validator/
 
 ```json
 {
-  "typescript": "^5.4.0",
-  "tsup": "^8.0.0",
-  "vitest": "^4.0.0",
-  "@types/node": "^20.0.0"
+  "typescript": "~6.0.3",
+  "tsup": "^8.5.1",
+  "vitest": "^5.0.3",
+  "@vitest/coverage-v8": "^5.0.3",
+  "@types/node": "^22.20.5",
+  "eslint": "^10.11.0",
+  "prettier": "^3.9.9"
 }
 ```
 
@@ -330,8 +352,8 @@ LLM provider SDKs (only needed if using LLM analysis):
 
 ## Current Boundaries and Follow-up
 
-1. **Schema version pinning**: Keep validation behavior pinned to the finalized MCP 2026-07-28 schema and prose requirements
-2. **Rule documentation**: Consolidated in `docs/RULES.md`, linked from issue output
+1. **Schema version pinning**: Keep validation behavior pinned to the current MCP 2026-07-28 schema and prose requirements
+2. **Rule documentation**: Consolidated in `docs/RULES.md`. Issue output does not link to it; where a rule sets `documentation`, the URL points to the MCP specification (modelcontextprotocol.io) or JSON Schema reference (json-schema.org)
 3. **LLM cost management**: Content-hash-based caching remains optional future work
 
 ## References

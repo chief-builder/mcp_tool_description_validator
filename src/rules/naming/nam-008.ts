@@ -74,10 +74,7 @@ const rule: Rule = {
       typeof t.name === 'string' ? tokenizeIdentifier(t.name) : []
     );
 
-    const firstTokenRatio = sharedTokenRatio(
-      tokenLists,
-      (tokens) => tokens[0]
-    );
+    const firstTokenRatio = sharedTokenRatio(tokenLists, (tokens) => tokens[0]);
     const lastTokenRatio = sharedTokenRatio(
       tokenLists,
       (tokens) => tokens[tokens.length - 1]

@@ -5,18 +5,24 @@
  * Command-line interface for validating MCP tool definitions.
  */
 
-import { Command, Option } from 'commander';
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { Command, InvalidArgumentError, Option } from 'commander';
 import chalk from 'chalk';
 import { validateFile, validateServer } from './core/validator.js';
 import { resolveConfig, type ConfigOverrides } from './core/config.js';
 import { VERSION } from './version.js';
-import { createDefaultLLMConfig } from './llm/analyzer.js';
+import { MCP_SPEC_VERSIONS } from './core/spec-versions.js';
+import { RULES } from './rules/index.js';
+import { resolveLLMConfig } from './llm/defaults.js';
+import { DEFAULT_HOST, DEFAULT_PORT, startServer } from './service/server.js';
 import {
   formatHumanOutput,
   formatJsonOutput,
   formatSarifOutput,
 } from './reporters/index.js';
 import type {
+  LLMConfig,
   ValidatorConfig,
   OutputConfig,
   IssueSeverity,
@@ -49,6 +55,8 @@ export function collectRules(
 
 /**
  * Parse rule settings from CLI into config format.
+ *
+ * @throws Error for an unknown rule ID or an unrecognized setting
  */
 export function parseRuleOverrides(
   ruleOverrides: Record<string, string>
@@ -56,6 +64,9 @@ export function parseRuleOverrides(
   const rules: Record<string, boolean | IssueSeverity> = {};
 
   for (const [id, setting] of Object.entries(ruleOverrides)) {
+    if (!Object.hasOwn(RULES, id)) {
+      throw new Error(`--rule: unknown rule ID "${id}"`);
+    }
     const normalizedSetting = setting.toLowerCase();
     if (normalizedSetting === 'off' || normalizedSetting === 'false') {
       rules[id] = false;
@@ -67,10 +78,46 @@ export function parseRuleOverrides(
       normalizedSetting === 'suggestion'
     ) {
       rules[id] = normalizedSetting as IssueSeverity;
+    } else {
+      throw new Error(
+        `--rule ${id}: invalid setting "${setting}" (use on, off, error, warning, or suggestion)`
+      );
     }
   }
 
   return rules;
+}
+
+/**
+ * Apply --llm / --llm-provider on top of the configured LLM settings.
+ * A provider chosen on the command line also replaces the configured
+ * model, unless the config names a model for that same provider.
+ */
+export function enableLLM(
+  configured: LLMConfig | undefined,
+  provider: string | undefined
+): LLMConfig {
+  const switchingProvider =
+    provider !== undefined && provider !== configured?.provider;
+  return resolveLLMConfig({
+    ...configured,
+    enabled: true,
+    ...(provider ? { provider } : {}),
+    ...(switchingProvider ? { model: '' } : {}),
+  });
+}
+
+/**
+ * Parse --timeout as a positive integer number of milliseconds.
+ */
+export function parseTimeout(value: string): number {
+  const ms = Number(value);
+  if (!Number.isInteger(ms) || ms <= 0) {
+    throw new InvalidArgumentError(
+      'Must be a positive integer (milliseconds).'
+    );
+  }
+  return ms;
 }
 
 /**
@@ -86,6 +133,7 @@ export interface CLIOptions {
   rule: Record<string, string>;
   llm?: boolean;
   llmProvider?: string;
+  timeout?: number;
   verbose?: boolean;
   quiet?: boolean;
   ci?: boolean;
@@ -105,7 +153,8 @@ async function runValidation(
       chalk.red('Error:'),
       'Must provide a file path or --server option'
     );
-    process.exit(2);
+    process.exitCode = 2;
+    return;
   }
 
   // Build overrides from options the user actually set, so config-file
@@ -142,12 +191,7 @@ async function runValidation(
 
   // Handle LLM options: --llm enables analysis on top of any file config
   if (options.llm) {
-    config.llm = {
-      ...createDefaultLLMConfig(),
-      ...(config.llm ?? {}),
-      enabled: true,
-      ...(options.llmProvider ? { provider: options.llmProvider } : {}),
-    };
+    config.llm = enableLLM(config.llm, options.llmProvider);
   }
 
   // Run validation with the fully-resolved config
@@ -156,6 +200,7 @@ async function runValidation(
     : await validateServer(options.server!, {
         config,
         configPath: options.config,
+        timeout: options.timeout,
       });
 
   // Format output
@@ -172,37 +217,16 @@ async function runValidation(
       output = formatHumanOutput(result, {
         color: config.output.color,
         verbose: config.output.verbose,
+        quiet: options.quiet,
       });
-  }
-
-  // In quiet mode with human format, filter to only errors
-  if (options.quiet && effectiveFormat === 'human') {
-    const lines = output.split('\n');
-    const filteredLines = lines.filter((line) => {
-      // Keep header lines, error lines, and summary
-      return (
-        line.includes('MCP Tool Validator') ||
-        line.includes('Validating:') ||
-        line.includes('ERROR') ||
-        line.includes('Summary:') ||
-        line.includes('Errors:') ||
-        line.includes('Validation failed') ||
-        line.includes('Validation passed') ||
-        line.includes('MCP specification compliance') ||
-        line.includes('Governance threshold') ||
-        line.match(/^[^\s]/) || // Tool names (start of line)
-        line.trim() === '' ||
-        line.includes('─')
-      );
-    });
-    output = filteredLines.join('\n');
   }
 
   console.log(output);
 
-  // Exit code
+  // Exit code. Set rather than call process.exit() so piped output
+  // (large JSON/SARIF reports) is fully flushed before the process ends.
   if (options.ci && !result.valid) {
-    process.exit(1);
+    process.exitCode = 1;
   }
 }
 
@@ -213,37 +237,40 @@ program
     'Validate MCP tool definitions for quality, security, and LLM compatibility'
   )
   .version(VERSION)
+  // Options after `serve` belong to serve (e.g. `serve -c file`).
+  .enablePositionalOptions()
   .argument('[file]', 'Tool definition file to validate (JSON or YAML)')
   .option('-s, --server <url>', 'Validate tools from a live MCP server')
-  .option(
-    '-f, --format <format>',
-    'Output format: human, json, sarif',
-    'human'
-  )
+  .option('-f, --format <format>', 'Output format: human, json, sarif', 'human')
   .option('-c, --config <path>', 'Path to config file')
   .addOption(
     new Option(
       '--spec-version <version>',
       'MCP spec version to validate against'
-    ).choices(['2025-11-25', '2026-07-28'])
+    ).choices(MCP_SPEC_VERSIONS)
   )
   .addOption(
     new Option(
       '--discovery-spec-version <version>',
       'MCP revision used to discover tools from a live server'
-    ).choices(['2025-11-25', '2026-07-28'])
+    ).choices(MCP_SPEC_VERSIONS)
   )
   .addOption(
-    new Option(
-      '--profile <profile>',
-      'Validation policy profile'
-    ).choices(['compliance', 'governance'])
+    new Option('--profile <profile>', 'Validation policy profile').choices([
+      'compliance',
+      'governance',
+    ])
   )
   .option(
     '-r, --rule <rule>',
     'Override rule: RULE-ID=on|off|error|warning|suggestion',
     collectRules,
     {}
+  )
+  .option(
+    '--timeout <ms>',
+    'Live discovery timeout per operation, in milliseconds (default: 30000)',
+    parseTimeout
   )
   .option('--llm', 'Enable LLM-assisted analysis')
   .option(
@@ -262,7 +289,7 @@ program
         chalk.red('Error:'),
         error instanceof Error ? error.message : error
       );
-      process.exit(2);
+      process.exitCode = 2;
     }
   });
 
@@ -270,31 +297,62 @@ program
 program
   .command('serve')
   .description('Start HTTP validation service')
-  .option('-p, --port <port>', 'Port to listen on', '8080')
-  .option('-h, --host <host>', 'Host to bind to', 'localhost')
-  .action(async (options: { port: string; host: string }) => {
+  .option('-p, --port <port>', 'Port to listen on', String(DEFAULT_PORT))
+  .option('-h, --host <host>', 'Host to bind to', DEFAULT_HOST)
+  .option('-c, --config <path>', 'Path to config file')
+  .action(async (options: { port: string; host: string; config?: string }) => {
     const port = Number.parseInt(options.port, 10);
     if (Number.isNaN(port) || port < 0 || port > 65535) {
       console.error(chalk.red('Error:'), `Invalid port: ${options.port}`);
-      process.exit(2);
+      process.exitCode = 2;
+      return;
     }
-    const { startServer } = await import('./service/server.js');
-    startServer(port, options.host);
+    // Resolve and validate the server's config once, at startup, so a bad
+    // config fails fast instead of on every request.
+    let config: ValidatorConfig;
+    try {
+      ({ config } = await resolveConfig(options.config));
+    } catch (error) {
+      console.error(
+        chalk.red('Error:'),
+        error instanceof Error ? error.message : error
+      );
+      process.exitCode = 2;
+      return;
+    }
+    const server = startServer({ port, host: options.host, config });
+    server.on('error', (error: Error) => {
+      console.error(
+        chalk.red('Error:'),
+        `Cannot start server: ${error.message}`
+      );
+      process.exitCode = 2;
+    });
   });
 
 // Export the program for testing
 export { program };
 
-// Only parse if this is the main module (not imported for testing)
-// Check if we're being run directly vs imported
-const isMainModule =
-  typeof process !== 'undefined' &&
-  process.argv[1] &&
-  (process.argv[1].endsWith('cli.js') ||
-    process.argv[1].endsWith('cli.ts') ||
-    process.argv[1].endsWith('mcp-validate.js') ||
-    process.argv[1].includes('/bin/mcp-validate'));
+/**
+ * Run the CLI with the given arguments. The `mcp-validate` bin calls this
+ * directly, so the CLI works however it is launched (npm/npx shims,
+ * symlinks, Windows paths).
+ */
+export async function run(argv: string[] = process.argv): Promise<void> {
+  await program.parseAsync(argv);
+}
 
-if (isMainModule) {
-  program.parse();
+// Also run when this file is executed directly (`node dist/cli.js`), but
+// not when it is imported (by bin/mcp-validate.js or by tests).
+function isMainModule(): boolean {
+  if (!process.argv[1]) return false;
+  try {
+    return realpathSync(process.argv[1]) === fileURLToPath(import.meta.url);
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule()) {
+  await run();
 }

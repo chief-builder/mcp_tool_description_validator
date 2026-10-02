@@ -9,8 +9,8 @@ change.
 
 | Field | Value |
 |---|---|
-| Observed | 2026-08-05 |
-| Validator | `mcp-tool-validator` 0.1.0, commit `6bc392b` |
+| Observed | 2026-08-05 (baseline and follow-up); re-run 2026-10-02 |
+| Validator | 0.1.0 at commit `6bc392b` (then named `mcp-tool-validator`); 0.2.0 for the re-run |
 | Endpoint | `https://drivemcp.googleapis.com/mcp/v1` |
 | Server owner | Google |
 | Server status | Developer Preview |
@@ -34,7 +34,7 @@ curl --location 'https://drivemcp.googleapis.com/mcp/v1' \
   --data '{"method":"tools/list","jsonrpc":"2.0","id":1}'
 ```
 
-The validator's finalized-protocol live path was attempted first:
+The validator's 2026-07-28 live path was attempted first:
 
 ```bash
 node ./dist/cli.js \
@@ -54,14 +54,16 @@ node ./dist/cli.js \
 ```
 
 The initial validator version coupled live discovery and rule targeting, so the
-first finalized-rule pass used the library's `validate()` function directly.
+first 2026-07-28 rule pass used the library's `validate()` function directly.
 That limitation led to LIVE-001 and is now resolved with independent CLI and
 configuration options.
 
 ## Results
 
-The legacy-discovery run and the direct finalized-rule run produced the same
-governance result:
+The legacy-discovery run and the direct 2026-07-28 rule run produced the same
+governance result. These figures were recorded by hand on 2026-08-05; the raw
+output of that run was not retained, so they cannot be re-derived from the
+repository.
 
 | Measure | Result |
 |---|---:|
@@ -91,7 +93,10 @@ The eight discovered tools were `copy_file`, `create_file`,
 | LLM rules | Mixed | 27 | Primarily long descriptions, abbreviations, and ambiguous wording |
 | Best-practice rules | Suggestion | 10 | Primarily missing display titles and response-format controls |
 
-The finalized-only rules SCH-009, SCH-010, and SEC-011 produced no findings.
+The rows above sum to 66 of the 74 findings in the totals; the remaining eight
+were not itemized in the original notes.
+
+The 2026-07-28-only rules SCH-009, SCH-010, and SEC-011 produced no findings.
 The schemas loaded successfully, including their input schemas, output schemas,
 annotations, local `$ref` usage, and pagination shapes.
 
@@ -145,21 +150,33 @@ node ./dist/cli.js \
   --format json --no-color
 ```
 
-| Measure | Follow-up result |
-|---|---:|
-| Tools analyzed | 8 |
-| MCP compliant | Yes |
-| Tools passing the compliance profile | 8 |
-| Errors | 0 |
-| Warnings | 43 |
-| Suggestions | 22 |
-| Specification findings | 0 |
-| Governance findings | 38 |
-| Heuristic findings | 27 |
-| Maturity score | 87/100 |
-| Maturity level | Mature |
+| Measure | Follow-up (2026-08-05) | Re-run (2026-10-02) |
+|---|---:|---:|
+| Tools analyzed | 8 | 8 |
+| MCP compliant | Yes | Yes |
+| Tools passing the compliance profile | 8 | 8 |
+| Errors | 0 | 0 |
+| Warnings | 43 | 48 |
+| Suggestions | 22 | 17 |
+| Specification findings | 0 | 0 |
+| Governance findings | 38 | 36 |
+| Heuristic findings | 27 | 29 |
+| Maturity score | 87/100 | 86/100 |
+| Maturity level | Mature | Mature |
 
-The follow-up report recorded the endpoint, both MCP revisions, compliance
-profile, authentication scope (`none`), and `toolExecutionPerformed: false`.
+The 2026-08-05 follow-up figures were recorded by hand and its JSON report was
+not retained. The 2026-10-02 re-run used the same command with validator
+0.2.0; its complete output is committed as
+[evidence/google-drive-2026-10-02.json](evidence/google-drive-2026-10-02.json).
+Both reports recorded the endpoint, both MCP revisions, the compliance profile,
+authentication scope (`none`), and `toolExecutionPerformed: false`. The
+same eight tools were discovered both times. The differences between the two
+columns have not been attributed: Google may have changed the tool
+definitions, and validator rules changed between the two versions.
+
+On 2026-10-02 the default 2026-07-28 discovery path (no
+`--discovery-spec-version`) also succeeded against this endpoint and produced
+the same result, so the HTTP 400 described above no longer reproduces.
+
 The original findings remain above as a baseline demonstrating why the new
 requirements were needed.

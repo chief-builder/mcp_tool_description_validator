@@ -12,27 +12,78 @@ import { tokenizeIdentifier } from '../utils/text.js';
 // Keywords indicating side effects in tool names
 const SIDE_EFFECT_NAME_PATTERNS = [
   // Create/Add operations
-  'create', 'add', 'new', 'insert', 'post', 'make',
+  'create',
+  'add',
+  'new',
+  'insert',
+  'post',
+  'make',
   // Update/Modify operations
-  'update', 'edit', 'modify', 'change', 'set', 'put', 'patch',
+  'update',
+  'edit',
+  'modify',
+  'change',
+  'set',
+  'put',
+  'patch',
   // Delete/Remove operations
-  'delete', 'remove', 'destroy', 'drop', 'clear', 'purge', 'reset',
+  'delete',
+  'remove',
+  'destroy',
+  'drop',
+  'clear',
+  'purge',
+  'reset',
   // Send/Transmit operations
-  'send', 'emit', 'publish', 'broadcast', 'dispatch', 'push', 'notify',
+  'send',
+  'emit',
+  'publish',
+  'broadcast',
+  'dispatch',
+  'push',
+  'notify',
   // Write/Store operations
-  'write', 'save', 'store', 'persist', 'commit', 'sync',
+  'write',
+  'save',
+  'store',
+  'persist',
+  'commit',
+  'sync',
   // Execute/Run operations
-  'execute', 'run', 'trigger', 'invoke', 'fire', 'start', 'stop',
+  'execute',
+  'run',
+  'trigger',
+  'invoke',
+  'fire',
+  'start',
+  'stop',
   // Import/Export operations
-  'import', 'export', 'upload', 'download',
+  'import',
+  'export',
+  'upload',
+  'download',
   // Move/Copy operations
-  'move', 'copy', 'transfer', 'migrate',
+  'move',
+  'copy',
+  'transfer',
+  'migrate',
   // Configuration operations
-  'configure', 'enable', 'disable', 'activate', 'deactivate',
+  'configure',
+  'enable',
+  'disable',
+  'activate',
+  'deactivate',
   // Auth operations
-  'login', 'logout', 'signup', 'register', 'revoke',
+  'login',
+  'logout',
+  'signup',
+  'register',
+  'revoke',
   // Approval operations
-  'approve', 'reject', 'cancel', 'confirm',
+  'approve',
+  'reject',
+  'cancel',
+  'confirm',
 ];
 
 // Keywords that indicate side effects are mentioned in description
@@ -131,11 +182,13 @@ function toolNameSuggestsSideEffects(toolName: string): boolean {
   // Match keywords only as whole tokens of the name, so "settings_list",
   // "news_reader", or "address_book" are not mistaken for "set"/"new"/"add"
   const tokens = tokenizeIdentifier(toolName);
-  return SIDE_EFFECT_NAME_PATTERNS.some(keyword => tokens.includes(keyword));
+  return SIDE_EFFECT_NAME_PATTERNS.some((keyword) => tokens.includes(keyword));
 }
 
 function descriptionMentionsSideEffects(description: string): boolean {
-  return SIDE_EFFECT_DESCRIPTION_PATTERNS.some(pattern => pattern.test(description));
+  return SIDE_EFFECT_DESCRIPTION_PATTERNS.some((pattern) =>
+    pattern.test(description)
+  );
 }
 
 const rule: Rule = {
@@ -148,7 +201,10 @@ const rule: Rule = {
     const issues: ValidationIssue[] = [];
 
     // Skip if description is empty (handled by LLM-001)
-    if (typeof tool.description !== 'string' || tool.description.trim() === '') {
+    if (
+      typeof tool.description !== 'string' ||
+      tool.description.trim() === ''
+    ) {
       return issues;
     }
 
@@ -163,14 +219,17 @@ const rule: Rule = {
           message: `Tool '${tool.name}' appears to have side effects but description does not mention them`,
           tool: tool.name,
           path: 'description',
-          suggestion: 'Clearly state what changes this tool makes (e.g., "Creates a new record...", "Deletes the file permanently...")',
+          suggestion:
+            'Clearly state what changes this tool makes (e.g., "Creates a new record...", "Deletes the file permanently...")',
         });
       }
     }
 
     // Also check annotations for destructive hint
     if (tool.annotations?.destructiveHint === true) {
-      const mentionsDestructive = DESTRUCTIVE_WARNING_PATTERN.test(tool.description);
+      const mentionsDestructive = DESTRUCTIVE_WARNING_PATTERN.test(
+        tool.description
+      );
       if (!mentionsDestructive) {
         issues.push({
           id: this.id,
@@ -179,7 +238,8 @@ const rule: Rule = {
           message: `Tool '${tool.name}' is marked as destructive but description does not warn about this`,
           tool: tool.name,
           path: 'description',
-          suggestion: 'Add a warning about the destructive nature (e.g., "Warning: This permanently deletes...")',
+          suggestion:
+            'Add a warning about the destructive nature (e.g., "Warning: This permanently deletes...")',
         });
       }
     }

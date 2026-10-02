@@ -5,25 +5,27 @@
  * rule execution, and result aggregation.
  */
 
+import { relative } from 'node:path';
 import type {
   ToolDefinition,
   ValidationResult,
-  ValidatorConfig,
   ValidationMetadata,
   ToolValidationResult,
   MCPSpecVersion,
 } from '../types/index.js';
 import { resolveConfig, type ConfigOverrides } from './config.js';
 import { loadRules } from './rule-loader.js';
-import { executeRules, aggregateResults, flattenIssues } from './rule-engine.js';
+import {
+  executeRules,
+  aggregateResults,
+  flattenIssues,
+} from './rule-engine.js';
 import { parseFile } from '../parsers/file.js';
 import { fetchToolsFromServer } from '../parsers/mcp-client.js';
 import { analyzeTools } from '../llm/analyzer.js';
 
 import { VERSION as VALIDATOR_VERSION } from '../version.js';
-
-/** Spec version reported/validated when the config does not set one. */
-const DEFAULT_MCP_SPEC_VERSION = '2026-07-28';
+import { DEFAULT_MCP_SPEC_VERSION } from './spec-versions.js';
 
 /**
  * Options for validation functions.
@@ -33,6 +35,14 @@ export interface ValidateOptions {
   config?: ConfigOverrides;
   /** Load config from file path */
   configPath?: string;
+  /**
+   * Search the working directory for a config file when `configPath` is
+   * not set (default true). Set to false to use only the built-in defaults
+   * plus `config`, e.g. when the caller has already resolved its config.
+   */
+  discoverConfig?: boolean;
+  /** Live discovery: per-operation timeout in milliseconds (default 30000). */
+  timeout?: number;
   /** Reproducibility context for live-server discovery. */
   runContext?: {
     serverEndpoint: string;
@@ -54,7 +64,7 @@ export interface ValidateOptions {
  *
  * @example
  * ```typescript
- * import { validate } from 'mcp-tool-validator';
+ * import { validate } from 'mcp-tool-description-validator';
  *
  * const tools = [{
  *   name: 'my-tool',
@@ -79,7 +89,8 @@ export async function validate(
   // inline overrides per-section so they don't clobber file settings.
   const { config, filepath } = await resolveConfig(
     options.configPath,
-    options.config
+    options.config,
+    { discover: options.discoverConfig }
   );
 
   // Load enabled rules based on config and targeted spec version
@@ -95,12 +106,14 @@ export async function validate(
   );
 
   // Build per-tool results
-  const toolValidationResults: ToolValidationResult[] = toolResults.map((tr) => ({
-    name: tr.tool.name,
-    valid: !tr.issues.some((i) => i.severity === 'error'),
-    tool: tr.tool,
-    issues: tr.issues,
-  }));
+  const toolValidationResults: ToolValidationResult[] = toolResults.map(
+    (tr) => ({
+      name: tr.tool.name,
+      valid: !tr.issues.some((i) => i.severity === 'error'),
+      tool: tr.tool,
+      issues: tr.issues,
+    })
+  );
 
   // Optional LLM-assisted analysis. A failure here (missing provider
   // package, network error) must not discard the static results.
@@ -117,8 +130,7 @@ export async function validate(
       }
       llmAnalysisUsed = true;
     } catch (error) {
-      llmAnalysisError =
-        error instanceof Error ? error.message : String(error);
+      llmAnalysisError = error instanceof Error ? error.message : String(error);
     }
   }
 
@@ -137,7 +149,9 @@ export async function validate(
     validationProfile: config.profile ?? 'governance',
     timestamp: new Date().toISOString(),
     duration: Date.now() - startTime,
-    configUsed: filepath ?? '',
+    // Relative to the working directory so reports do not embed
+    // machine-specific absolute paths.
+    configUsed: filepath ? relative(process.cwd(), filepath) : '',
     llmAnalysisUsed,
     ...(options.runContext
       ? {
@@ -172,7 +186,7 @@ export async function validate(
  *
  * @example
  * ```typescript
- * import { validateFile } from 'mcp-tool-validator';
+ * import { validateFile } from 'mcp-tool-description-validator';
  *
  * const result = await validateFile('./tools.json');
  * console.log(`Validated ${result.summary.totalTools} tools`);
@@ -198,7 +212,7 @@ export async function validateFile(
  *
  * @example
  * ```typescript
- * import { validateServer } from 'mcp-tool-validator';
+ * import { validateServer } from 'mcp-tool-description-validator';
  *
  * // HTTP server
  * const result = await validateServer('http://localhost:3000/mcp');
@@ -211,12 +225,17 @@ export async function validateServer(
   serverUrl: string,
   options: ValidateOptions = {}
 ): Promise<ValidationResult> {
-  const { config } = await resolveConfig(options.configPath, options.config);
+  const { config } = await resolveConfig(options.configPath, options.config, {
+    discover: options.discoverConfig,
+  });
   const discoverySpecVersion =
-    config.discoverySpecVersion ?? config.specVersion ?? DEFAULT_MCP_SPEC_VERSION;
+    config.discoverySpecVersion ??
+    config.specVersion ??
+    DEFAULT_MCP_SPEC_VERSION;
   const tools = await fetchToolsFromServer({
     server: serverUrl,
     specVersion: discoverySpecVersion,
+    timeout: options.timeout,
   });
   return validate(tools, {
     ...options,

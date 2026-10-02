@@ -21,17 +21,17 @@ const EXAMPLE_PATTERNS = [
   'like ',
   'including',
   'sample',
-  '```',  // Code block
+  '```', // Code block
 ];
 
 // Regex patterns for detecting example-like content
 const EXAMPLE_REGEXES = [
-  /\b\w+\s*=\s*["'][^"']+["']/,  // key="value" or key='value'
-  /\b\w+:\s*["'][^"']+["']/,     // key: "value" or key: 'value'
-  /`[^`]+`/,                      // `inline code`
-  /\(\s*e\.?g\.?\s+/i,           // (e.g. or (eg
-  /"[^"]+"/,                      // "quoted example" (requires a pair)
-  /'[^']{2,}'/,                   // 'quoted example' (pair; skips apostrophes like "user's")
+  /\b\w+\s*=\s*["'][^"']+["']/, // key="value" or key='value'
+  /\b\w+:\s*["'][^"']+["']/, // key: "value" or key: 'value'
+  /`[^`]+`/, // `inline code`
+  /\(\s*e\.?g\.?\s+/i, // (e.g. or (eg
+  /"[^"]+"/, // "quoted example" (requires a pair)
+  /'[^']{2,}'/, // 'quoted example' (pair; skips apostrophes like "user's")
 ];
 
 const rule: Rule = {
@@ -44,7 +44,10 @@ const rule: Rule = {
     const issues: ValidationIssue[] = [];
 
     // Skip if description is empty (handled by LLM-001)
-    if (typeof tool.description !== 'string' || tool.description.trim() === '') {
+    if (
+      typeof tool.description !== 'string' ||
+      tool.description.trim() === ''
+    ) {
       return issues;
     }
 
@@ -52,12 +55,12 @@ const rule: Rule = {
     const descLower = description.toLowerCase();
 
     // Check for phrase patterns
-    const hasExamplePhrase = EXAMPLE_PATTERNS.some(pattern =>
+    const hasExamplePhrase = EXAMPLE_PATTERNS.some((pattern) =>
       descLower.includes(pattern.toLowerCase())
     );
 
     // Check for regex patterns
-    const hasExamplePattern = EXAMPLE_REGEXES.some(regex =>
+    const hasExamplePattern = EXAMPLE_REGEXES.some((regex) =>
       regex.test(description)
     );
 
@@ -69,7 +72,8 @@ const rule: Rule = {
         message: 'Tool description does not include usage examples',
         tool: tool.name,
         path: 'description',
-        suggestion: 'Add examples to illustrate usage (e.g., "Example: search-users query=\'john\'")',
+        suggestion:
+          'Add examples to illustrate usage (e.g., "Example: search-users query=\'john\'")',
       });
     }
 

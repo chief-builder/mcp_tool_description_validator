@@ -4,7 +4,10 @@
 
 import { describe, it, expect } from 'vitest';
 import rule from '../../../../src/rules/security/sec-011.js';
-import type { ToolDefinition, ToolSource } from '../../../../src/types/index.js';
+import type {
+  ToolDefinition,
+  ToolSource,
+} from '../../../../src/types/index.js';
 import type { RuleContext } from '../../../../src/rules/types.js';
 
 const mockSource: ToolSource = { type: 'file', location: 'test.json', raw: {} };
@@ -45,13 +48,16 @@ describe('SEC-011: sensitive parameter exposed as header', () => {
     expect(issues[0].severity).toBe('error');
     expect(issues[0].message).toContain('api_key');
     expect(issues[0].message.toLowerCase()).toContain('intermediaries');
-    expect(issues[0].path).toBe(
-      'inputSchema.properties.api_key.x-mcp-header'
-    );
+    expect(issues[0].path).toBe('inputSchema.properties.api_key.x-mcp-header');
   });
 
   it('should flag camelCase sensitive names (token-aware)', () => {
-    for (const name of ['apiKey', 'accessToken', 'clientSecret', 'userPassword']) {
+    for (const name of [
+      'apiKey',
+      'accessToken',
+      'clientSecret',
+      'userPassword',
+    ]) {
       const tool = createTool({
         type: 'object',
         properties: {

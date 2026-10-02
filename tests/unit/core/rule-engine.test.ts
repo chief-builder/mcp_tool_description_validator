@@ -12,8 +12,11 @@ import {
   getMaturityLevel,
   getRuleProvenance,
 } from '../../../src/core/rule-engine.js';
-import { getEffectiveSeverity } from '../../../src/core/rule-loader.js';
-import type { Rule, RuleContext, ToolRuleResults } from '../../../src/rules/types.js';
+import type {
+  Rule,
+  RuleContext,
+  ToolRuleResults,
+} from '../../../src/rules/types.js';
 import type {
   ToolDefinition,
   RuleConfig,
@@ -205,26 +208,6 @@ describe('Rule Engine', () => {
 
       expect(results).toHaveLength(1);
       expect(results[0].issues).toHaveLength(0);
-    });
-  });
-
-  describe('getEffectiveSeverity', () => {
-    it('should return rule default severity when not configured', () => {
-      const config: RuleConfig = {};
-      const severity = getEffectiveSeverity(emptyNameRule, config);
-      expect(severity).toBe('error');
-    });
-
-    it('should return config severity when configured as string', () => {
-      const config: RuleConfig = { 'TEST-001': 'warning' };
-      const severity = getEffectiveSeverity(emptyNameRule, config);
-      expect(severity).toBe('warning');
-    });
-
-    it('should return rule default when config is boolean true', () => {
-      const config: RuleConfig = { 'TEST-001': true };
-      const severity = getEffectiveSeverity(emptyNameRule, config);
-      expect(severity).toBe('error');
     });
   });
 
@@ -590,13 +573,15 @@ describe('Rule Engine', () => {
       const results: ToolRuleResults[] = [
         {
           tool: createMockTool(),
-          issues: Array(15).fill(null).map((_, i) => ({
-            id: `E${i}`,
-            category: 'schema' as const,
-            severity: 'error' as const,
-            message: `Error ${i}`,
-            tool: 'test',
-          })),
+          issues: Array(15)
+            .fill(null)
+            .map((_, i) => ({
+              id: `E${i}`,
+              category: 'schema' as const,
+              severity: 'error' as const,
+              message: `Error ${i}`,
+              tool: 'test',
+            })),
         },
       ];
 
@@ -638,11 +623,17 @@ describe('hostile tool definitions', () => {
       },
     };
 
-    const results = executeRules([createMockTool()], [crashingRule, okRule], {});
+    const results = executeRules(
+      [createMockTool()],
+      [crashingRule, okRule],
+      {}
+    );
     const issues = results[0].issues;
 
     // The crash became a finding and the other rule still ran
-    expect(issues.some((i) => i.id === 'TEST-CRASH' && i.severity === 'error')).toBe(true);
+    expect(
+      issues.some((i) => i.id === 'TEST-CRASH' && i.severity === 'error')
+    ).toBe(true);
     expect(issues.some((i) => i.id === 'TEST-OK')).toBe(true);
   });
 
@@ -654,17 +645,37 @@ describe('hostile tool definitions', () => {
       description: 'escalates one finding',
       check(tool) {
         return [
-          { id: 'TEST-ESC', category: 'schema', severity: 'warning', message: 'escalated', tool: tool.name },
-          { id: 'TEST-ESC', category: 'schema', severity: 'suggestion', message: 'normal', tool: tool.name },
+          {
+            id: 'TEST-ESC',
+            category: 'schema',
+            severity: 'warning',
+            message: 'escalated',
+            tool: tool.name,
+          },
+          {
+            id: 'TEST-ESC',
+            category: 'schema',
+            severity: 'suggestion',
+            message: 'normal',
+            tool: tool.name,
+          },
         ];
       },
     };
 
     const kept = executeRules([createMockTool()], [escalatingRule], {});
-    expect(kept[0].issues.map((i) => i.severity)).toEqual(['warning', 'suggestion']);
+    expect(kept[0].issues.map((i) => i.severity)).toEqual([
+      'warning',
+      'suggestion',
+    ]);
 
-    const overridden = executeRules([createMockTool()], [escalatingRule], { 'TEST-ESC': 'error' });
-    expect(overridden[0].issues.map((i) => i.severity)).toEqual(['error', 'error']);
+    const overridden = executeRules([createMockTool()], [escalatingRule], {
+      'TEST-ESC': 'error',
+    });
+    expect(overridden[0].issues.map((i) => i.severity)).toEqual([
+      'error',
+      'error',
+    ]);
   });
 
   it('labels every finding with its provenance', () => {

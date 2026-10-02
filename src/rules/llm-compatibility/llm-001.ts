@@ -17,7 +17,10 @@ const rule: Rule = {
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
 
-    if (typeof tool.description !== 'string' || tool.description.trim() === '') {
+    if (
+      typeof tool.description !== 'string' ||
+      tool.description.trim() === ''
+    ) {
       issues.push({
         id: this.id,
         category: this.category,
@@ -25,7 +28,8 @@ const rule: Rule = {
         message: 'Tool description is empty or missing',
         tool: tool.name,
         path: 'description',
-        suggestion: 'Add a clear description explaining what this tool does and when to use it',
+        suggestion:
+          'Add a clear description explaining what this tool does and when to use it',
       });
     }
 

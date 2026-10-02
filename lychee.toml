@@ -1,0 +1,23 @@
+# Link checker configuration (https://lychee.cli.rs), used by CI.
+
+# Check #fragment anchors in Markdown and HTML links.
+include_fragments = "anchor-only"
+
+max_retries = 3
+retry_wait_time = 5
+timeout = 30
+# 429: rate limited, not broken.
+accept = ["200..=299", "429"]
+
+exclude_path = ["(^|/)node_modules/", "(^|/)dist/", "(^|/)coverage/"]
+
+exclude = [
+  # Local endpoints and placeholder domains used in examples.
+  '^https?://localhost',
+  '^https?://127\.0\.0\.1',
+  '^https?://([a-z0-9-]+\.)*example\.(com|org)',
+  # This repository's own files on github.com: github.com answers automated
+  # requests for these pages with 503, so scripts/check-repo-links.mjs
+  # checks that the files exist in the checkout instead.
+  '^https://github\.com/chief-builder/mcp_tool_description_validator/(blob|tree)/',
+]

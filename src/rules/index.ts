@@ -40,34 +40,5 @@ export const RULES: Record<string, Rule> = Object.fromEntries(
   ALL_RULES.map((rule) => [rule.id, rule])
 );
 
-/**
- * Get all registered rule IDs.
- */
-export function getAllRuleIds(): string[] {
-  return Object.keys(RULES);
-}
-
-/**
- * Check if a rule ID is registered.
- */
-export function isRuleRegistered(ruleId: string): boolean {
-  return ruleId in RULES;
-}
-
-/**
- * Get a rule by ID.
- */
-export function getRuleById(ruleId: string): Rule | undefined {
-  return RULES[ruleId];
-}
-
-/**
- * Load a rule by ID (synchronous via static registry).
- * Kept async for backwards compatibility with existing code.
- */
-export async function loadRuleModule(ruleId: string): Promise<Rule | null> {
-  return RULES[ruleId] ?? null;
-}
-
 // Re-export types
 export type { Rule } from './types.js';

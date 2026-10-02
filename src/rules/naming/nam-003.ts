@@ -20,7 +20,7 @@ const rule: Rule = {
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
 
-    // Skip if name is empty (handled by NAM-001)
+    // Skip if name is empty (handled by SCH-001)
     if (!tool.name || tool.name.trim() === '') {
       return issues;
     }
@@ -35,7 +35,8 @@ const rule: Rule = {
         message: `Tool name "${tool.name}" is too short (${length} characters). Should be at least ${MIN_LENGTH} characters.`,
         tool: tool.name,
         path: 'name',
-        suggestion: 'Use a more descriptive name that clearly indicates the tool\'s purpose',
+        suggestion:
+          "Use a more descriptive name that clearly indicates the tool's purpose",
       });
     } else if (length > MAX_LENGTH) {
       issues.push({
@@ -45,7 +46,8 @@ const rule: Rule = {
         message: `Tool name "${tool.name}" is too long (${length} characters). Should be at most ${MAX_LENGTH} characters.`,
         tool: tool.name,
         path: 'name',
-        suggestion: 'Use a shorter, more concise name while keeping it descriptive',
+        suggestion:
+          'Use a shorter, more concise name while keeping it descriptive',
       });
     }
 

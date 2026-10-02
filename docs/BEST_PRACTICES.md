@@ -143,7 +143,7 @@ Follows MCP annotations, agent-design, and usability guidelines.
 - Limit parameter count (max 10)
 - Limit nesting depth (max 4 levels)
 - Provide outputSchema for response validation
-- Icons must use safe sources (https:// or data:)
+- Icons must use safe sources (`https://` URLs or base64 `data:image/...` URIs)
 - Parameterless tools should set `additionalProperties: false`
 - Document handle lifetimes, support pagination/filtering, offer response-format control, and avoid overlapping tool descriptions
 

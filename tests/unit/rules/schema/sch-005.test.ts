@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import rule from '../../../../src/rules/schema/sch-005.js';
-import type { ToolDefinition, ToolSource } from '../../../../src/types/index.js';
+import type {
+  ToolDefinition,
+  ToolSource,
+} from '../../../../src/types/index.js';
 import type { RuleContext } from '../../../../src/rules/types.js';
 
 const mockSource: ToolSource = { type: 'file', location: 'test.json', raw: {} };

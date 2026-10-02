@@ -58,7 +58,9 @@ const rule: Rule = {
         severity: this.defaultSeverity,
         message: `Tool name "${tool.name}" contains discouraged character(s): ${illegalChars
           .map((c) => JSON.stringify(c))
-          .join(', ')}. The MCP spec recommends only letters, digits, underscores, dots, and hyphens`,
+          .join(
+            ', '
+          )}. The MCP spec recommends only letters, digits, underscores, dots, and hyphens`,
         tool: tool.name,
         path: 'name',
         suggestion:

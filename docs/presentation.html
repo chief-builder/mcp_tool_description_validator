@@ -170,7 +170,7 @@
 
   <!-- 1. Title -->
   <section class="slide active">
-    <div class="eyebrow">mcp-tool-validator · v0.1.0</div>
+    <div class="eyebrow">mcp-tool-description-validator · v0.2.0</div>
     <h1>MCP Tool Description Validator</h1>
     <p class="lead">A governance validator for Model Context Protocol tool definitions — catching the schema violations, security gaps, and ambiguous descriptions that make LLM agents misuse tools.</p>
     <p class="lead" style="font-size:1rem; margin-top:2rem;">57 rules · 5 categories · CLI + HTTP API + library · live-server validation · optional LLM-assisted analysis</p>
@@ -262,7 +262,7 @@ POST /validate  { <span class="b">"tools"</span>: [...] }</pre>
         <span class="pill bp">BP-003</span> "delete" tool missing <code class="inline">destructiveHint</code></p>
       </div>
       <div class="card"><h3>Finalized-version rules</h3>
-        <p>Three finalized rules are skipped only with legacy <code class="inline">--spec-version 2025-11-25</code>:<br>
+        <p>Three 2026-07-28-only rules are skipped with legacy <code class="inline">--spec-version 2025-11-25</code>:<br>
         <span class="pill sch">SCH-009</span> network <code class="inline">$ref</code> ban ·
         <span class="pill sch">SCH-010</span> <code class="inline">x-mcp-header</code> constraints ·
         <span class="pill sec">SEC-011</span> sensitive params exposed as headers</p>
@@ -285,7 +285,7 @@ POST /validate  { <span class="b">"tools"</span>: [...] }</pre>
     </table>
     <div class="grid cols-3" style="margin-top:1.6rem;">
       <div class="card"><div class="big" style="color:var(--green)">99</div><p><code class="inline">examples/polished-tools.json</code> — 2 tools, 2 suggestions</p></div>
-      <div class="card"><div class="big" style="color:var(--accent)">75</div><p>Official MCP <strong>memory server</strong>, validated live over STDIO</p></div>
+      <div class="card"><div class="big" style="color:var(--accent)">79</div><p>Official MCP <strong>memory server</strong> 2026.8.31, discovered live over stdio (2026-10-02)</p></div>
       <div class="card"><div class="big" style="color:var(--yellow)">60</div><p><code class="inline">examples/needs-work-tools.json</code> — 9 errors, 10 warnings, 16 suggestions</p></div>
     </div>
   </section>
@@ -306,7 +306,7 @@ mcp-validate tools.json <span class="b">--rule</span> SEC-001=off</pre>
       <div class="card">
         <h3>2 · Library</h3>
 <pre><span class="p">import</span> { validate, validateFile,
-  validateServer } <span class="p">from</span> <span class="g">'mcp-tool-validator'</span>;
+  validateServer } <span class="p">from</span> <span class="g">'mcp-tool-description-validator'</span>;
 
 <span class="p">const</span> r = <span class="p">await</span> validateFile(<span class="g">'./tools.json'</span>);
 r.compliant; r.valid; r.summary.maturityScore; r.issues;</pre>
@@ -316,41 +316,46 @@ r.compliant; r.valid; r.summary.maturityScore; r.issues;</pre>
 <pre>mcp-validate serve --port 8080
 <span class="c"># GET  /health   → {status, version}</span>
 <span class="c"># POST /validate → full result</span>
-<span class="c"># bad config     → 400 with details</span></pre>
+<span class="c"># bad config     → 400 with details</span>
+<span class="c"># non-JSON 415 · over 1 MiB 413</span></pre>
       </div>
       <div class="card">
         <h3>4 · Live MCP servers</h3>
 <pre><span class="c"># STDIO command or Streamable HTTP URL</span>
-mcp-validate -s <span class="g">"npx -y @mcp/server-memory"</span>
+mcp-validate -s <span class="g">"npx -y @modelcontextprotocol/server-memory"</span> <span class="b">--discovery-spec-version 2025-11-25</span>
 mcp-validate -s <span class="g">"http://localhost:3000/mcp"</span></pre>
       </div>
     </div>
-    <p class="muted" style="margin-top:1.2rem; font-size:.9rem;">Exit codes: <code class="inline">0</code> success · <code class="inline">1</code> errors found with <code class="inline">--ci</code> · <code class="inline">2</code> input/usage failure. SARIF 2.1.0 output plugs into GitHub code scanning.</p>
+    <p class="muted" style="margin-top:1.2rem; font-size:.9rem;">Exit codes: <code class="inline">0</code> success · <code class="inline">1</code> errors found with <code class="inline">--ci</code> · <code class="inline">2</code> runtime failure (bad file, config, or discovery). SARIF 2.1.0 is the format GitHub code scanning accepts for uploads.</p>
   </section>
 
   <!-- 7. Sample output -->
   <section class="slide">
     <h2>What a run looks like</h2>
-<pre style="font-size:.9rem;">MCP Tool Validator v0.1.0
+<pre style="font-size:.9rem;">MCP Tool Validator v0.2.0
 ──────────────────────────────────────────────────
 Validating: 1 tool(s)
 Profile: governance
 Validation spec: 2026-07-28
 
-<span class="r">✗ BadName!!</span>
+<span class="g">✓ BadName!!</span>
   <span class="y">WARNING</span> [NAM-002] [GOVERNANCE] Tool name "BadName!!" contains discouraged character(s): "!".
-                     The MCP spec allows only letters, digits, underscores, dots, and hyphens
-  <span class="y">WARNING</span> [LLM-002] [HEURISTIC] Tool description is too short
-  <span class="y">WARNING</span> [LLM-004] [HEURISTIC] Description does not explain when to use this tool
-  <span class="b">SUGGESTION</span> [LLM-005] [HEURISTIC] Description does not include usage examples
+          The MCP spec recommends only letters, digits, underscores, dots, and hyphens
+    at: name
+  <span class="y">WARNING</span> [LLM-002] [HEURISTIC] Tool description is too short (11 characters, minimum 20)
+    at: description
+  <span class="b">SUGGESTION</span> [LLM-005] [HEURISTIC] Tool description does not include usage examples
+    at: description
+  <span class="c">… 10 more findings …</span>
 
 ──────────────────────────────────────────────────
-Summary: 1/1 tools valid   Errors: 0   Warnings: 3   Suggestions: 1
+Summary: 1/1 tools valid   Errors: 0   Warnings: 6   Suggestions: 7
+Maturity: MATURE (81/100)
 
 MCP specification compliance passed.
 Governance threshold passed.</pre>
     <ul class="clean" style="margin-top:1.2rem;">
-      <li>Every issue carries a rule ID, severity, <strong>provenance</strong>, the offending schema path, and a concrete fix suggestion.</li>
+      <li>Every issue carries a rule ID, severity and <strong>provenance</strong>, plus the schema path and a fix suggestion where they apply (<code class="inline">--verbose</code> prints suggestions).</li>
       <li>Rules can be tuned per project: <code class="inline">--rule SEC-001=off</code>, <code class="inline">--rule LLM-005=error</code>, or the same in config.</li>
     </ul>
   </section>
@@ -392,8 +397,8 @@ Governance threshold passed.</pre>
     <h2>Optional LLM-assisted analysis</h2>
     <p class="muted" style="margin-bottom:1.4rem; max-width:48rem;">Static rules catch structural problems. With <code class="inline">--llm</code>, each tool is additionally scored by a model for the things regexes can't judge:</p>
     <div class="grid cols-3">
-      <div class="card"><h3>Clarity score</h3><p>Would an agent reading only this description know exactly what the tool does and returns?</p></div>
-      <div class="card"><h3>Ambiguities &amp; conflicts</h3><p>Descriptions that contradict their own schema, overloaded parameters, undefined behavior.</p></div>
+      <div class="card"><h3>Clarity &amp; completeness</h3><p>Two 1–10 scores: would an AI understand when to call this tool, and does the description cover it?</p></div>
+      <div class="card"><h3>Ambiguities &amp; conflicts</h3><p>Vague phrases, and mismatches between the description and its schema.</p></div>
       <div class="card"><h3>Improvement suggestions</h3><p>Concrete rewrites attached per tool in the result.</p></div>
     </div>
     <ul class="clean" style="margin-top:1.6rem;">
@@ -406,14 +411,14 @@ Governance threshold passed.</pre>
   <section class="slide">
     <h2>Verified in this review</h2>
     <div class="grid cols-3" style="margin-bottom:1.4rem;">
-      <div class="card"><div class="big" style="color:var(--green)">1,036 / 1,036</div><p>tests passing across 71 files — rules, profiles, provenance, core, parsers, reporters, service, CLI, and integration suites</p></div>
-      <div class="card"><div class="big" style="color:var(--green)">8 / 8</div><p>Google Drive tools passed the compliance profile using legacy discovery and finalized 2026 validation</p></div>
+      <div class="card"><div class="big" style="color:var(--green)">1,086 / 1,086</div><p>tests passing across 73 files — rules, profiles, provenance, core, parsers, reporters, service, CLI, and integration suites</p></div>
+      <div class="card"><div class="big" style="color:var(--green)">8 / 8</div><p>Google Drive tools passed the compliance profile using legacy discovery and 2026-07-28 validation</p></div>
       <div class="card"><div class="big" style="color:var(--green)">0</div><p>type errors — <code class="inline">tsc</code> clean over src, tests, and scripts</p></div>
     </div>
     <ul class="clean check">
       <li>CLI exercised end-to-end: human, JSON, and SARIF output; rule overrides; both supported spec revisions; YAML input; correct exit codes (0 / 1 with <code class="inline">--ci</code> / 2 on bad input).</li>
       <li>Malformed input handled gracefully — missing files, garbage JSON, and illegal tool names all produce descriptive errors, never stack traces.</li>
-      <li>Managed remote proof against Google Drive MCP: 8 tools, 0 specification findings, 87/100, no authorization, and no tool execution.</li>
+      <li>Managed remote proof against Google Drive MCP: 8 tools, 0 specification findings, 86/100 on the 2026-10-02 re-run (report committed), no authorization, and no tool execution.</li>
       <li>HTTP service verified: <code class="inline">/health</code>, <code class="inline">/validate</code> (200 with full result), invalid config rejected with 400 and field-level detail.</li>
     </ul>
   </section>

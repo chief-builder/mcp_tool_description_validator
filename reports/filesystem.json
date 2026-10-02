@@ -1035,7 +1035,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "read_file",
             "title": "Read File (Deprecated)",
@@ -1213,7 +1213,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "read_text_file",
             "title": "Read Text File",
@@ -1365,7 +1365,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "read_media_file",
             "title": "Read Media File",
@@ -1539,7 +1539,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "read_multiple_files",
             "title": "Read Multiple Files",
@@ -1667,7 +1667,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "write_file",
             "title": "Write File",
@@ -1846,7 +1846,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "edit_file",
             "title": "Edit File",
@@ -2030,7 +2030,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "create_directory",
             "title": "Create Directory",
@@ -2150,7 +2150,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "list_directory",
             "title": "List Directory",
@@ -2285,7 +2285,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "list_directory_with_sizes",
             "title": "List Directory with Sizes",
@@ -2436,7 +2436,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "directory_tree",
             "title": "Directory Tree",
@@ -2593,7 +2593,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "move_file",
             "title": "Move File",
@@ -2737,7 +2737,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "search_files",
             "title": "Search Files",
@@ -2901,7 +2901,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "get_file_info",
             "title": "Get File Info",
@@ -3011,7 +3011,7 @@
         },
         "source": {
           "type": "server",
-          "location": "npx -y @modelcontextprotocol/server-filesystem /Users/chiefbuilder/Documents/Projects/mcp_tool_description_validator",
+          "location": "npx -y @modelcontextprotocol/server-filesystem .",
           "raw": {
             "name": "list_allowed_directories",
             "title": "List Allowed Directories",

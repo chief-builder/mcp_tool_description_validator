@@ -277,7 +277,9 @@ describe('LLM-009: Include parameter constraints in description', () => {
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(1);
     // Should mention multiple constraints
-    expect(issues[0].message).toMatch(/minimum length|maximum length|format pattern/);
+    expect(issues[0].message).toMatch(
+      /minimum length|maximum length|format pattern/
+    );
   });
 
   it('should handle missing inputSchema gracefully', () => {

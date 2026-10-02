@@ -3,7 +3,9 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import rule, { isSensitiveParameter } from '../../../../src/rules/security/sec-007.js';
+import rule, {
+  isSensitiveParameter,
+} from '../../../../src/rules/security/sec-007.js';
 import type { ToolDefinition } from '../../../../src/types/index.js';
 import type { RuleContext } from '../../../../src/rules/types.js';
 

@@ -56,13 +56,17 @@ const rule: Rule = {
   id: 'LLM-013',
   category: 'llm-compatibility',
   defaultSeverity: 'suggestion',
-  description: 'Tool description should include workflow guidance (prerequisites, alternatives, sequencing)',
+  description:
+    'Tool description should include workflow guidance (prerequisites, alternatives, sequencing)',
 
   check(tool, ctx) {
     const issues: ValidationIssue[] = [];
 
     // Skip if description is empty (handled by LLM-001)
-    if (typeof tool.description !== 'string' || tool.description.trim() === '') {
+    if (
+      typeof tool.description !== 'string' ||
+      tool.description.trim() === ''
+    ) {
       return issues;
     }
 
@@ -72,27 +76,31 @@ const rule: Rule = {
     const hasWorkflowKeyword = hasWorkflowKeywordMatcher(description);
 
     // Check for workflow patterns
-    const hasWorkflowPattern = WORKFLOW_PATTERNS.some(pattern => pattern.test(description));
+    const hasWorkflowPattern = WORKFLOW_PATTERNS.some((pattern) =>
+      pattern.test(description)
+    );
 
     // Check for references to other tool names, matched as whole words so
     // short names like 'run' or 'get' don't match inside ordinary prose
     const otherToolNames = ctx.allTools
-      .map(otherTool => otherTool.name)
+      .map((otherTool) => otherTool.name)
       .filter(
-        name =>
+        (name) =>
           name !== tool.name && name.length >= MIN_REFERENCED_TOOL_NAME_LENGTH
       );
     const hasToolReference =
       findWordMatches(description, otherToolNames).length > 0;
 
-    const hasWorkflowGuidance = hasWorkflowKeyword || hasWorkflowPattern || hasToolReference;
+    const hasWorkflowGuidance =
+      hasWorkflowKeyword || hasWorkflowPattern || hasToolReference;
 
     if (!hasWorkflowGuidance) {
       issues.push({
         id: this.id,
         category: this.category,
         severity: this.defaultSeverity,
-        message: 'Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)',
+        message:
+          'Tool description lacks workflow guidance (prerequisites, alternatives, or sequencing)',
         tool: tool.name,
         path: 'description',
         suggestion:

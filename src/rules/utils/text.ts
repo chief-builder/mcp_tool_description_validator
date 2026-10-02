@@ -25,11 +25,6 @@ export function normalizeForMatching(text: string): string {
   return tokenizeIdentifier(text).join(' ');
 }
 
-/** True when the identifier contains the term as a whole token. */
-export function hasToken(text: string, term: string): boolean {
-  return tokenizeIdentifier(text).includes(term.toLowerCase());
-}
-
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

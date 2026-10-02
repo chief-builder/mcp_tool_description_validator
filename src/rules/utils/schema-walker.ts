@@ -166,7 +166,13 @@ export function walkSchema(
       const list = node[key];
       if (Array.isArray(list)) {
         for (let index = 0; index < list.length && !truncated; index++) {
-          walk(list[index], `${path}.${key}[${index}]`, depth + 1, undefined, false);
+          walk(
+            list[index],
+            `${path}.${key}[${index}]`,
+            depth + 1,
+            undefined,
+            false
+          );
         }
       }
     }

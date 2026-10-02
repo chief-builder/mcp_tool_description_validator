@@ -192,9 +192,7 @@ const rule: Rule = {
       if (occurrences && occurrences.length > 1) {
         // This schema appears in multiple places
         const otherLocations = occurrences
-          .filter(
-            (o) => o.tool !== tool.name || o.path !== schemaInfo.path
-          )
+          .filter((o) => o.tool !== tool.name || o.path !== schemaInfo.path)
           .map((o) => (o.tool === tool.name ? o.path : o.tool));
 
         if (otherLocations.length > 0) {

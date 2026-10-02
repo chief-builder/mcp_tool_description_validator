@@ -27,7 +27,9 @@ describe('NAM-006: Parameter names should use consistent casing', () => {
     expect(rule.id).toBe('NAM-006');
     expect(rule.category).toBe('naming');
     expect(rule.defaultSeverity).toBe('warning');
-    expect(rule.description).toBe('Parameter names should use consistent casing (camelCase recommended)');
+    expect(rule.description).toBe(
+      'Parameter names should use consistent casing (camelCase recommended)'
+    );
   });
 
   describe('passing cases', () => {
@@ -64,7 +66,7 @@ describe('NAM-006: Parameter names should use consistent casing', () => {
       const issues = rule.check(tool, createContext());
       // Should warn about not using camelCase, but no inconsistency issue
       expect(issues.length).toBeGreaterThanOrEqual(1);
-      expect(issues.some(i => i.message.includes('camelCase'))).toBe(true);
+      expect(issues.some((i) => i.message.includes('camelCase'))).toBe(true);
     });
 
     it('should pass for single-word lowercase parameters', () => {
@@ -97,7 +99,7 @@ describe('NAM-006: Parameter names should use consistent casing', () => {
       });
       const issues = rule.check(tool, createContext());
       expect(issues.length).toBeGreaterThanOrEqual(1);
-      expect(issues.some(i => i.message.includes('inconsistent'))).toBe(true);
+      expect(issues.some((i) => i.message.includes('inconsistent'))).toBe(true);
     });
 
     it('should fail for mixed snake_case and kebab-case', () => {
@@ -118,7 +120,7 @@ describe('NAM-006: Parameter names should use consistent casing', () => {
       });
       const issues = rule.check(tool, createContext());
       expect(issues.length).toBeGreaterThanOrEqual(1);
-      expect(issues.some(i => i.message.includes('camelCase'))).toBe(true);
+      expect(issues.some((i) => i.message.includes('camelCase'))).toBe(true);
     });
 
     it('should suggest camelCase alternatives', () => {
@@ -126,7 +128,7 @@ describe('NAM-006: Parameter names should use consistent casing', () => {
         user_id: { type: 'string' },
       });
       const issues = rule.check(tool, createContext());
-      expect(issues.some(i => i.suggestion?.includes('userId'))).toBe(true);
+      expect(issues.some((i) => i.suggestion?.includes('userId'))).toBe(true);
     });
 
     it('should provide path in issue', () => {

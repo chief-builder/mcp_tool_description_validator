@@ -81,8 +81,12 @@ describe('SEC-001: String parameters must have maxLength constraint', () => {
       });
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(2);
-      expect(issues.map((i) => i.path)).toContain('inputSchema.properties.name');
-      expect(issues.map((i) => i.path)).toContain('inputSchema.properties.email');
+      expect(issues.map((i) => i.path)).toContain(
+        'inputSchema.properties.name'
+      );
+      expect(issues.map((i) => i.path)).toContain(
+        'inputSchema.properties.email'
+      );
     });
 
     it('should provide helpful suggestion', () => {
@@ -130,8 +134,12 @@ describe('SEC-001: String parameters must have maxLength constraint', () => {
       });
       const issues = rule.check(tool, createContext());
       expect(issues).toHaveLength(2);
-      expect(issues.map((i) => i.path)).toContain('inputSchema.properties.userId');
-      expect(issues.map((i) => i.path)).toContain('inputSchema.properties.path');
+      expect(issues.map((i) => i.path)).toContain(
+        'inputSchema.properties.userId'
+      );
+      expect(issues.map((i) => i.path)).toContain(
+        'inputSchema.properties.path'
+      );
     });
   });
 

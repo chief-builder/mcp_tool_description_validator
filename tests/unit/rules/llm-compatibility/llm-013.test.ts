@@ -34,7 +34,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
   describe('workflow keywords', () => {
     it('should pass for description with "first"', () => {
       const tool = createTool({
-        description: 'Creates a new resource. Call this first before making other changes.',
+        description:
+          'Creates a new resource. Call this first before making other changes.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -42,7 +43,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass for description with "before"', () => {
       const tool = createTool({
-        description: 'Validates the input. Run this before submitting the form.',
+        description:
+          'Validates the input. Run this before submitting the form.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -50,7 +52,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass for description with "after"', () => {
       const tool = createTool({
-        description: 'Gets the status. Use after creating a resource to check progress.',
+        description:
+          'Gets the status. Use after creating a resource to check progress.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -58,7 +61,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass for description with "instead"', () => {
       const tool = createTool({
-        description: 'Simple search. Use search_advanced instead for complex queries.',
+        description:
+          'Simple search. Use search_advanced instead for complex queries.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -66,7 +70,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass for description with "alternatively"', () => {
       const tool = createTool({
-        description: 'Gets user by ID. Alternatively, use search_users to find by name.',
+        description:
+          'Gets user by ID. Alternatively, use search_users to find by name.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -74,7 +79,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass for description with "prerequisite"', () => {
       const tool = createTool({
-        description: 'Submits the order. Prerequisite: user must be authenticated.',
+        description:
+          'Submits the order. Prerequisite: user must be authenticated.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -90,7 +96,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass for description with "then"', () => {
       const tool = createTool({
-        description: 'Authenticates the user. Then you can access protected resources.',
+        description:
+          'Authenticates the user. Then you can access protected resources.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -100,7 +107,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
   describe('workflow patterns', () => {
     it('should pass for "use X for" pattern', () => {
       const tool = createTool({
-        description: 'Basic file reader. Use read_file_advanced for large files.',
+        description:
+          'Basic file reader. Use read_file_advanced for large files.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -108,7 +116,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass for "call X to" pattern', () => {
       const tool = createTool({
-        description: 'Gets user info. Call validate_token to ensure authentication.',
+        description:
+          'Gets user info. Call validate_token to ensure authentication.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -116,7 +125,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass for "see X for" pattern', () => {
       const tool = createTool({
-        description: 'Creates a simple report. See generate_detailed_report for more options.',
+        description:
+          'Creates a simple report. See generate_detailed_report for more options.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -124,7 +134,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass for "prefer X" pattern', () => {
       const tool = createTool({
-        description: 'Legacy search function. Prefer search_v2 for better performance.',
+        description:
+          'Legacy search function. Prefer search_v2 for better performance.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -139,7 +150,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
       });
       const tool2 = createTool({
         name: 'get_user_status',
-        description: 'Gets user status. Works well with create_user to verify creation.',
+        description:
+          'Gets user status. Works well with create_user to verify creation.',
       });
       const allTools = [tool1, tool2];
       const issues = rule.check(tool2, createContext(allTools));
@@ -158,18 +170,27 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
     it('should not match short sibling tool names as substrings (regression)', () => {
       // Regression: includes() matched sibling 'get' inside "Gets" and
       // sibling 'run' inside "prune"
-      const sibling1 = createTool({ name: 'get', description: 'Gets a value.' });
+      const sibling1 = createTool({
+        name: 'get',
+        description: 'Gets a value.',
+      });
       const sibling2 = createTool({ name: 'run', description: 'Runs a task.' });
       const tool = createTool({
         name: 'show_profile',
         description: 'Gets the current user profile and prunes stale entries.',
       });
-      const issues = rule.check(tool, createContext([sibling1, sibling2, tool]));
+      const issues = rule.check(
+        tool,
+        createContext([sibling1, sibling2, tool])
+      );
       expect(issues).toHaveLength(1);
     });
 
     it('should require whole-word matches for sibling tool names', () => {
-      const sibling = createTool({ name: 'user', description: 'Shows a user.' });
+      const sibling = createTool({
+        name: 'user',
+        description: 'Shows a user.',
+      });
       const tool = createTool({
         name: 'show_accounts',
         description: 'Lists all users in the account.',
@@ -253,7 +274,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
   describe('real-world examples', () => {
     it('should pass: "Call discover_required_fields first to identify mandatory fields"', () => {
       const tool = createTool({
-        description: 'Call discover_required_fields first to identify mandatory fields.',
+        description:
+          'Call discover_required_fields first to identify mandatory fields.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -261,7 +283,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass: "No user filtering; use search_calls_extensive instead"', () => {
       const tool = createTool({
-        description: 'Basic search. No user filtering; use search_calls_extensive instead.',
+        description:
+          'Basic search. No user filtering; use search_calls_extensive instead.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);
@@ -269,7 +292,8 @@ describe('LLM-013: Tool description should include workflow guidance', () => {
 
     it('should pass: "After creating, use get_status to check progress"', () => {
       const tool = createTool({
-        description: 'Creates a new task. After creating, use get_status to check progress.',
+        description:
+          'Creates a new task. After creating, use get_status to check progress.',
       });
       const issues = rule.check(tool, createContext([tool]));
       expect(issues).toHaveLength(0);

@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { loadRules, getEffectiveSeverity } from '../../../src/core/rule-loader.js';
+import { loadRules } from '../../../src/core/rule-loader.js';
 import { getDefaultRules } from '../../../src/core/config.js';
 
 const FINALIZED_2026_RULES = ['SCH-009', 'SCH-010', 'SEC-011'];
@@ -68,21 +68,6 @@ describe('Rule Loader', () => {
         expect(ids).not.toContain('SCH-010');
         expect(ids).toContain('SCH-009');
       });
-    });
-  });
-
-  describe('getEffectiveSeverity', () => {
-    it('should use the default severity when config just enables the rule', async () => {
-      const rules = await loadRules(getDefaultRules(), '2026-07-28');
-      const rule = rules.find((r) => r.id === 'SCH-010');
-      expect(rule).toBeDefined();
-      expect(getEffectiveSeverity(rule!, { 'SCH-010': true })).toBe('error');
-    });
-
-    it('should apply a config severity override', async () => {
-      const rules = await loadRules(getDefaultRules(), '2026-07-28');
-      const rule = rules.find((r) => r.id === 'SCH-010');
-      expect(getEffectiveSeverity(rule!, { 'SCH-010': 'warning' })).toBe('warning');
     });
   });
 });

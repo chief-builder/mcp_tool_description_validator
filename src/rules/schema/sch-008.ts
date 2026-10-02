@@ -13,7 +13,8 @@ const rule: Rule = {
   category: 'schema',
   defaultSeverity: 'error',
   description: 'Parameters in required must exist in properties',
-  documentation: 'https://json-schema.org/understanding-json-schema/reference/object#required',
+  documentation:
+    'https://json-schema.org/understanding-json-schema/reference/object#required',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
@@ -34,7 +35,9 @@ const rule: Rule = {
 
     // Get the set of property names (empty if properties is missing/invalid)
     const propertyNames = new Set(
-      properties && typeof properties === 'object' ? Object.keys(properties) : []
+      properties && typeof properties === 'object'
+        ? Object.keys(properties)
+        : []
     );
 
     // Check each required parameter
@@ -47,7 +50,8 @@ const rule: Rule = {
           message: `inputSchema.required contains non-string value: ${JSON.stringify(requiredParam)}`,
           tool: tool.name || '(unnamed)',
           path: 'inputSchema.required',
-          suggestion: 'Ensure all values in the required array are strings representing property names',
+          suggestion:
+            'Ensure all values in the required array are strings representing property names',
           documentation: this.documentation,
         });
         continue;

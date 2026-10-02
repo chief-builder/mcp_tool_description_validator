@@ -1,0 +1,9 @@
+# gitleaks configuration: extend the default rules and allow-list
+# deliberate, clearly fake example credentials.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Fake 'BAD: secret in code' example in the code-review skill docs"
+paths = ['''^\.claude/skills/code-review/examples/anti-patterns\.md$''']
+regexes = ['''sk-1234567890abcdef''']

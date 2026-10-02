@@ -117,7 +117,7 @@ interface PropertySchema {
 
 function hasContext(text: string): boolean {
   // Tokenize so camelCase/snake_case identifiers are matched word-wise
-  return tokenizeIdentifier(text).some(token =>
+  return tokenizeIdentifier(text).some((token) =>
     CONTEXT_INDICATOR_SET.has(token)
   );
 }
@@ -140,7 +140,8 @@ const rule: Rule = {
   id: 'LLM-008',
   category: 'llm-compatibility',
   defaultSeverity: 'warning',
-  description: 'Avoid ambiguous terms (e.g., "data", "value", "input") without context',
+  description:
+    'Avoid ambiguous terms (e.g., "data", "value", "input") without context',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
@@ -150,7 +151,8 @@ const rule: Rule = {
       return issues;
     }
 
-    const properties = schema.properties as Record<string, PropertySchema> | undefined;
+    const properties = schema.properties as
+      Record<string, PropertySchema> | undefined;
     if (!properties || typeof properties !== 'object') {
       return issues;
     }
@@ -167,7 +169,8 @@ const rule: Rule = {
 
       // Check if description provides context
       // Also include tool name as context - e.g., write_file.content is clear
-      const descriptionText = typeof description === 'string' ? description : '';
+      const descriptionText =
+        typeof description === 'string' ? description : '';
       const combinedContext = `${tool.name} ${paramName} ${descriptionText}`;
 
       if (nameTerms.length > 0 && !hasContext(combinedContext)) {

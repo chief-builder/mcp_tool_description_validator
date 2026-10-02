@@ -2,9 +2,10 @@
  * BP-010: Tool icons must be well-formed and use safe sources
  *
  * The MCP spec allows an optional `icons` array on tools. Each entry must
- * be an object with a string `src` that is an https:// URL or a data: URI.
- * Clients MUST reject unsafe schemes (javascript:, file:, ftp:, ws:, local
- * app schemes), so those are escalated to error severity. Unknown MIME
+ * be an object with a string `src` that is an https:// URL or a base64
+ * image data URI (data:image/...;base64,...). Clients MUST reject unsafe
+ * schemes (javascript:, file:, ftp:, ws:, local app schemes), so any other
+ * source is escalated to error severity. Unknown MIME
  * types and SVG (script-execution risk) get suggestion-severity notes.
  */
 
@@ -21,7 +22,8 @@ const KNOWN_ICON_MIME_TYPES = new Set([
 ]);
 
 const ICON_SIZE = /^(?:any|[1-9]\d*x[1-9]\d*)$/;
-const BASE64_IMAGE_DATA_URI = /^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/]*={0,2}$/i;
+const BASE64_IMAGE_DATA_URI =
+  /^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/]*={0,2}$/i;
 
 /** True when the icon src is a valid HTTPS URL or base64 image data URI. */
 function isSafeIconSrc(src: string): boolean {
@@ -88,7 +90,8 @@ const rule: Rule = {
           message: `Icon entry at ${path} is missing a string \`src\``,
           tool: tool.name,
           path: `${path}.src`,
-          suggestion: 'Set `src` to an https:// URL or a data: URI',
+          suggestion:
+            'Set `src` to an https:// URL or a base64 data:image/... URI',
         });
       } else if (!isSafeIconSrc(icon.src)) {
         // Clients MUST reject unsafe schemes; escalate to error
@@ -96,10 +99,11 @@ const rule: Rule = {
           id: this.id,
           category: this.category,
           severity: 'error',
-          message: `Icon src "${icon.src}" does not use an allowed scheme. Only https:// URLs and data: URIs are permitted; clients MUST reject unsafe schemes (javascript:, file:, ftp:, ws:, http:, local app schemes)`,
+          message: `Icon src "${icon.src}" does not use an allowed scheme. Only https:// URLs and base64 data:image/... URIs are permitted; clients MUST reject unsafe schemes such as javascript:, file:, ftp:, ws: and local app schemes`,
           tool: tool.name,
           path: `${path}.src`,
-          suggestion: 'Serve the icon over HTTPS or inline it as a data: URI',
+          suggestion:
+            'Serve the icon over HTTPS or inline it as a base64 data:image/... URI',
         });
       }
 
@@ -151,7 +155,8 @@ const rule: Rule = {
             message: `Icon sizes at ${path} must be an array of strings`,
             tool: tool.name,
             path: `${path}.sizes`,
-            suggestion: 'Use size strings such as ["48x48", "96x96"] or ["any"]',
+            suggestion:
+              'Use size strings such as ["48x48", "96x96"] or ["any"]',
           });
         } else {
           icon.sizes.forEach((size, sizeIndex) => {
@@ -163,7 +168,8 @@ const rule: Rule = {
                 message: `Icon size "${size}" must use WxH format or "any"`,
                 tool: tool.name,
                 path: `${path}.sizes[${sizeIndex}]`,
-                suggestion: 'Use a positive pixel size such as "48x48" or the value "any"',
+                suggestion:
+                  'Use a positive pixel size such as "48x48" or the value "any"',
               });
             }
           });

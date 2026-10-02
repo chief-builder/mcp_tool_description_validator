@@ -102,7 +102,12 @@
             "maxLength": 2000
           }
         },
-        "required": ["customerId", "priority", "summary", "troubleshootingNotes"]
+        "required": [
+          "customerId",
+          "priority",
+          "summary",
+          "troubleshootingNotes"
+        ]
       },
       "outputSchema": {
         "type": "object",

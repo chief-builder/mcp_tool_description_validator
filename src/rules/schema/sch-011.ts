@@ -42,12 +42,20 @@ const rule: Rule = {
     };
 
     if (raw.title !== undefined && typeof raw.title !== 'string') {
-      emit('title', 'Tool "title" must be a string when provided', 'Use a human-readable string title or remove the field');
+      emit(
+        'title',
+        'Tool "title" must be a string when provided',
+        'Use a human-readable string title or remove the field'
+      );
     }
 
     if (raw.annotations !== undefined) {
       if (!isSchemaObject(raw.annotations)) {
-        emit('annotations', 'Tool "annotations" must be an object when provided', 'Provide an annotations object or remove the field');
+        emit(
+          'annotations',
+          'Tool "annotations" must be an object when provided',
+          'Provide an annotations object or remove the field'
+        );
       } else {
         if (
           raw.annotations.title !== undefined &&
@@ -76,7 +84,11 @@ const rule: Rule = {
     }
 
     if (raw._meta !== undefined && !isSchemaObject(raw._meta)) {
-      emit('_meta', 'Tool "_meta" must be an object when provided', 'Provide a metadata object or remove the field');
+      emit(
+        '_meta',
+        'Tool "_meta" must be an object when provided',
+        'Provide a metadata object or remove the field'
+      );
     }
 
     return issues;

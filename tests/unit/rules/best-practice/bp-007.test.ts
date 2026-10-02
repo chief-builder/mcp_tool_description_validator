@@ -216,6 +216,41 @@ describe('BP-007: schema depth limit', () => {
     expect(issues[0].id).toBe('BP-007');
   });
 
+  it('should not overflow the stack on a long composition chain', () => {
+    let schema: Record<string, unknown> = { type: 'string' };
+    for (let i = 0; i < 20_000; i++) schema = { anyOf: [schema] };
+    const tool = createTool({
+      inputSchema: { type: 'object', properties: { p: schema } },
+    });
+
+    expect(() => rule.check(tool, createContext([tool]))).not.toThrow();
+  });
+
+  it('should still measure nesting inside composition keywords', () => {
+    const deep = {
+      type: 'object',
+      properties: {
+        a: {
+          type: 'object',
+          properties: {
+            b: {
+              type: 'object',
+              properties: {
+                c: { type: 'object', properties: { d: { type: 'string' } } },
+              },
+            },
+          },
+        },
+      },
+    };
+    const tool = createTool({
+      inputSchema: { type: 'object', properties: { p: { anyOf: [deep] } } },
+    });
+
+    const issues = rule.check(tool, createContext([tool]));
+    expect(issues).toHaveLength(1);
+  });
+
   it('should have correct rule metadata', () => {
     expect(rule.id).toBe('BP-007');
     expect(rule.category).toBe('best-practice');

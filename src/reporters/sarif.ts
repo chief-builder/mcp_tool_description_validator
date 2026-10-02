@@ -1,4 +1,5 @@
 import type { ValidationResult, ValidationIssue } from '../types/index.js';
+import { PACKAGE_NAME } from '../version.js';
 
 /**
  * SARIF 2.1.0 output format
@@ -54,9 +55,12 @@ export interface SarifResult {
  */
 function severityToSarifLevel(severity: string): 'error' | 'warning' | 'note' {
   switch (severity) {
-    case 'error': return 'error';
-    case 'warning': return 'warning';
-    default: return 'note';
+    case 'error':
+      return 'error';
+    case 'warning':
+      return 'warning';
+    default:
+      return 'note';
   }
 }
 
@@ -74,7 +78,7 @@ export function formatSarifOutput(result: ValidationResult): string {
     }
   }
 
-  const rules: SarifRule[] = Array.from(uniqueRules.values()).map(issue => ({
+  const rules: SarifRule[] = Array.from(uniqueRules.values()).map((issue) => ({
     id: issue.id,
     name: issue.id,
     shortDescription: { text: issue.message },
@@ -92,31 +96,41 @@ export function formatSarifOutput(result: ValidationResult): string {
         level: severityToSarifLevel(issue.severity),
         message: { text: issue.message },
         properties: { provenance: issue.provenance ?? 'governance' },
-        locations: [{
-          logicalLocations: [{
-            name: issue.tool,
-            kind: 'tool',
-            fullyQualifiedName: issue.path ? `${issue.tool}.${issue.path}` : issue.tool,
-          }],
-        }],
+        locations: [
+          {
+            logicalLocations: [
+              {
+                name: issue.tool,
+                kind: 'tool',
+                fullyQualifiedName: issue.path
+                  ? `${issue.tool}.${issue.path}`
+                  : issue.tool,
+              },
+            ],
+          },
+        ],
       });
     }
   }
 
   const sarif: SarifLog = {
-    $schema: 'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json',
+    $schema:
+      'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json',
     version: '2.1.0',
-    runs: [{
-      tool: {
-        driver: {
-          name: 'mcp-tool-validator',
-          version: result.metadata.validatorVersion,
-          informationUri: 'https://github.com/chief-builder/mcp_tool_description_validator',
-          rules,
+    runs: [
+      {
+        tool: {
+          driver: {
+            name: PACKAGE_NAME,
+            version: result.metadata.validatorVersion,
+            informationUri:
+              'https://github.com/chief-builder/mcp_tool_description_validator',
+            rules,
+          },
         },
+        results,
       },
-      results,
-    }],
+    ],
   };
 
   return JSON.stringify(sarif, null, 2);

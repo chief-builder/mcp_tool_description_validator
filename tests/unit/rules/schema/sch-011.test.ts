@@ -19,17 +19,21 @@ function check(tool: ToolDefinition) {
 
 describe('SCH-011: optional tool metadata', () => {
   it('should accept valid finalized metadata', () => {
-    expect(check(createTool({
-      title: 'Test Tool',
-      annotations: {
-        title: 'Legacy Display Title',
-        readOnlyHint: true,
-        destructiveHint: false,
-        idempotentHint: true,
-        openWorldHint: false,
-      },
-      _meta: { 'example.com/key': 'value' },
-    }))).toHaveLength(0);
+    expect(
+      check(
+        createTool({
+          title: 'Test Tool',
+          annotations: {
+            title: 'Legacy Display Title',
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: false,
+          },
+          _meta: { 'example.com/key': 'value' },
+        })
+      )
+    ).toHaveLength(0);
   });
 
   it('should reject invalid title and _meta shapes', () => {
@@ -39,13 +43,15 @@ describe('SCH-011: optional tool metadata', () => {
   });
 
   it('should reject invalid annotation field types', () => {
-    const issues = check(createTool({
-      annotations: {
-        title: false,
-        readOnlyHint: 'yes',
-        destructiveHint: 1,
-      },
-    }));
+    const issues = check(
+      createTool({
+        annotations: {
+          title: false,
+          readOnlyHint: 'yes',
+          destructiveHint: 1,
+        },
+      })
+    );
     expect(issues.map((issue) => issue.path)).toEqual([
       'annotations.title',
       'annotations.readOnlyHint',

@@ -17,7 +17,8 @@ const rule: Rule = {
   id: 'SEC-009',
   category: 'security',
   defaultSeverity: 'warning',
-  description: 'Object parameters with additionalProperties: true need justification',
+  description:
+    'Object parameters with additionalProperties: true need justification',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
