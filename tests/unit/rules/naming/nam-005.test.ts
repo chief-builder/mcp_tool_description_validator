@@ -237,8 +237,12 @@ describe('NAM-005: Tool name should use descriptive verbs', () => {
     });
 
     it('should handle snake_case and camelCase verb prefixes', () => {
-      expect(rule.check(createTool('get_user'), createContext())).toHaveLength(0);
-      expect(rule.check(createTool('getUser'), createContext())).toHaveLength(0);
+      expect(rule.check(createTool('get_user'), createContext())).toHaveLength(
+        0
+      );
+      expect(rule.check(createTool('getUser'), createContext())).toHaveLength(
+        0
+      );
     });
   });
 });

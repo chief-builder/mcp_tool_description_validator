@@ -14,7 +14,10 @@ import type {
   MCPSpecVersion,
   ValidationProfile,
 } from '../types/index.js';
-import { DEFAULT_MCP_SPEC_VERSION, MCP_SPEC_VERSIONS } from './spec-versions.js';
+import {
+  DEFAULT_MCP_SPEC_VERSION,
+  MCP_SPEC_VERSIONS,
+} from './spec-versions.js';
 import { resolveLLMConfig } from '../llm/defaults.js';
 import { RULES } from '../rules/index.js';
 
@@ -86,10 +89,7 @@ function createExplorer() {
  * 'off'/'on' are accepted as aliases for false/true (common in YAML configs).
  */
 const ruleSettingSchema = z
-  .union([
-    z.boolean(),
-    z.enum(['error', 'warning', 'suggestion', 'off', 'on']),
-  ])
+  .union([z.boolean(), z.enum(['error', 'warning', 'suggestion', 'off', 'on'])])
   .transform((value) => {
     if (value === 'off') return false;
     if (value === 'on') return true;
@@ -232,7 +232,9 @@ export interface LoadConfigResult {
  * @param configPath - Optional explicit path to config file
  * @returns The loaded configuration merged with defaults, and the filepath
  */
-export async function loadConfig(configPath?: string): Promise<LoadConfigResult> {
+export async function loadConfig(
+  configPath?: string
+): Promise<LoadConfigResult> {
   const explorer = createExplorer();
 
   const result = configPath
@@ -310,7 +312,9 @@ export async function resolveConfig(
  * @param userConfig - Partial user configuration
  * @returns Complete merged configuration
  */
-export function mergeConfig(userConfig: Partial<ValidatorConfig>): ValidatorConfig {
+export function mergeConfig(
+  userConfig: Partial<ValidatorConfig>
+): ValidatorConfig {
   const defaultConfig = getDefaultConfig();
 
   // Merge rules: start with defaults, overlay user rules

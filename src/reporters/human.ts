@@ -22,7 +22,10 @@ export function sanitizeForTerminal(text: string): string {
 /**
  * Get the appropriate color function for a maturity level.
  */
-function getMaturityColor(level: MaturityLevel, c: typeof chalk): (text: string) => string {
+function getMaturityColor(
+  level: MaturityLevel,
+  c: typeof chalk
+): (text: string) => string {
   switch (level) {
     case 'exemplary':
       return c.green;
@@ -54,7 +57,10 @@ function getMaturityDescription(level: MaturityLevel): string {
 /**
  * Format validation results for human-readable terminal output
  */
-export function formatHumanOutput(result: ValidationResult, options: HumanOutputOptions = {}): string {
+export function formatHumanOutput(
+  result: ValidationResult,
+  options: HumanOutputOptions = {}
+): string {
   const { color = true, verbose = false, quiet = false } = options;
   const c = color ? chalk : new Chalk({ level: 0 });
   const safe = (text: unknown) => sanitizeForTerminal(String(text));
@@ -79,14 +85,18 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
 
   // Per-tool results
   for (const toolResult of result.tools) {
-    const hasErrors = toolResult.issues.some(i => i.severity === 'error');
+    const hasErrors = toolResult.issues.some((i) => i.severity === 'error');
     const icon = hasErrors ? c.red('✗') : c.green('✓');
     lines.push(`${icon} ${safe(toolResult.tool.name)}`);
 
     for (const issue of toolResult.issues) {
       if (quiet && issue.severity !== 'error') continue;
-      const severityColor = issue.severity === 'error' ? c.red :
-                           issue.severity === 'warning' ? c.yellow : c.blue;
+      const severityColor =
+        issue.severity === 'error'
+          ? c.red
+          : issue.severity === 'warning'
+            ? c.yellow
+            : c.blue;
       const severityLabel = issue.severity.toUpperCase();
 
       const provenance = (issue.provenance ?? 'governance').toUpperCase();
@@ -120,7 +130,9 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
 
   // Summary
   lines.push(c.gray('─'.repeat(50)));
-  lines.push(`Summary: ${result.summary.validTools}/${result.summary.totalTools} tools valid`);
+  lines.push(
+    `Summary: ${result.summary.validTools}/${result.summary.totalTools} tools valid`
+  );
   lines.push('');
 
   lines.push(`  Errors:      ${result.summary.issuesBySeverity.error}`);
@@ -143,7 +155,9 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
   lines.push('');
 
   lines.push('  By Category:');
-  for (const [category, count] of Object.entries(result.summary.issuesByCategory)) {
+  for (const [category, count] of Object.entries(
+    result.summary.issuesByCategory
+  )) {
     if (count > 0) {
       lines.push(`    ${category}: ${count}`);
     }
@@ -152,8 +166,12 @@ export function formatHumanOutput(result: ValidationResult, options: HumanOutput
 
   // Maturity assessment
   const maturityColor = getMaturityColor(result.summary.maturityLevel, c);
-  const maturityDescription = getMaturityDescription(result.summary.maturityLevel);
-  lines.push(`Maturity: ${maturityColor(result.summary.maturityLevel.toUpperCase())} (${result.summary.maturityScore}/100)`);
+  const maturityDescription = getMaturityDescription(
+    result.summary.maturityLevel
+  );
+  lines.push(
+    `Maturity: ${maturityColor(result.summary.maturityLevel.toUpperCase())} (${result.summary.maturityScore}/100)`
+  );
   lines.push(`  ${c.gray(maturityDescription)}`);
   lines.push('');
 

@@ -19,7 +19,10 @@ const rule: Rule = {
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
 
-    if (tool.description !== undefined && typeof tool.description !== 'string') {
+    if (
+      tool.description !== undefined &&
+      typeof tool.description !== 'string'
+    ) {
       issues.push({
         id: 'SCH-002',
         category: 'schema',

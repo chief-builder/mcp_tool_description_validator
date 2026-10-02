@@ -14,29 +14,69 @@ const mockResult: ValidationResult = {
   summary: {
     totalTools: 2,
     validTools: 1,
-    issuesByCategory: { schema: 1, security: 0, 'llm-compatibility': 1, naming: 0, 'best-practice': 0 },
+    issuesByCategory: {
+      schema: 1,
+      security: 0,
+      'llm-compatibility': 1,
+      naming: 0,
+      'best-practice': 0,
+    },
     issuesBySeverity: { error: 1, warning: 1, suggestion: 0 },
     maturityScore: 93,
     maturityLevel: 'exemplary',
   },
   issues: [
-    { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool' },
-    { id: 'LLM-002', category: 'llm-compatibility', severity: 'warning', message: 'Short description', tool: 'test-tool' },
+    {
+      id: 'SCH-001',
+      category: 'schema',
+      severity: 'error',
+      message: 'Missing name',
+      tool: 'test-tool',
+    },
+    {
+      id: 'LLM-002',
+      category: 'llm-compatibility',
+      severity: 'warning',
+      message: 'Short description',
+      tool: 'test-tool',
+    },
   ],
   tools: [
     {
       name: 'test-tool',
       valid: false,
-      tool: { name: 'test-tool', description: 'Test', inputSchema: { type: 'object' }, source: { type: 'file', location: 'test.json', raw: {} } },
+      tool: {
+        name: 'test-tool',
+        description: 'Test',
+        inputSchema: { type: 'object' },
+        source: { type: 'file', location: 'test.json', raw: {} },
+      },
       issues: [
-        { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool' },
-        { id: 'LLM-002', category: 'llm-compatibility', severity: 'warning', message: 'Short description', tool: 'test-tool' },
+        {
+          id: 'SCH-001',
+          category: 'schema',
+          severity: 'error',
+          message: 'Missing name',
+          tool: 'test-tool',
+        },
+        {
+          id: 'LLM-002',
+          category: 'llm-compatibility',
+          severity: 'warning',
+          message: 'Short description',
+          tool: 'test-tool',
+        },
       ],
     },
     {
       name: 'good-tool',
       valid: true,
-      tool: { name: 'good-tool', description: 'A good tool', inputSchema: { type: 'object' }, source: { type: 'file', location: 'test.json', raw: {} } },
+      tool: {
+        name: 'good-tool',
+        description: 'A good tool',
+        inputSchema: { type: 'object' },
+        source: { type: 'file', location: 'test.json', raw: {} },
+      },
       issues: [],
     },
   ],
@@ -64,8 +104,8 @@ describe('Human Reporter', () => {
 
       // Check that there's a pass icon for good-tool and fail icon for test-tool
       const lines = output.split('\n');
-      const testToolLine = lines.find(l => l.includes('test-tool'));
-      const goodToolLine = lines.find(l => l.includes('good-tool'));
+      const testToolLine = lines.find((l) => l.includes('test-tool'));
+      const goodToolLine = lines.find((l) => l.includes('good-tool'));
 
       expect(testToolLine).toBeDefined();
       expect(goodToolLine).toBeDefined();
@@ -127,7 +167,14 @@ describe('Human Reporter', () => {
       const resultWithPath: ValidationResult = {
         ...mockResult,
         issues: [
-          { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool', path: 'inputSchema.properties.userId' },
+          {
+            id: 'SCH-001',
+            category: 'schema',
+            severity: 'error',
+            message: 'Missing name',
+            tool: 'test-tool',
+            path: 'inputSchema.properties.userId',
+          },
         ],
         tools: [
           {
@@ -135,7 +182,14 @@ describe('Human Reporter', () => {
             valid: false,
             tool: mockResult.tools[0].tool,
             issues: [
-              { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool', path: 'inputSchema.properties.userId' },
+              {
+                id: 'SCH-001',
+                category: 'schema',
+                severity: 'error',
+                message: 'Missing name',
+                tool: 'test-tool',
+                path: 'inputSchema.properties.userId',
+              },
             ],
           },
         ],
@@ -156,14 +210,27 @@ describe('Human Reporter', () => {
             valid: false,
             tool: mockResult.tools[0].tool,
             issues: [
-              { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool', suggestion: 'Add a name property' },
+              {
+                id: 'SCH-001',
+                category: 'schema',
+                severity: 'error',
+                message: 'Missing name',
+                tool: 'test-tool',
+                suggestion: 'Add a name property',
+              },
             ],
           },
         ],
       };
 
-      const verboseOutput = formatHumanOutput(resultWithSuggestion, { color: false, verbose: true });
-      const normalOutput = formatHumanOutput(resultWithSuggestion, { color: false, verbose: false });
+      const verboseOutput = formatHumanOutput(resultWithSuggestion, {
+        color: false,
+        verbose: true,
+      });
+      const normalOutput = formatHumanOutput(resultWithSuggestion, {
+        color: false,
+        verbose: false,
+      });
 
       expect(verboseOutput).toContain('suggestion:');
       expect(verboseOutput).toContain('Add a name property');
@@ -258,7 +325,9 @@ describe('Human Reporter', () => {
     });
 
     it('should leave ordinary text, including non-ASCII, unchanged', () => {
-      expect(sanitizeForTerminal('get_user — café ✓')).toBe('get_user — café ✓');
+      expect(sanitizeForTerminal('get_user — café ✓')).toBe(
+        'get_user — café ✓'
+      );
     });
 
     it('should not emit escape sequences from tool names or messages', () => {
@@ -267,7 +336,10 @@ describe('Human Reporter', () => {
         tools: [
           {
             ...mockResult.tools[0],
-            tool: { ...mockResult.tools[0].tool, name: 'evil\u001b]0;pwned\u0007' },
+            tool: {
+              ...mockResult.tools[0].tool,
+              name: 'evil\u001b]0;pwned\u0007',
+            },
             issues: [
               {
                 ...mockResult.tools[0].issues[0],
@@ -279,7 +351,10 @@ describe('Human Reporter', () => {
         ],
       };
 
-      const output = formatHumanOutput(hostile, { color: false, verbose: true });
+      const output = formatHumanOutput(hostile, {
+        color: false,
+        verbose: true,
+      });
 
       expect(output).not.toContain('\u001b');
       expect(output).not.toContain('\u0007');
@@ -289,7 +364,10 @@ describe('Human Reporter', () => {
 
   describe('quiet mode', () => {
     it('should show errors and status but not warnings or breakdowns', () => {
-      const output = formatHumanOutput(mockResult, { color: false, quiet: true });
+      const output = formatHumanOutput(mockResult, {
+        color: false,
+        quiet: true,
+      });
 
       expect(output).toContain('[SCH-001]');
       expect(output).not.toContain('[LLM-002]');

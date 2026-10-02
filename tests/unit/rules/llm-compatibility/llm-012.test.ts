@@ -42,10 +42,19 @@ describe('LLM-012: Related tools should have consistent description patterns', (
 
   it('should pass for consistent verb-starting descriptions', () => {
     const tools = [
-      createTool({ name: 'user-create', description: 'Creates a new user account' }),
-      createTool({ name: 'user-get', description: 'Retrieves user information' }),
+      createTool({
+        name: 'user-create',
+        description: 'Creates a new user account',
+      }),
+      createTool({
+        name: 'user-get',
+        description: 'Retrieves user information',
+      }),
       createTool({ name: 'user-update', description: 'Updates user details' }),
-      createTool({ name: 'user-delete', description: 'Deletes a user account' }),
+      createTool({
+        name: 'user-delete',
+        description: 'Deletes a user account',
+      }),
     ];
     const issues = rule.check(tools[0], createContext(tools));
     expect(issues).toHaveLength(0);
@@ -53,10 +62,19 @@ describe('LLM-012: Related tools should have consistent description patterns', (
 
   it('should fail when one tool does not start with verb', () => {
     const tools = [
-      createTool({ name: 'user-create', description: 'Creates a new user account' }),
-      createTool({ name: 'user-get', description: 'Retrieves user information' }),
+      createTool({
+        name: 'user-create',
+        description: 'Creates a new user account',
+      }),
+      createTool({
+        name: 'user-get',
+        description: 'Retrieves user information',
+      }),
       createTool({ name: 'user-update', description: 'Updates user details' }),
-      createTool({ name: 'user-list', description: 'User listing functionality' }), // No verb start
+      createTool({
+        name: 'user-list',
+        description: 'User listing functionality',
+      }), // No verb start
     ];
     const issues = rule.check(tools[3], createContext(tools));
     expect(issues).toHaveLength(1);
@@ -66,8 +84,14 @@ describe('LLM-012: Related tools should have consistent description patterns', (
 
   it('should pass when all tools have similar length descriptions', () => {
     const tools = [
-      createTool({ name: 'item-add', description: 'Adds a new item to the list' }),
-      createTool({ name: 'item-remove', description: 'Removes an item from list' }),
+      createTool({
+        name: 'item-add',
+        description: 'Adds a new item to the list',
+      }),
+      createTool({
+        name: 'item-remove',
+        description: 'Removes an item from list',
+      }),
       createTool({ name: 'item-get', description: 'Gets an item by its ID' }),
     ];
     const issues = rule.check(tools[0], createContext(tools));
@@ -97,7 +121,10 @@ describe('LLM-012: Related tools should have consistent description patterns', (
   it('should require at least 2 related tools for comparison', () => {
     const tools = [
       createTool({ name: 'api-call', description: 'Makes an API call' }),
-      createTool({ name: 'api-config', description: 'API configuration settings' }), // Only 1 related
+      createTool({
+        name: 'api-config',
+        description: 'API configuration settings',
+      }), // Only 1 related
     ];
     const issues = rule.check(tools[1], createContext(tools));
     expect(issues).toHaveLength(0); // Not enough tools to establish pattern
@@ -115,10 +142,22 @@ describe('LLM-012: Related tools should have consistent description patterns', (
 
   it('should detect missing "when to use" clause inconsistency', () => {
     const tools = [
-      createTool({ name: 'cache-get', description: 'Gets cached value. Use this when you need fast access.' }),
-      createTool({ name: 'cache-set', description: 'Sets a cache value. Useful for storing temporary data.' }),
-      createTool({ name: 'cache-delete', description: 'Removes from cache. Use when clearing stale entries.' }),
-      createTool({ name: 'cache-clear', description: 'Clears the entire cache.' }), // Missing when clause
+      createTool({
+        name: 'cache-get',
+        description: 'Gets cached value. Use this when you need fast access.',
+      }),
+      createTool({
+        name: 'cache-set',
+        description: 'Sets a cache value. Useful for storing temporary data.',
+      }),
+      createTool({
+        name: 'cache-delete',
+        description: 'Removes from cache. Use when clearing stale entries.',
+      }),
+      createTool({
+        name: 'cache-clear',
+        description: 'Clears the entire cache.',
+      }), // Missing when clause
     ];
     const issues = rule.check(tools[3], createContext(tools));
     expect(issues.length).toBeGreaterThanOrEqual(0); // May or may not flag depending on threshold
@@ -126,10 +165,22 @@ describe('LLM-012: Related tools should have consistent description patterns', (
 
   it('should provide helpful suggestion with related tool names', () => {
     const tools = [
-      createTool({ name: 'order-create', description: 'Creates a new order in the system' }),
-      createTool({ name: 'order-update', description: 'Updates order details' }),
-      createTool({ name: 'order-cancel', description: 'Cancels an existing order' }),
-      createTool({ name: 'order-status', description: 'Order status checking tool' }), // Inconsistent
+      createTool({
+        name: 'order-create',
+        description: 'Creates a new order in the system',
+      }),
+      createTool({
+        name: 'order-update',
+        description: 'Updates order details',
+      }),
+      createTool({
+        name: 'order-cancel',
+        description: 'Cancels an existing order',
+      }),
+      createTool({
+        name: 'order-status',
+        description: 'Order status checking tool',
+      }), // Inconsistent
     ];
     const issues = rule.check(tools[3], createContext(tools));
     if (issues.length > 0) {

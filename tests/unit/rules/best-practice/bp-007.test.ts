@@ -230,7 +230,17 @@ describe('BP-007: schema depth limit', () => {
     const deep = {
       type: 'object',
       properties: {
-        a: { type: 'object', properties: { b: { type: 'object', properties: { c: { type: 'object', properties: { d: { type: 'string' } } } } } } },
+        a: {
+          type: 'object',
+          properties: {
+            b: {
+              type: 'object',
+              properties: {
+                c: { type: 'object', properties: { d: { type: 'string' } } },
+              },
+            },
+          },
+        },
       },
     };
     const tool = createTool({

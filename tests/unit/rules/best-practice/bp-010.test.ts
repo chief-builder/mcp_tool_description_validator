@@ -40,8 +40,16 @@ describe('BP-010: icons validation', () => {
   it('should pass for a valid https icon with a known mimeType', () => {
     const tool = createTool({
       icons: [
-        { src: 'https://example.com/icon-48.png', mimeType: 'image/png', sizes: ['48x48'] },
-        { src: 'https://example.com/icon-dark.png', mimeType: 'image/png', theme: 'dark' },
+        {
+          src: 'https://example.com/icon-48.png',
+          mimeType: 'image/png',
+          sizes: ['48x48'],
+        },
+        {
+          src: 'https://example.com/icon-dark.png',
+          mimeType: 'image/png',
+          theme: 'dark',
+        },
       ],
     });
     expect(check(tool)).toHaveLength(0);
@@ -93,7 +101,9 @@ describe('BP-010: icons validation', () => {
 
   it('should flag a non-array icons value at error severity', () => {
     const tool = createTool({
-      icons: { src: 'https://example.com/icon.png' } as unknown as ToolDefinition['icons'],
+      icons: {
+        src: 'https://example.com/icon.png',
+      } as unknown as ToolDefinition['icons'],
     });
     const issues = check(tool);
     expect(issues).toHaveLength(1);
@@ -103,7 +113,9 @@ describe('BP-010: icons validation', () => {
 
   it('should flag a non-object entry at error severity', () => {
     const tool = createTool({
-      icons: ['https://example.com/icon.png'] as unknown as ToolDefinition['icons'],
+      icons: [
+        'https://example.com/icon.png',
+      ] as unknown as ToolDefinition['icons'],
     });
     const issues = check(tool);
     expect(issues).toHaveLength(1);
@@ -123,7 +135,9 @@ describe('BP-010: icons validation', () => {
 
   it('should flag an unknown mimeType at suggestion severity', () => {
     const tool = createTool({
-      icons: [{ src: 'https://example.com/icon.ico', mimeType: 'image/x-icon' }],
+      icons: [
+        { src: 'https://example.com/icon.ico', mimeType: 'image/x-icon' },
+      ],
     });
     const issues = check(tool);
     expect(issues).toHaveLength(1);
@@ -134,7 +148,9 @@ describe('BP-010: icons validation', () => {
 
   it('should note the script-execution risk for image/svg+xml at suggestion severity', () => {
     const tool = createTool({
-      icons: [{ src: 'https://example.com/icon.svg', mimeType: 'image/svg+xml' }],
+      icons: [
+        { src: 'https://example.com/icon.svg', mimeType: 'image/svg+xml' },
+      ],
     });
     const issues = check(tool);
     expect(issues).toHaveLength(1);
@@ -152,24 +168,35 @@ describe('BP-010: icons validation', () => {
     });
     const issues = check(tool);
     expect(issues).toHaveLength(2);
-    expect(issues.map((i) => i.severity).sort()).toEqual(['error', 'suggestion']);
+    expect(issues.map((i) => i.severity).sort()).toEqual([
+      'error',
+      'suggestion',
+    ]);
   });
 
   it('should validate sizes and theme shapes', () => {
     const tool = createTool({
-      icons: [{
-        src: 'https://example.com/icon.png',
-        sizes: ['48', '0x48'],
-        theme: 'system' as 'light',
-      }],
+      icons: [
+        {
+          src: 'https://example.com/icon.png',
+          sizes: ['48', '0x48'],
+          theme: 'system' as 'light',
+        },
+      ],
     });
     const issues = check(tool);
-    expect(issues.filter((issue) => issue.path?.includes('sizes'))).toHaveLength(2);
-    expect(issues.find((issue) => issue.path?.endsWith('theme'))?.severity).toBe('error');
+    expect(
+      issues.filter((issue) => issue.path?.includes('sizes'))
+    ).toHaveLength(2);
+    expect(
+      issues.find((issue) => issue.path?.endsWith('theme'))?.severity
+    ).toBe('error');
   });
 
   it('should reject malformed data URIs', () => {
-    const issues = check(createTool({ icons: [{ src: 'data:text/html,hello' }] }));
+    const issues = check(
+      createTool({ icons: [{ src: 'data:text/html,hello' }] })
+    );
     expect(issues).toHaveLength(1);
     expect(issues[0].severity).toBe('error');
   });

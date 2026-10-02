@@ -66,7 +66,12 @@ describe('BP-013: pagination/filtering for collection tools', () => {
   });
 
   it('should recognize other listing verbs (search, query, find, browse)', () => {
-    for (const name of ['search_docs', 'query_events', 'findUsers', 'browse_catalog']) {
+    for (const name of [
+      'search_docs',
+      'query_events',
+      'findUsers',
+      'browse_catalog',
+    ]) {
       const tool = createTool({ name, description: 'Does a thing.' });
       // No bounding parameter at all -> fires
       expect(check(tool), name).toHaveLength(1);

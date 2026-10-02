@@ -27,7 +27,8 @@ const rule: Rule = {
         message: 'Tool must include an "inputSchema" JSON Schema object',
         tool: tool.name || '(unnamed)',
         path: 'inputSchema',
-        suggestion: 'Add an inputSchema object defining the tool\'s input parameters using JSON Schema',
+        suggestion:
+          "Add an inputSchema object defining the tool's input parameters using JSON Schema",
         documentation: this.documentation,
       });
     }

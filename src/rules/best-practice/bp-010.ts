@@ -21,7 +21,8 @@ const KNOWN_ICON_MIME_TYPES = new Set([
 ]);
 
 const ICON_SIZE = /^(?:any|[1-9]\d*x[1-9]\d*)$/;
-const BASE64_IMAGE_DATA_URI = /^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/]*={0,2}$/i;
+const BASE64_IMAGE_DATA_URI =
+  /^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/]*={0,2}$/i;
 
 /** True when the icon src is a valid HTTPS URL or base64 image data URI. */
 function isSafeIconSrc(src: string): boolean {
@@ -151,7 +152,8 @@ const rule: Rule = {
             message: `Icon sizes at ${path} must be an array of strings`,
             tool: tool.name,
             path: `${path}.sizes`,
-            suggestion: 'Use size strings such as ["48x48", "96x96"] or ["any"]',
+            suggestion:
+              'Use size strings such as ["48x48", "96x96"] or ["any"]',
           });
         } else {
           icon.sizes.forEach((size, sizeIndex) => {
@@ -163,7 +165,8 @@ const rule: Rule = {
                 message: `Icon size "${size}" must use WxH format or "any"`,
                 tool: tool.name,
                 path: `${path}.sizes[${sizeIndex}]`,
-                suggestion: 'Use a positive pixel size such as "48x48" or the value "any"',
+                suggestion:
+                  'Use a positive pixel size such as "48x48" or the value "any"',
               });
             }
           });

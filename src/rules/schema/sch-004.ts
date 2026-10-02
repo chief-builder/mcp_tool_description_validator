@@ -59,16 +59,18 @@ function validateSchema(
     'https://modelcontextprotocol.io/specification/2026-07-28/basic/index#json-schema-usage';
 
   if (!isSchemaObject(value)) {
-    return [{
-      id: 'SCH-004',
-      category: 'schema',
-      severity: 'error',
-      message: `${field} must be a JSON Schema object`,
-      tool: toolName,
-      path: field,
-      suggestion: `Provide ${field} as a valid JSON Schema object`,
-      documentation,
-    }];
+    return [
+      {
+        id: 'SCH-004',
+        category: 'schema',
+        severity: 'error',
+        message: `${field} must be a JSON Schema object`,
+        tool: toolName,
+        path: field,
+        suggestion: `Provide ${field} as a valid JSON Schema object`,
+        documentation,
+      },
+    ];
   }
 
   const declaredDialect = value.$schema;
@@ -78,16 +80,19 @@ function validateSchema(
     maxNodes: MAX_SCHEMA_NODES,
   });
   if (!withinResourceBounds) {
-    return [{
-      id: 'SCH-004',
-      category: 'schema',
-      severity: 'error',
-      message: `${field} exceeds validator resource limits (${MAX_SCHEMA_DEPTH} levels or ${MAX_SCHEMA_NODES} subschemas)`,
-      tool: toolName,
-      path: field,
-      suggestion: 'Reduce schema nesting or the number of composed subschemas',
-      documentation,
-    }];
+    return [
+      {
+        id: 'SCH-004',
+        category: 'schema',
+        severity: 'error',
+        message: `${field} exceeds validator resource limits (${MAX_SCHEMA_DEPTH} levels or ${MAX_SCHEMA_NODES} subschemas)`,
+        tool: toolName,
+        path: field,
+        suggestion:
+          'Reduce schema nesting or the number of composed subschemas',
+        documentation,
+      },
+    ];
   }
 
   let validator: Ajv;
@@ -104,34 +109,40 @@ function validateSchema(
   ) {
     validator = ajvDraft07;
   } else {
-    return [{
-      id: 'SCH-004',
-      category: 'schema',
-      severity: 'error',
-      message: `${field} declares unsupported JSON Schema dialect: ${JSON.stringify(declaredDialect)}`,
-      tool: toolName,
-      path: `${field}.$schema`,
-      suggestion:
-        'Use JSON Schema 2020-12 (the MCP default; omit $schema) or draft-07 (http://json-schema.org/draft-07/schema#)',
-      documentation,
-    }];
+    return [
+      {
+        id: 'SCH-004',
+        category: 'schema',
+        severity: 'error',
+        message: `${field} declares unsupported JSON Schema dialect: ${JSON.stringify(declaredDialect)}`,
+        tool: toolName,
+        path: `${field}.$schema`,
+        suggestion:
+          'Use JSON Schema 2020-12 (the MCP default; omit $schema) or draft-07 (http://json-schema.org/draft-07/schema#)',
+        documentation,
+      },
+    ];
   }
 
   try {
     validator.compile(value);
     return [];
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown schema error';
-    return [{
-      id: 'SCH-004',
-      category: 'schema',
-      severity: 'error',
-      message: `${field} is not valid JSON Schema: ${errorMessage}`,
-      tool: toolName,
-      path: field,
-      suggestion: 'Review the JSON Schema specification and fix the schema syntax errors',
-      documentation,
-    }];
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown schema error';
+    return [
+      {
+        id: 'SCH-004',
+        category: 'schema',
+        severity: 'error',
+        message: `${field} is not valid JSON Schema: ${errorMessage}`,
+        tool: toolName,
+        path: field,
+        suggestion:
+          'Review the JSON Schema specification and fix the schema syntax errors',
+        documentation,
+      },
+    ];
   }
 }
 
@@ -144,9 +155,8 @@ const rule: Rule = {
     'https://modelcontextprotocol.io/specification/2026-07-28/basic/index#json-schema-usage',
 
   check(tool, _ctx) {
-    const toolName = typeof tool.name === 'string' && tool.name
-      ? tool.name
-      : '(unnamed)';
+    const toolName =
+      typeof tool.name === 'string' && tool.name ? tool.name : '(unnamed)';
     const issues: ValidationIssue[] = [];
 
     // SCH-003 owns missing/non-object inputSchema diagnostics.
@@ -156,7 +166,9 @@ const rule: Rule = {
 
     const raw = tool as unknown as Record<string, unknown>;
     if (raw.outputSchema !== undefined) {
-      issues.push(...validateSchema('outputSchema', raw.outputSchema, toolName));
+      issues.push(
+        ...validateSchema('outputSchema', raw.outputSchema, toolName)
+      );
     }
 
     return issues;

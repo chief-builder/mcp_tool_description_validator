@@ -17,11 +17,31 @@ const RUN_DATE = new Date().toISOString().split('T')[0];
 const REPORT_PATH = `./reports/mcp-server-validation-by-llm-${RUN_DATE}.md`;
 
 const SERVERS = [
-  { name: 'filesystem', file: 'official-filesystem.json', maintainer: 'modelcontextprotocol/servers' },
-  { name: 'memory', file: 'official-memory.json', maintainer: 'modelcontextprotocol/servers' },
-  { name: 'everything', file: 'official-everything.json', maintainer: 'modelcontextprotocol/servers' },
-  { name: 'sequential-thinking', file: 'official-sequential-thinking.json', maintainer: 'modelcontextprotocol/servers' },
-  { name: 'playwright', file: 'thirdparty-playwright.json', maintainer: 'Microsoft' },
+  {
+    name: 'filesystem',
+    file: 'official-filesystem.json',
+    maintainer: 'modelcontextprotocol/servers',
+  },
+  {
+    name: 'memory',
+    file: 'official-memory.json',
+    maintainer: 'modelcontextprotocol/servers',
+  },
+  {
+    name: 'everything',
+    file: 'official-everything.json',
+    maintainer: 'modelcontextprotocol/servers',
+  },
+  {
+    name: 'sequential-thinking',
+    file: 'official-sequential-thinking.json',
+    maintainer: 'modelcontextprotocol/servers',
+  },
+  {
+    name: 'playwright',
+    file: 'thirdparty-playwright.json',
+    maintainer: 'Microsoft',
+  },
   { name: 'sqlite', file: 'thirdparty-sqlite.json', maintainer: 'Community' },
 ];
 
@@ -68,8 +88,7 @@ function formatParameters(inputSchema) {
 }
 
 async function analyzeTool(tool) {
-  const prompt = ANALYSIS_PROMPT
-    .replace('{name}', tool.name)
+  const prompt = ANALYSIS_PROMPT.replace('{name}', tool.name)
     .replace('{description}', tool.description || 'No description')
     .replace('{parameters}', formatParameters(tool.inputSchema));
 
@@ -95,7 +114,10 @@ async function analyzeTool(tool) {
 
   return {
     clarity_score: Math.min(10, Math.max(1, result.clarity_score || 5)),
-    completeness_score: Math.min(10, Math.max(1, result.completeness_score || 5)),
+    completeness_score: Math.min(
+      10,
+      Math.max(1, result.completeness_score || 5)
+    ),
     ambiguities: Array.isArray(result.ambiguities) ? result.ambiguities : [],
     conflicts: Array.isArray(result.conflicts) ? result.conflicts : [],
     suggestions: Array.isArray(result.suggestions) ? result.suggestions : [],
@@ -109,7 +131,7 @@ async function analyzeServer(server) {
   const fixturePath = path.join(FIXTURES_DIR, server.file);
   const data = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
 
-  const tools = data.tools.map(t => t.tool);
+  const tools = data.tools.map((t) => t.tool);
   const results = [];
 
   console.log(`\nAnalyzing ${server.name} (${tools.length} tools)...`);
@@ -120,9 +142,11 @@ async function analyzeServer(server) {
       process.stdout.write(`  - ${tool.name}... `);
       const result = await analyzeTool(tool);
       results.push({ tool: tool.name, ...result });
-      console.log(`clarity: ${result.clarity_score}, completeness: ${result.completeness_score}`);
+      console.log(
+        `clarity: ${result.clarity_score}, completeness: ${result.completeness_score}`
+      );
       // Small delay to avoid rate limiting
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300));
     } catch (error) {
       console.log(`Error: ${error.message}`);
       failedAnalyses++;
@@ -132,7 +156,7 @@ async function analyzeServer(server) {
         completeness_score: 0,
         ambiguities: [],
         conflicts: [],
-        suggestions: [`Analysis failed: ${error.message}`]
+        suggestions: [`Analysis failed: ${error.message}`],
       });
     }
   }
@@ -141,11 +165,15 @@ async function analyzeServer(server) {
 }
 
 function calculateAverages(results) {
-  const validResults = results.filter(r => r.clarity_score > 0);
+  const validResults = results.filter((r) => r.clarity_score > 0);
   if (validResults.length === 0) return { clarity: '0.0', completeness: '0.0' };
 
-  const clarity = validResults.reduce((sum, r) => sum + r.clarity_score, 0) / validResults.length;
-  const completeness = validResults.reduce((sum, r) => sum + r.completeness_score, 0) / validResults.length;
+  const clarity =
+    validResults.reduce((sum, r) => sum + r.clarity_score, 0) /
+    validResults.length;
+  const completeness =
+    validResults.reduce((sum, r) => sum + r.completeness_score, 0) /
+    validResults.length;
   return { clarity: clarity.toFixed(1), completeness: completeness.toFixed(1) };
 }
 
@@ -217,14 +245,14 @@ LLM-assisted analysis of **${Object.values(allResults).reduce((sum, s) => sum + 
     }
 
     // Collect all issues
-    const allAmbiguities = data.results.flatMap(r =>
-      r.ambiguities.map(a => `- **${r.tool}**: ${a}`)
+    const allAmbiguities = data.results.flatMap((r) =>
+      r.ambiguities.map((a) => `- **${r.tool}**: ${a}`)
     );
-    const allConflicts = data.results.flatMap(r =>
-      r.conflicts.map(c => `- **${r.tool}**: ${c}`)
+    const allConflicts = data.results.flatMap((r) =>
+      r.conflicts.map((c) => `- **${r.tool}**: ${c}`)
     );
-    const allSuggestions = data.results.flatMap(r =>
-      r.suggestions.map(s => `- **${r.tool}**: ${s}`)
+    const allSuggestions = data.results.flatMap((r) =>
+      r.suggestions.map((s) => `- **${r.tool}**: ${s}`)
     );
 
     if (allAmbiguities.length > 0) {
@@ -278,7 +306,9 @@ This analysis uses ${MODEL} to evaluate each tool definition for:
 main()
   .then(() => {
     if (totalAnalyses > 0 && failedAnalyses === totalAnalyses) {
-      console.error(`\nAll ${totalAnalyses} analyses failed; not a usable report.`);
+      console.error(
+        `\nAll ${totalAnalyses} analyses failed; not a usable report.`
+      );
       process.exit(1);
     }
   })

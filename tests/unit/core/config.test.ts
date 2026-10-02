@@ -210,7 +210,9 @@ describe('Configuration System', () => {
 
     it('should preserve a user specVersion and default otherwise', () => {
       expect(mergeConfig({}).specVersion).toBe('2026-07-28');
-      expect(mergeConfig({ specVersion: '2025-11-25' }).specVersion).toBe('2025-11-25');
+      expect(mergeConfig({ specVersion: '2025-11-25' }).specVersion).toBe(
+        '2025-11-25'
+      );
     });
   });
 
@@ -219,7 +221,10 @@ describe('Configuration System', () => {
 
     beforeEach(async () => {
       // Create a unique temp directory for each test
-      testDir = join(tmpdir(), `mcp-validate-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+      testDir = join(
+        tmpdir(),
+        `mcp-validate-test-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      );
       await mkdir(testDir, { recursive: true });
     });
 
@@ -460,7 +465,9 @@ describe('resolveConfig()', () => {
       // Invalid values are rejected
       const badPath = join(tmpBase, 'bad.config.yaml');
       await writeFile(badPath, ['specVersion: 2099-01-01'].join('\n'));
-      await expect(resolveConfig(badPath)).rejects.toThrow(/Invalid configuration/);
+      await expect(resolveConfig(badPath)).rejects.toThrow(
+        /Invalid configuration/
+      );
     } finally {
       await rm(tmpBase, { recursive: true, force: true });
     }
@@ -500,7 +507,9 @@ describe('resolveConfig()', () => {
 
       const badPath = join(tmpBase, 'bad.config.yaml');
       await writeFile(badPath, ['minScore: 70'].join('\n'));
-      await expect(resolveConfig(badPath)).rejects.toThrow(/Invalid configuration/);
+      await expect(resolveConfig(badPath)).rejects.toThrow(
+        /Invalid configuration/
+      );
     } finally {
       await rm(tmpBase, { recursive: true, force: true });
     }
@@ -536,15 +545,15 @@ describe('resolveConfig()', () => {
     });
 
     it('should reject unknown rule IDs', () => {
-      expect(() => validateRequestConfig({ rules: { 'NAM-001': false } })).toThrow(
-        'Unknown rule ID "NAM-001"'
-      );
+      expect(() =>
+        validateRequestConfig({ rules: { 'NAM-001': false } })
+      ).toThrow('Unknown rule ID "NAM-001"');
     });
 
     it('should reject invalid severities and unknown keys', () => {
-      expect(() => validateRequestConfig({ rules: { 'SEC-001': 'fatal' } })).toThrow(
-        'Invalid configuration in HTTP request'
-      );
+      expect(() =>
+        validateRequestConfig({ rules: { 'SEC-001': 'fatal' } })
+      ).toThrow('Invalid configuration in HTTP request');
       expect(() => validateRequestConfig({ bogus: true })).toThrow(/bogus/);
     });
   });

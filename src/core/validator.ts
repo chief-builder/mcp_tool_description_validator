@@ -14,7 +14,11 @@ import type {
 } from '../types/index.js';
 import { resolveConfig, type ConfigOverrides } from './config.js';
 import { loadRules } from './rule-loader.js';
-import { executeRules, aggregateResults, flattenIssues } from './rule-engine.js';
+import {
+  executeRules,
+  aggregateResults,
+  flattenIssues,
+} from './rule-engine.js';
 import { parseFile } from '../parsers/file.js';
 import { fetchToolsFromServer } from '../parsers/mcp-client.js';
 import { analyzeTools } from '../llm/analyzer.js';
@@ -101,12 +105,14 @@ export async function validate(
   );
 
   // Build per-tool results
-  const toolValidationResults: ToolValidationResult[] = toolResults.map((tr) => ({
-    name: tr.tool.name,
-    valid: !tr.issues.some((i) => i.severity === 'error'),
-    tool: tr.tool,
-    issues: tr.issues,
-  }));
+  const toolValidationResults: ToolValidationResult[] = toolResults.map(
+    (tr) => ({
+      name: tr.tool.name,
+      valid: !tr.issues.some((i) => i.severity === 'error'),
+      tool: tr.tool,
+      issues: tr.issues,
+    })
+  );
 
   // Optional LLM-assisted analysis. A failure here (missing provider
   // package, network error) must not discard the static results.
@@ -123,8 +129,7 @@ export async function validate(
       }
       llmAnalysisUsed = true;
     } catch (error) {
-      llmAnalysisError =
-        error instanceof Error ? error.message : String(error);
+      llmAnalysisError = error instanceof Error ? error.message : String(error);
     }
   }
 
@@ -221,7 +226,9 @@ export async function validateServer(
     discover: options.discoverConfig,
   });
   const discoverySpecVersion =
-    config.discoverySpecVersion ?? config.specVersion ?? DEFAULT_MCP_SPEC_VERSION;
+    config.discoverySpecVersion ??
+    config.specVersion ??
+    DEFAULT_MCP_SPEC_VERSION;
   const tools = await fetchToolsFromServer({
     server: serverUrl,
     specVersion: discoverySpecVersion,

@@ -113,7 +113,9 @@ export function enableLLM(
 export function parseTimeout(value: string): number {
   const ms = Number(value);
   if (!Number.isInteger(ms) || ms <= 0) {
-    throw new InvalidArgumentError('Must be a positive integer (milliseconds).');
+    throw new InvalidArgumentError(
+      'Must be a positive integer (milliseconds).'
+    );
   }
   return ms;
 }
@@ -239,11 +241,7 @@ program
   .enablePositionalOptions()
   .argument('[file]', 'Tool definition file to validate (JSON or YAML)')
   .option('-s, --server <url>', 'Validate tools from a live MCP server')
-  .option(
-    '-f, --format <format>',
-    'Output format: human, json, sarif',
-    'human'
-  )
+  .option('-f, --format <format>', 'Output format: human, json, sarif', 'human')
   .option('-c, --config <path>', 'Path to config file')
   .addOption(
     new Option(
@@ -258,10 +256,10 @@ program
     ).choices(MCP_SPEC_VERSIONS)
   )
   .addOption(
-    new Option(
-      '--profile <profile>',
-      'Validation policy profile'
-    ).choices(['compliance', 'governance'])
+    new Option('--profile <profile>', 'Validation policy profile').choices([
+      'compliance',
+      'governance',
+    ])
   )
   .option(
     '-r, --rule <rule>',
@@ -324,7 +322,10 @@ program
     }
     const server = startServer({ port, host: options.host, config });
     server.on('error', (error: Error) => {
-      console.error(chalk.red('Error:'), `Cannot start server: ${error.message}`);
+      console.error(
+        chalk.red('Error:'),
+        `Cannot start server: ${error.message}`
+      );
       process.exitCode = 2;
     });
   });

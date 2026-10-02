@@ -32,19 +32,32 @@ describe('LLM-003: Tool description should explain WHAT the tool does', () => {
   });
 
   it('should pass for description starting with action verb', () => {
-    const tool = createTool({ description: 'Creates a new user account in the system' });
+    const tool = createTool({
+      description: 'Creates a new user account in the system',
+    });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(0);
   });
 
   it('should pass for description with action verb in middle', () => {
-    const tool = createTool({ description: 'This tool retrieves user data from the database' });
+    const tool = createTool({
+      description: 'This tool retrieves user data from the database',
+    });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(0);
   });
 
   it('should pass for various action verbs', () => {
-    const verbs = ['creates', 'retrieves', 'updates', 'deletes', 'sends', 'fetches', 'generates', 'validates'];
+    const verbs = [
+      'creates',
+      'retrieves',
+      'updates',
+      'deletes',
+      'sends',
+      'fetches',
+      'generates',
+      'validates',
+    ];
     for (const verb of verbs) {
       const tool = createTool({ description: `${verb} something useful` });
       const issues = rule.check(tool, createContext([tool]));
@@ -81,7 +94,9 @@ describe('LLM-003: Tool description should explain WHAT the tool does', () => {
 
   it('should match whole words only', () => {
     // "screate" contains "create" but is not the word "create"
-    const tool = createTool({ description: 'This is screating something unusual' });
+    const tool = createTool({
+      description: 'This is screating something unusual',
+    });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(1); // Should fail because "screating" is not "creating"
   });

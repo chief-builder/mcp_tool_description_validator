@@ -58,7 +58,11 @@ describe('BP-011: parameterless tool shape', () => {
 
   it('should pass with empty properties and additionalProperties: false', () => {
     const issues = check(
-      createTool({ type: 'object', properties: {}, additionalProperties: false })
+      createTool({
+        type: 'object',
+        properties: {},
+        additionalProperties: false,
+      })
     );
     expect(issues).toHaveLength(0);
   });
@@ -81,6 +85,8 @@ describe('BP-011: parameterless tool shape', () => {
     expect(check(createTool(undefined))).toHaveLength(0);
     expect(check(createTool(null))).toHaveLength(0);
     expect(check(createTool('not-a-schema'))).toHaveLength(0);
-    expect(check(createTool({ type: 'object', properties: 'bad' }))).toHaveLength(0);
+    expect(
+      check(createTool({ type: 'object', properties: 'bad' }))
+    ).toHaveLength(0);
   });
 });

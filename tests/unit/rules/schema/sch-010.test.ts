@@ -4,7 +4,10 @@
 
 import { describe, it, expect } from 'vitest';
 import rule from '../../../../src/rules/schema/sch-010.js';
-import type { ToolDefinition, ToolSource } from '../../../../src/types/index.js';
+import type {
+  ToolDefinition,
+  ToolSource,
+} from '../../../../src/types/index.js';
 import type { RuleContext } from '../../../../src/rules/types.js';
 
 const mockSource: ToolSource = { type: 'file', location: 'test.json', raw: {} };
@@ -58,7 +61,7 @@ describe('SCH-010: x-mcp-header constraints', () => {
     const validCases: Array<[unknown, unknown]> = [
       ['region', 'string'],
       ['Region-Name', 'string'],
-      ['x!#$%&\'*+-.^_`|~1', 'string'],
+      ["x!#$%&'*+-.^_`|~1", 'string'],
       ['retries', 'integer'],
       ['dry-run', 'boolean'],
     ];
@@ -76,9 +79,7 @@ describe('SCH-010: x-mcp-header constraints', () => {
       expect(issues).toHaveLength(1);
       expect(issues[0].severity).toBe('error');
       expect(issues[0].message).toContain('must not be empty');
-      expect(issues[0].path).toBe(
-        'inputSchema.properties.region.x-mcp-header'
-      );
+      expect(issues[0].path).toBe('inputSchema.properties.region.x-mcp-header');
     });
 
     it('should flag a non-string value', () => {
@@ -90,7 +91,12 @@ describe('SCH-010: x-mcp-header constraints', () => {
     });
 
     it('should flag CR/LF and control characters', () => {
-      for (const value of ['bad\r\nheader', 'bad\nheader', 'bad\theader', 'bad\u0000header']) {
+      for (const value of [
+        'bad\r\nheader',
+        'bad\nheader',
+        'bad\theader',
+        'bad\u0000header',
+      ]) {
         const issues = check(createTool(headerSchema(value)));
         expect(issues).toHaveLength(1);
         expect(issues[0].message).toContain('control characters');
@@ -98,7 +104,15 @@ describe('SCH-010: x-mcp-header constraints', () => {
     });
 
     it('should flag values outside RFC 9110 token syntax', () => {
-      for (const value of ['has space', 'colon:name', 'brace{name}', 'slash/name', 'q=1', 'ünïcode', '"quoted"']) {
+      for (const value of [
+        'has space',
+        'colon:name',
+        'brace{name}',
+        'slash/name',
+        'q=1',
+        'ünïcode',
+        '"quoted"',
+      ]) {
         const issues = check(createTool(headerSchema(value)));
         expect(issues).toHaveLength(1);
         expect(issues[0].message).toContain('RFC 9110');
@@ -186,7 +200,9 @@ describe('SCH-010: x-mcp-header constraints', () => {
         },
       };
       expect(check(createTool(noType))).toHaveLength(1);
-      expect(check(createTool(headerSchema('region', ['string', 'null'])))).toHaveLength(1);
+      expect(
+        check(createTool(headerSchema('region', ['string', 'null'])))
+      ).toHaveLength(1);
     });
   });
 
@@ -215,14 +231,22 @@ describe('SCH-010: x-mcp-header constraints', () => {
             region: { type: 'string', 'x-mcp-header': 'region' },
           },
         };
-        const schema = keyword === 'items'
-          ? { type: 'object', properties: { values: { type: 'array', items: annotated } } }
-          : keyword === '$defs'
-            ? { type: 'object', $defs: { annotated } }
-            : { type: 'object', [keyword]: [annotated] };
+        const schema =
+          keyword === 'items'
+            ? {
+                type: 'object',
+                properties: { values: { type: 'array', items: annotated } },
+              }
+            : keyword === '$defs'
+              ? { type: 'object', $defs: { annotated } }
+              : { type: 'object', [keyword]: [annotated] };
 
         const issues = check(createTool(schema));
-        expect(issues.some((issue) => issue.message.includes('not statically reachable'))).toBe(true);
+        expect(
+          issues.some((issue) =>
+            issue.message.includes('not statically reachable')
+          )
+        ).toBe(true);
       }
     );
   });

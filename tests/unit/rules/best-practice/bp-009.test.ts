@@ -99,7 +99,9 @@ describe('BP-009: outputSchema validation', () => {
       const issues = rule.check(tool, ctx);
 
       expect(issues.some((i) => i.path === 'outputSchema.type')).toBe(true);
-      expect(issues.find((i) => i.path === 'outputSchema.type')?.severity).toBe('warning');
+      expect(issues.find((i) => i.path === 'outputSchema.type')?.severity).toBe(
+        'warning'
+      );
     });
 
     it('should pass when outputSchema has type as string', () => {
@@ -155,8 +157,12 @@ describe('BP-009: outputSchema validation', () => {
 
       const issues = rule.check(tool, ctx);
 
-      expect(issues.some((i) => i.path === 'outputSchema.description')).toBe(true);
-      expect(issues.find((i) => i.path === 'outputSchema.description')?.severity).toBe('suggestion');
+      expect(issues.some((i) => i.path === 'outputSchema.description')).toBe(
+        true
+      );
+      expect(
+        issues.find((i) => i.path === 'outputSchema.description')?.severity
+      ).toBe('suggestion');
     });
 
     it('should report issue when outputSchema description is empty', () => {
@@ -174,7 +180,9 @@ describe('BP-009: outputSchema validation', () => {
 
       const issues = rule.check(tool, ctx);
 
-      expect(issues.some((i) => i.path === 'outputSchema.description')).toBe(true);
+      expect(issues.some((i) => i.path === 'outputSchema.description')).toBe(
+        true
+      );
     });
 
     it('should pass when outputSchema has description', () => {
@@ -192,7 +200,9 @@ describe('BP-009: outputSchema validation', () => {
 
       const issues = rule.check(tool, ctx);
 
-      expect(issues.some((i) => i.path === 'outputSchema.description')).toBe(false);
+      expect(issues.some((i) => i.path === 'outputSchema.description')).toBe(
+        false
+      );
     });
   });
 
@@ -215,10 +225,12 @@ describe('BP-009: outputSchema validation', () => {
 
       const issues = rule.check(tool, ctx);
 
-      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(true);
-      expect(issues.find((i) => i.path === 'outputSchema.properties')?.message).toContain(
-        'missing descriptions'
+      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(
+        true
       );
+      expect(
+        issues.find((i) => i.path === 'outputSchema.properties')?.message
+      ).toContain('missing descriptions');
     });
 
     it('should report issue when some properties are missing descriptions', () => {
@@ -240,8 +252,12 @@ describe('BP-009: outputSchema validation', () => {
 
       const issues = rule.check(tool, ctx);
 
-      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(true);
-      expect(issues.find((i) => i.path === 'outputSchema.properties')?.message).toContain('2 of 3');
+      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(
+        true
+      );
+      expect(
+        issues.find((i) => i.path === 'outputSchema.properties')?.message
+      ).toContain('2 of 3');
     });
 
     it('should pass when all properties have descriptions', () => {
@@ -262,7 +278,9 @@ describe('BP-009: outputSchema validation', () => {
 
       const issues = rule.check(tool, ctx);
 
-      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(false);
+      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(
+        false
+      );
     });
 
     it('should pass when object has no properties', () => {
@@ -280,7 +298,9 @@ describe('BP-009: outputSchema validation', () => {
 
       const issues = rule.check(tool, ctx);
 
-      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(false);
+      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(
+        false
+      );
     });
 
     it('should not check properties for non-object types', () => {
@@ -297,7 +317,9 @@ describe('BP-009: outputSchema validation', () => {
 
       const issues = rule.check(tool, ctx);
 
-      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(false);
+      expect(issues.some((i) => i.path === 'outputSchema.properties')).toBe(
+        false
+      );
     });
   });
 
@@ -310,7 +332,10 @@ describe('BP-009: outputSchema validation', () => {
             type: 'object',
             description: 'The result of the operation',
             properties: {
-              success: { type: 'boolean', description: 'Whether the operation succeeded' },
+              success: {
+                type: 'boolean',
+                description: 'Whether the operation succeeded',
+              },
               data: { type: 'object', description: 'The result data' },
               error: { type: 'string', description: 'Error message if failed' },
             },

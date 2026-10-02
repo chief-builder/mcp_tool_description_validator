@@ -14,15 +14,7 @@ import nam006 from './nam-006.js';
 import nam007 from './nam-007.js';
 import nam008 from './nam-008.js';
 
-export {
-  nam002,
-  nam003,
-  nam004,
-  nam005,
-  nam006,
-  nam007,
-  nam008,
-};
+export { nam002, nam003, nam004, nam005, nam006, nam007, nam008 };
 
 /**
  * All naming rules as an array.

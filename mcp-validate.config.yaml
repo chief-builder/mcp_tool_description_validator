@@ -25,13 +25,13 @@ rules:
 
 # Output configuration
 output:
-  format: human    # human | json | sarif
-  verbose: false   # Show additional details
-  color: true      # Enable colored output (terminal only)
+  format: human # human | json | sarif
+  verbose: false # Show additional details
+  color: true # Enable colored output (terminal only)
 
 # MCP protocol revision: 2026-07-28 (default, the latest released revision)
 # or 2025-11-25.
-specVersion: "2026-07-28"
+specVersion: '2026-07-28'
 
 # Optional live-discovery revision. Omit to inherit specVersion.
 # discoverySpecVersion: "2025-11-25"

@@ -30,7 +30,8 @@ const rule: Rule = {
       return issues;
     }
 
-    const properties = schema.properties as Record<string, PropertySchema> | undefined;
+    const properties = schema.properties as
+      Record<string, PropertySchema> | undefined;
     if (!properties || typeof properties !== 'object') {
       return issues;
     }

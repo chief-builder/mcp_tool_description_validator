@@ -116,9 +116,9 @@ describe('LLM-006: Each parameter must have a description', () => {
     });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(2);
-    const messages = issues.map(i => i.message);
-    expect(messages.some(m => m.includes('userId'))).toBe(true);
-    expect(messages.some(m => m.includes('email'))).toBe(true);
+    const messages = issues.map((i) => i.message);
+    expect(messages.some((m) => m.includes('userId'))).toBe(true);
+    expect(messages.some((m) => m.includes('email'))).toBe(true);
   });
 
   it('should handle missing inputSchema gracefully', () => {

@@ -34,7 +34,8 @@ const rule: Rule = {
           message: `Number parameter '${name}' is missing minimum/maximum constraints`,
           tool: tool.name,
           path,
-          suggestion: 'Add "minimum" and/or "maximum" constraints to bound the value',
+          suggestion:
+            'Add "minimum" and/or "maximum" constraints to bound the value',
         });
       }
     }

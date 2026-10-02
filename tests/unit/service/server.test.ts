@@ -5,10 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  createApp,
-  type LogEntry,
-} from '../../../src/service/server.js';
+import { createApp, type LogEntry } from '../../../src/service/server.js';
 import { getDefaultConfig } from '../../../src/core/config.js';
 import { VERSION } from '../../../src/version.js';
 
@@ -55,7 +52,8 @@ describe('HTTP Service', () => {
           tools: [
             {
               name: 'test-tool',
-              description: 'A test tool for validation testing that performs basic operations.',
+              description:
+                'A test tool for validation testing that performs basic operations.',
               inputSchema: {
                 type: 'object',
                 properties: {
@@ -147,7 +145,9 @@ describe('HTTP Service', () => {
 
       expect(res.status).toBe(200);
       const body = (await res.json()) as Record<string, any>;
-      expect(body.issues.some((issue: { id: string }) => issue.id === 'LLM-005')).toBe(false);
+      expect(
+        body.issues.some((issue: { id: string }) => issue.id === 'LLM-005')
+      ).toBe(false);
       expect(body.summary.issuesBySeverity).not.toHaveProperty('off');
       expect(body.summary.maturityScore).toEqual(expect.any(Number));
     });
@@ -418,7 +418,9 @@ describe('HTTP Service', () => {
           'Content-Type': 'application/json',
           Authorization: 'Bearer test-only-token',
         },
-        body: JSON.stringify({ tools: [{ ...simpleTool, description: 'SENTINEL-DESCRIPTION' }] }),
+        body: JSON.stringify({
+          tools: [{ ...simpleTool, description: 'SENTINEL-DESCRIPTION' }],
+        }),
       });
 
       expect(entries).toHaveLength(1);

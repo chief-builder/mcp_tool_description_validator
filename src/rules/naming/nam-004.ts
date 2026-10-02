@@ -31,7 +31,8 @@ const rule: Rule = {
         message: `Tool name "${tool.name}" should not start with a number`,
         tool: tool.name,
         path: 'name',
-        suggestion: 'Start the tool name with a descriptive verb or noun instead of a number',
+        suggestion:
+          'Start the tool name with a descriptive verb or noun instead of a number',
       });
     }
 

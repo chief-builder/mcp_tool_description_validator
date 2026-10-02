@@ -24,21 +24,29 @@ vi.mock('ai', () => ({
 // Mock provider packages (they're optional peer deps).
 // The analyzer uses the createX factories so apiKey/baseUrl are honored.
 vi.mock('@ai-sdk/openai', () => ({
-  createOpenAI: vi.fn().mockReturnValue(vi.fn().mockReturnValue('openai-model')),
+  createOpenAI: vi
+    .fn()
+    .mockReturnValue(vi.fn().mockReturnValue('openai-model')),
 }));
 
 vi.mock('@ai-sdk/anthropic', () => ({
-  createAnthropic: vi.fn().mockReturnValue(vi.fn().mockReturnValue('anthropic-model')),
+  createAnthropic: vi
+    .fn()
+    .mockReturnValue(vi.fn().mockReturnValue('anthropic-model')),
 }));
 
 vi.mock('ollama-ai-provider-v2', () => ({
-  createOllama: vi.fn().mockReturnValue(vi.fn().mockReturnValue('ollama-model')),
+  createOllama: vi
+    .fn()
+    .mockReturnValue(vi.fn().mockReturnValue('ollama-model')),
 }));
 
 /**
  * Create a mock tool definition for testing.
  */
-function createMockTool(overrides: Partial<ToolDefinition> = {}): ToolDefinition {
+function createMockTool(
+  overrides: Partial<ToolDefinition> = {}
+): ToolDefinition {
   return {
     name: 'test-tool',
     description: 'A test tool for searching data.',
@@ -234,12 +242,14 @@ describe('LLM Analyzer', () => {
 
   describe('createDefaultLLMConfig()', () => {
     it('should export createDefaultLLMConfig function', async () => {
-      const { createDefaultLLMConfig } = await import('../../../src/llm/analyzer.js');
+      const { createDefaultLLMConfig } =
+        await import('../../../src/llm/analyzer.js');
       expect(typeof createDefaultLLMConfig).toBe('function');
     });
 
     it('should return default config with LLM disabled', async () => {
-      const { createDefaultLLMConfig } = await import('../../../src/llm/analyzer.js');
+      const { createDefaultLLMConfig } =
+        await import('../../../src/llm/analyzer.js');
       const config = createDefaultLLMConfig();
 
       expect(config.enabled).toBe(false);

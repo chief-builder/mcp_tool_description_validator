@@ -33,7 +33,8 @@ describe('LLM-002: Tool description should be 20-500 characters', () => {
 
   it('should pass for description within valid range', () => {
     const tool = createTool({
-      description: 'Creates a new user account in the system with the specified details.',
+      description:
+        'Creates a new user account in the system with the specified details.',
     });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues).toHaveLength(0);

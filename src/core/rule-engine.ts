@@ -18,13 +18,26 @@ import type {
 } from '../types/index.js';
 
 const SPECIFICATION_RULES = new Set([
-  'SCH-001', 'SCH-002', 'SCH-003', 'SCH-004', 'SCH-005',
-  'SCH-009', 'SCH-010', 'SCH-011',
+  'SCH-001',
+  'SCH-002',
+  'SCH-003',
+  'SCH-004',
+  'SCH-005',
+  'SCH-009',
+  'SCH-010',
+  'SCH-011',
 ]);
 
 const HEURISTIC_RULES = new Set([
-  'NAM-003', 'NAM-004', 'NAM-005', 'NAM-006', 'NAM-008',
-  'SEC-004', 'SEC-006', 'SEC-007', 'SEC-010',
+  'NAM-003',
+  'NAM-004',
+  'NAM-005',
+  'NAM-006',
+  'NAM-008',
+  'SEC-004',
+  'SEC-006',
+  'SEC-007',
+  'SEC-010',
 ]);
 
 /** Classify a rule's authority when it does not declare one explicitly. */
@@ -147,19 +160,21 @@ function calculateToolScore(issues: ValidationIssue[]): number {
  * Aggregate results into a validation summary.
  * Uses per-tool averaged scoring for fair comparison across servers.
  */
-export function aggregateResults(results: ToolRuleResults[]): ValidationSummary {
+export function aggregateResults(
+  results: ToolRuleResults[]
+): ValidationSummary {
   const issuesByCategory: Record<IssueCategory, number> = {
-    'schema': 0,
-    'security': 0,
+    schema: 0,
+    security: 0,
     'llm-compatibility': 0,
-    'naming': 0,
+    naming: 0,
     'best-practice': 0,
   };
 
   const issuesBySeverity: Record<IssueSeverity, number> = {
-    'error': 0,
-    'warning': 0,
-    'suggestion': 0,
+    error: 0,
+    warning: 0,
+    suggestion: 0,
   };
   const issuesByProvenance: Record<IssueProvenance, number> = {
     specification: 0,
@@ -185,9 +200,8 @@ export function aggregateResults(results: ToolRuleResults[]): ValidationSummary 
   }
 
   // Per-tool averaged maturity score (handles empty results)
-  const maturityScore = results.length > 0
-    ? Math.round(totalToolScore / results.length)
-    : 100;
+  const maturityScore =
+    results.length > 0 ? Math.round(totalToolScore / results.length) : 100;
   const maturityLevel = getMaturityLevel(maturityScore);
 
   return {

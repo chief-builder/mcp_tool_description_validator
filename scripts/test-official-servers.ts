@@ -53,7 +53,8 @@ const SERVERS: ServerConfig[] = [
   {
     name: 'sequential-thinking',
     command: 'npx -y @modelcontextprotocol/server-sequential-thinking',
-    description: 'Dynamic and reflective problem-solving through thought sequences',
+    description:
+      'Dynamic and reflective problem-solving through thought sequences',
   },
 ];
 
@@ -90,7 +91,9 @@ async function testServer(config: ServerConfig): Promise<ServerTestResult> {
     console.log(`   Issues: ${totalIssues} total`);
     console.log(`     - Errors: ${result.summary.issuesBySeverity.error}`);
     console.log(`     - Warnings: ${result.summary.issuesBySeverity.warning}`);
-    console.log(`     - Suggestions: ${result.summary.issuesBySeverity.suggestion}`);
+    console.log(
+      `     - Suggestions: ${result.summary.issuesBySeverity.suggestion}`
+    );
 
     return {
       server: config.name,
@@ -184,7 +187,9 @@ Generated: ${new Date().toISOString()}
         }
 
         md += `**Issues by Rule:**\n`;
-        for (const [ruleId, count] of Array.from(issuesByRule.entries()).sort()) {
+        for (const [ruleId, count] of Array.from(
+          issuesByRule.entries()
+        ).sort()) {
           md += `- \`${ruleId}\`: ${count} occurrence(s)\n`;
         }
         md += '\n';
@@ -198,14 +203,20 @@ Generated: ${new Date().toISOString()}
   // Common issues section
   md += `## Common Issues Across Servers\n\n`;
 
-  const allIssuesByRule = new Map<string, { count: number; servers: string[] }>();
+  const allIssuesByRule = new Map<
+    string,
+    { count: number; servers: string[] }
+  >();
   for (const r of results) {
     if (r.result) {
       const rulesSeen = new Set<string>();
       for (const issue of r.result.issues) {
         if (!rulesSeen.has(issue.id)) {
           rulesSeen.add(issue.id);
-          const entry = allIssuesByRule.get(issue.id) || { count: 0, servers: [] };
+          const entry = allIssuesByRule.get(issue.id) || {
+            count: 0,
+            servers: [],
+          };
           entry.count += 1;
           entry.servers.push(r.server);
           allIssuesByRule.set(issue.id, entry);
@@ -233,7 +244,7 @@ Generated: ${new Date().toISOString()}
  */
 async function main() {
   console.log('🔍 MCP Tool Definition Validator - Official Server Tests\n');
-  console.log('=' .repeat(60));
+  console.log('='.repeat(60));
 
   // Ensure reports directory exists
   await fs.mkdir(REPORTS_DIR, { recursive: true });
@@ -253,7 +264,7 @@ async function main() {
     }
   }
 
-  console.log('\n' + '=' .repeat(60));
+  console.log('\n' + '='.repeat(60));
   console.log('\n📊 Generating summary report...\n');
 
   // Generate and save summary
@@ -264,7 +275,9 @@ async function main() {
 
   // Print summary
   const successCount = results.filter((r) => r.success).length;
-  console.log(`\n✨ Complete: ${successCount}/${results.length} servers tested successfully`);
+  console.log(
+    `\n✨ Complete: ${successCount}/${results.length} servers tested successfully`
+  );
 
   // Exit with error if any server failed
   if (successCount < results.length) {

@@ -12,29 +12,69 @@ const mockResult: ValidationResult = {
   summary: {
     totalTools: 2,
     validTools: 1,
-    issuesByCategory: { schema: 1, security: 0, 'llm-compatibility': 1, naming: 0, 'best-practice': 0 },
+    issuesByCategory: {
+      schema: 1,
+      security: 0,
+      'llm-compatibility': 1,
+      naming: 0,
+      'best-practice': 0,
+    },
     issuesBySeverity: { error: 1, warning: 1, suggestion: 0 },
     maturityScore: 88,
     maturityLevel: 'mature',
   },
   issues: [
-    { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool' },
-    { id: 'LLM-002', category: 'llm-compatibility', severity: 'warning', message: 'Short description', tool: 'test-tool' },
+    {
+      id: 'SCH-001',
+      category: 'schema',
+      severity: 'error',
+      message: 'Missing name',
+      tool: 'test-tool',
+    },
+    {
+      id: 'LLM-002',
+      category: 'llm-compatibility',
+      severity: 'warning',
+      message: 'Short description',
+      tool: 'test-tool',
+    },
   ],
   tools: [
     {
       name: 'test-tool',
       valid: false,
-      tool: { name: 'test-tool', description: 'Test', inputSchema: { type: 'object' }, source: { type: 'file', location: 'test.json', raw: {} } },
+      tool: {
+        name: 'test-tool',
+        description: 'Test',
+        inputSchema: { type: 'object' },
+        source: { type: 'file', location: 'test.json', raw: {} },
+      },
       issues: [
-        { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool' },
-        { id: 'LLM-002', category: 'llm-compatibility', severity: 'warning', message: 'Short description', tool: 'test-tool' },
+        {
+          id: 'SCH-001',
+          category: 'schema',
+          severity: 'error',
+          message: 'Missing name',
+          tool: 'test-tool',
+        },
+        {
+          id: 'LLM-002',
+          category: 'llm-compatibility',
+          severity: 'warning',
+          message: 'Short description',
+          tool: 'test-tool',
+        },
       ],
     },
     {
       name: 'good-tool',
       valid: true,
-      tool: { name: 'good-tool', description: 'A good tool', inputSchema: { type: 'object' }, source: { type: 'file', location: 'test.json', raw: {} } },
+      tool: {
+        name: 'good-tool',
+        description: 'A good tool',
+        inputSchema: { type: 'object' },
+        source: { type: 'file', location: 'test.json', raw: {} },
+      },
       issues: [],
     },
   ],
@@ -54,7 +94,9 @@ describe('SARIF Reporter', () => {
       const output = formatSarifOutput(mockResult);
       const parsed: SarifLog = JSON.parse(output);
 
-      expect(parsed.$schema).toBe('https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json');
+      expect(parsed.$schema).toBe(
+        'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json'
+      );
       expect(parsed.version).toBe('2.1.0');
       expect(parsed.runs).toBeDefined();
       expect(Array.isArray(parsed.runs)).toBe(true);
@@ -75,7 +117,9 @@ describe('SARIF Reporter', () => {
       const output = formatSarifOutput(mockResult);
       const parsed: SarifLog = JSON.parse(output);
 
-      const errorResult = parsed.runs[0].results.find(r => r.ruleId === 'SCH-001');
+      const errorResult = parsed.runs[0].results.find(
+        (r) => r.ruleId === 'SCH-001'
+      );
       expect(errorResult).toBeDefined();
       expect(errorResult?.level).toBe('error');
     });
@@ -84,7 +128,9 @@ describe('SARIF Reporter', () => {
       const output = formatSarifOutput(mockResult);
       const parsed: SarifLog = JSON.parse(output);
 
-      const warningResult = parsed.runs[0].results.find(r => r.ruleId === 'LLM-002');
+      const warningResult = parsed.runs[0].results.find(
+        (r) => r.ruleId === 'LLM-002'
+      );
       expect(warningResult).toBeDefined();
       expect(warningResult?.level).toBe('warning');
     });
@@ -92,13 +138,17 @@ describe('SARIF Reporter', () => {
     it('should preserve finding provenance in SARIF properties', () => {
       const result: ValidationResult = {
         ...mockResult,
-        tools: [{
-          ...mockResult.tools[0],
-          issues: [{
-            ...mockResult.tools[0].issues[0],
-            provenance: 'specification',
-          }],
-        }],
+        tools: [
+          {
+            ...mockResult.tools[0],
+            issues: [
+              {
+                ...mockResult.tools[0].issues[0],
+                provenance: 'specification',
+              },
+            ],
+          },
+        ],
       };
       const parsed: SarifLog = JSON.parse(formatSarifOutput(result));
       expect(parsed.runs[0].results[0].properties?.provenance).toBe(
@@ -110,7 +160,13 @@ describe('SARIF Reporter', () => {
       const resultWithSuggestion: ValidationResult = {
         ...mockResult,
         issues: [
-          { id: 'BP-001', category: 'best-practice', severity: 'suggestion', message: 'Consider adding examples', tool: 'test-tool' },
+          {
+            id: 'BP-001',
+            category: 'best-practice',
+            severity: 'suggestion',
+            message: 'Consider adding examples',
+            tool: 'test-tool',
+          },
         ],
         tools: [
           {
@@ -118,7 +174,13 @@ describe('SARIF Reporter', () => {
             valid: true,
             tool: mockResult.tools[0].tool,
             issues: [
-              { id: 'BP-001', category: 'best-practice', severity: 'suggestion', message: 'Consider adding examples', tool: 'test-tool' },
+              {
+                id: 'BP-001',
+                category: 'best-practice',
+                severity: 'suggestion',
+                message: 'Consider adding examples',
+                tool: 'test-tool',
+              },
             ],
           },
         ],
@@ -127,7 +189,9 @@ describe('SARIF Reporter', () => {
       const output = formatSarifOutput(resultWithSuggestion);
       const parsed: SarifLog = JSON.parse(output);
 
-      const suggestionResult = parsed.runs[0].results.find(r => r.ruleId === 'BP-001');
+      const suggestionResult = parsed.runs[0].results.find(
+        (r) => r.ruleId === 'BP-001'
+      );
       expect(suggestionResult).toBeDefined();
       expect(suggestionResult?.level).toBe('note');
     });
@@ -140,17 +204,39 @@ describe('SARIF Reporter', () => {
           {
             name: 'test-tool-1',
             valid: false,
-            tool: { name: 'test-tool-1', description: 'Test 1', inputSchema: { type: 'object' }, source: { type: 'file', location: 'test.json', raw: {} } },
+            tool: {
+              name: 'test-tool-1',
+              description: 'Test 1',
+              inputSchema: { type: 'object' },
+              source: { type: 'file', location: 'test.json', raw: {} },
+            },
             issues: [
-              { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool-1' },
+              {
+                id: 'SCH-001',
+                category: 'schema',
+                severity: 'error',
+                message: 'Missing name',
+                tool: 'test-tool-1',
+              },
             ],
           },
           {
             name: 'test-tool-2',
             valid: false,
-            tool: { name: 'test-tool-2', description: 'Test 2', inputSchema: { type: 'object' }, source: { type: 'file', location: 'test.json', raw: {} } },
+            tool: {
+              name: 'test-tool-2',
+              description: 'Test 2',
+              inputSchema: { type: 'object' },
+              source: { type: 'file', location: 'test.json', raw: {} },
+            },
             issues: [
-              { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool-2' },
+              {
+                id: 'SCH-001',
+                category: 'schema',
+                severity: 'error',
+                message: 'Missing name',
+                tool: 'test-tool-2',
+              },
             ],
           },
         ],
@@ -161,11 +247,13 @@ describe('SARIF Reporter', () => {
 
       // Rules should be deduplicated - only one SCH-001 rule
       const rules = parsed.runs[0].tool.driver.rules;
-      const sch001Rules = rules.filter(r => r.id === 'SCH-001');
+      const sch001Rules = rules.filter((r) => r.id === 'SCH-001');
       expect(sch001Rules.length).toBe(1);
 
       // But results should have both occurrences
-      const sch001Results = parsed.runs[0].results.filter(r => r.ruleId === 'SCH-001');
+      const sch001Results = parsed.runs[0].results.filter(
+        (r) => r.ruleId === 'SCH-001'
+      );
       expect(sch001Results.length).toBe(2);
     });
 
@@ -176,7 +264,9 @@ describe('SARIF Reporter', () => {
       const result = parsed.runs[0].results[0];
       expect(result.locations).toBeDefined();
       expect(result.locations?.[0].logicalLocations).toBeDefined();
-      expect(result.locations?.[0].logicalLocations?.[0].name).toBe('test-tool');
+      expect(result.locations?.[0].logicalLocations?.[0].name).toBe(
+        'test-tool'
+      );
       expect(result.locations?.[0].logicalLocations?.[0].kind).toBe('tool');
     });
 
@@ -189,7 +279,14 @@ describe('SARIF Reporter', () => {
             valid: false,
             tool: mockResult.tools[0].tool,
             issues: [
-              { id: 'SCH-001', category: 'schema', severity: 'error', message: 'Missing name', tool: 'test-tool', path: 'inputSchema.properties.userId' },
+              {
+                id: 'SCH-001',
+                category: 'schema',
+                severity: 'error',
+                message: 'Missing name',
+                tool: 'test-tool',
+                path: 'inputSchema.properties.userId',
+              },
             ],
           },
         ],
@@ -199,7 +296,9 @@ describe('SARIF Reporter', () => {
       const parsed: SarifLog = JSON.parse(output);
 
       const result = parsed.runs[0].results[0];
-      expect(result.locations?.[0].logicalLocations?.[0].fullyQualifiedName).toBe('test-tool.inputSchema.properties.userId');
+      expect(
+        result.locations?.[0].logicalLocations?.[0].fullyQualifiedName
+      ).toBe('test-tool.inputSchema.properties.userId');
     });
 
     it('should use tool name as fullyQualifiedName when path is absent', () => {
@@ -207,7 +306,9 @@ describe('SARIF Reporter', () => {
       const parsed: SarifLog = JSON.parse(output);
 
       const result = parsed.runs[0].results[0];
-      expect(result.locations?.[0].logicalLocations?.[0].fullyQualifiedName).toBe('test-tool');
+      expect(
+        result.locations?.[0].logicalLocations?.[0].fullyQualifiedName
+      ).toBe('test-tool');
     });
 
     it('should include rule definitions with defaultConfiguration', () => {

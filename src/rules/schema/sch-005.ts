@@ -36,7 +36,8 @@ const rule: Rule = {
           : 'inputSchema is missing required "type" field (must be "object")',
         tool: tool.name || '(unnamed)',
         path: 'inputSchema.type',
-        suggestion: 'Set inputSchema.type to "object" - MCP tool inputs must be objects with named parameters',
+        suggestion:
+          'Set inputSchema.type to "object" - MCP tool inputs must be objects with named parameters',
         documentation: this.documentation,
       });
     }

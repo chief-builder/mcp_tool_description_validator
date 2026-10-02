@@ -108,7 +108,6 @@ async function getModel(config: LLMConfig) {
   }
 }
 
-
 /**
  * Format tool parameters for the prompt in a human-readable format.
  */

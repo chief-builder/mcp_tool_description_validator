@@ -14,7 +14,8 @@ describe('Validator Integration', () => {
       const tools = [
         {
           name: 'test-tool',
-          description: 'A test tool for validation that performs comprehensive testing operations.',
+          description:
+            'A test tool for validation that performs comprehensive testing operations.',
           inputSchema: {
             type: 'object' as const,
             properties: {
@@ -37,7 +38,9 @@ describe('Validator Integration', () => {
       expect(result.tools).toHaveLength(1);
       expect(result.summary.totalTools).toBe(1);
       expect(typeof result.metadata.duration).toBe('number');
-      expect(result.metadata.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+      expect(result.metadata.timestamp).toMatch(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/
+      );
     });
 
     it('should detect common validation issues', async () => {
@@ -74,7 +77,8 @@ describe('Validator Integration', () => {
       const tools = [
         {
           name: 'delete-resource',
-          description: 'Delete a resource permanently from the database. This is a destructive operation.',
+          description:
+            'Delete a resource permanently from the database. This is a destructive operation.',
           inputSchema: {
             type: 'object' as const,
             properties: {

@@ -128,7 +128,8 @@ const rule: Rule = {
   id: 'LLM-009',
   category: 'llm-compatibility',
   defaultSeverity: 'suggestion',
-  description: 'Include parameter constraints in description (e.g., "max 100 characters")',
+  description:
+    'Include parameter constraints in description (e.g., "max 100 characters")',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
@@ -138,7 +139,8 @@ const rule: Rule = {
       return issues;
     }
 
-    const properties = schema.properties as Record<string, PropertySchema> | undefined;
+    const properties = schema.properties as
+      Record<string, PropertySchema> | undefined;
     if (!properties || typeof properties !== 'object') {
       return issues;
     }
@@ -162,12 +164,16 @@ const rule: Rule = {
         }
 
         // Skip empty enums
-        if (check.schemaKey === 'enum' && Array.isArray(constraintValue) && constraintValue.length === 0) {
+        if (
+          check.schemaKey === 'enum' &&
+          Array.isArray(constraintValue) &&
+          constraintValue.length === 0
+        ) {
           continue;
         }
 
         // Check if description mentions the constraint
-        const mentionsConstraint = check.descriptionPatterns.some(pattern =>
+        const mentionsConstraint = check.descriptionPatterns.some((pattern) =>
           pattern.test(descText)
         );
 

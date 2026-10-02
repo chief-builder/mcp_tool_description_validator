@@ -129,19 +129,22 @@ describe('LLM-011: Tool description should mention side effects if any', () => {
     });
     const issues = rule.check(tool, createContext([tool]));
     expect(issues.length).toBeGreaterThanOrEqual(1);
-    expect(issues.some(i => i.message.includes('destructive'))).toBe(true);
+    expect(issues.some((i) => i.message.includes('destructive'))).toBe(true);
   });
 
   it('should pass for destructive hint with warning', () => {
     const tool = createTool({
       name: 'purge-records',
-      description: 'Warning: Permanently deletes all records. This action cannot be undone.',
+      description:
+        'Warning: Permanently deletes all records. This action cannot be undone.',
       annotations: {
         destructiveHint: true,
       },
     });
     const issues = rule.check(tool, createContext([tool]));
-    expect(issues.filter(i => i.message.includes('destructive'))).toHaveLength(0);
+    expect(
+      issues.filter((i) => i.message.includes('destructive'))
+    ).toHaveLength(0);
   });
 
   it('should accept inflected destructive words (regression)', () => {

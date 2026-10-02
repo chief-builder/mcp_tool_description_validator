@@ -29,7 +29,11 @@ const rule: Rule = {
     const propertyEntries = getAllPropertyEntries(tool.inputSchema);
 
     for (const { name, schema, path } of propertyEntries) {
-      if (schema.type === 'string' && isUrlParameter(name) && schema.format !== 'uri') {
+      if (
+        schema.type === 'string' &&
+        isUrlParameter(name) &&
+        schema.format !== 'uri'
+      ) {
         issues.push({
           id: this.id,
           category: this.category,

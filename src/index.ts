@@ -48,11 +48,7 @@ export {
 // Configuration
 // ============================================================================
 
-export {
-  loadConfig,
-  mergeConfig,
-  getDefaultConfig,
-} from './core/config.js';
+export { loadConfig, mergeConfig, getDefaultConfig } from './core/config.js';
 
 // ============================================================================
 // Reporters

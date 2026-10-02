@@ -60,9 +60,7 @@ const rule: Rule = {
 
     const hasFormatParam = getAllPropertyEntries(tool.inputSchema).some(
       (entry) =>
-        tokenizeIdentifier(entry.name).some((token) =>
-          FORMAT_TOKENS.has(token)
-        )
+        tokenizeIdentifier(entry.name).some((token) => FORMAT_TOKENS.has(token))
     );
     if (hasFormatParam) {
       return issues;

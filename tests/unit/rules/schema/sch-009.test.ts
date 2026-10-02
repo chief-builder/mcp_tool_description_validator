@@ -4,7 +4,10 @@
 
 import { describe, it, expect } from 'vitest';
 import rule from '../../../../src/rules/schema/sch-009.js';
-import type { ToolDefinition, ToolSource } from '../../../../src/types/index.js';
+import type {
+  ToolDefinition,
+  ToolSource,
+} from '../../../../src/types/index.js';
 import type { RuleContext } from '../../../../src/rules/types.js';
 
 const mockSource: ToolSource = { type: 'file', location: 'test.json', raw: {} };
@@ -66,7 +69,9 @@ describe('SCH-009: $ref must not resolve to a network URI', () => {
     expect(issues).toHaveLength(1);
     expect(issues[0].id).toBe('SCH-009');
     expect(issues[0].severity).toBe('error');
-    expect(issues[0].message).toContain('https://example.com/schemas/user.json');
+    expect(issues[0].message).toContain(
+      'https://example.com/schemas/user.json'
+    );
     expect(issues[0].path).toBe('inputSchema.$ref');
     expect(issues[0].suggestion).toContain('$defs');
   });

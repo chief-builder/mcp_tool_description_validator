@@ -64,7 +64,8 @@ const rule: Rule = {
   id: 'SEC-001',
   category: 'security',
   defaultSeverity: 'error',
-  description: 'String parameters must have maxLength constraint (except content fields)',
+  description:
+    'String parameters must have maxLength constraint (except content fields)',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];

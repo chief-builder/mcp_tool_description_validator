@@ -15,8 +15,7 @@ const rule: Rule = {
   id: 'BP-011',
   category: 'best-practice',
   defaultSeverity: 'suggestion',
-  description:
-    'Parameterless tools should set additionalProperties: false',
+  description: 'Parameterless tools should set additionalProperties: false',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];

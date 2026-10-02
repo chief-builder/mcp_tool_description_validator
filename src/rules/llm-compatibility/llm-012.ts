@@ -24,22 +24,73 @@ function extractPattern(description: string): DescriptionPattern {
 
   // Common verbs that descriptions start with
   const commonVerbs = [
-    'creates', 'create', 'retrieves', 'retrieve', 'gets', 'get',
-    'updates', 'update', 'deletes', 'delete', 'removes', 'remove',
-    'lists', 'list', 'searches', 'search', 'finds', 'find',
-    'sends', 'send', 'fetches', 'fetch', 'returns', 'return',
-    'generates', 'generate', 'validates', 'validate', 'checks', 'check',
-    'sets', 'set', 'adds', 'add', 'inserts', 'insert',
-    'saves', 'save', 'loads', 'load', 'reads', 'read', 'writes', 'write',
-    'executes', 'execute', 'runs', 'run', 'starts', 'start', 'stops', 'stop',
-    'enables', 'enable', 'disables', 'disable', 'configures', 'configure',
+    'creates',
+    'create',
+    'retrieves',
+    'retrieve',
+    'gets',
+    'get',
+    'updates',
+    'update',
+    'deletes',
+    'delete',
+    'removes',
+    'remove',
+    'lists',
+    'list',
+    'searches',
+    'search',
+    'finds',
+    'find',
+    'sends',
+    'send',
+    'fetches',
+    'fetch',
+    'returns',
+    'return',
+    'generates',
+    'generate',
+    'validates',
+    'validate',
+    'checks',
+    'check',
+    'sets',
+    'set',
+    'adds',
+    'add',
+    'inserts',
+    'insert',
+    'saves',
+    'save',
+    'loads',
+    'load',
+    'reads',
+    'read',
+    'writes',
+    'write',
+    'executes',
+    'execute',
+    'runs',
+    'run',
+    'starts',
+    'start',
+    'stops',
+    'stop',
+    'enables',
+    'enable',
+    'disables',
+    'disable',
+    'configures',
+    'configure',
   ];
 
   const startsWithVerb = commonVerbs.includes(firstWord);
   const verbUsed = startsWithVerb ? firstWord : null;
 
   const hasWhenClause = /\b(when|if|for|used\s+to|use\s+this)\b/i.test(trimmed);
-  const hasExamples = /\b(example|e\.g\.|for\s+instance|such\s+as)\b/i.test(trimmed);
+  const hasExamples = /\b(example|e\.g\.|for\s+instance|such\s+as)\b/i.test(
+    trimmed
+  );
 
   const length = trimmed.length;
   let approximateLength: 'short' | 'medium' | 'long';
@@ -97,33 +148,45 @@ function getToolPrefix(toolName: string): string | null {
   return null;
 }
 
-function findRelatedTools(tool: ToolDefinition, allTools: ToolDefinition[]): ToolDefinition[] {
+function findRelatedTools(
+  tool: ToolDefinition,
+  allTools: ToolDefinition[]
+): ToolDefinition[] {
   const prefix = getToolPrefix(tool.name);
   if (!prefix) {
     return [];
   }
 
-  return allTools.filter(t => {
+  return allTools.filter((t) => {
     if (t.name === tool.name) return false;
     const otherPrefix = getToolPrefix(t.name);
     return otherPrefix === prefix;
   });
 }
 
-function describeInconsistencies(toolPattern: DescriptionPattern, relatedPatterns: DescriptionPattern[]): string[] {
+function describeInconsistencies(
+  toolPattern: DescriptionPattern,
+  relatedPatterns: DescriptionPattern[]
+): string[] {
   const inconsistencies: string[] = [];
 
   // Check verb consistency
   if (toolPattern.startsWithVerb) {
-    const othersStartWithVerb = relatedPatterns.filter(p => p.startsWithVerb).length;
+    const othersStartWithVerb = relatedPatterns.filter(
+      (p) => p.startsWithVerb
+    ).length;
     if (othersStartWithVerb < relatedPatterns.length / 2) {
       // Most related tools don't start with verb but this one does
       // This isn't necessarily bad, so we don't flag it
     }
   } else {
-    const othersStartWithVerb = relatedPatterns.filter(p => p.startsWithVerb).length;
+    const othersStartWithVerb = relatedPatterns.filter(
+      (p) => p.startsWithVerb
+    ).length;
     if (othersStartWithVerb > relatedPatterns.length / 2) {
-      inconsistencies.push('does not start with an action verb like related tools');
+      inconsistencies.push(
+        'does not start with an action verb like related tools'
+      );
     }
   }
 
@@ -132,8 +195,9 @@ function describeInconsistencies(toolPattern: DescriptionPattern, relatedPattern
   for (const p of relatedPatterns) {
     lengthCounts[p.approximateLength]++;
   }
-  const mostCommonLength = Object.entries(lengthCounts)
-    .sort((a, b) => b[1] - a[1])[0];
+  const mostCommonLength = Object.entries(lengthCounts).sort(
+    (a, b) => b[1] - a[1]
+  )[0];
 
   if (mostCommonLength && mostCommonLength[1] > relatedPatterns.length / 2) {
     if (toolPattern.approximateLength !== mostCommonLength[0]) {
@@ -142,19 +206,29 @@ function describeInconsistencies(toolPattern: DescriptionPattern, relatedPattern
         medium: 'medium length',
         long: 'longer',
       };
-      inconsistencies.push(`has ${lengthDescriptions[toolPattern.approximateLength]} description while related tools have ${lengthDescriptions[mostCommonLength[0]]} descriptions`);
+      inconsistencies.push(
+        `has ${lengthDescriptions[toolPattern.approximateLength]} description while related tools have ${lengthDescriptions[mostCommonLength[0]]} descriptions`
+      );
     }
   }
 
   // Check when-clause consistency
-  const othersHaveWhen = relatedPatterns.filter(p => p.hasWhenClause).length;
-  if (!toolPattern.hasWhenClause && othersHaveWhen > relatedPatterns.length / 2) {
+  const othersHaveWhen = relatedPatterns.filter((p) => p.hasWhenClause).length;
+  if (
+    !toolPattern.hasWhenClause &&
+    othersHaveWhen > relatedPatterns.length / 2
+  ) {
     inconsistencies.push('lacks "when to use" context that related tools have');
   }
 
   // Check examples consistency
-  const othersHaveExamples = relatedPatterns.filter(p => p.hasExamples).length;
-  if (!toolPattern.hasExamples && othersHaveExamples > relatedPatterns.length / 2) {
+  const othersHaveExamples = relatedPatterns.filter(
+    (p) => p.hasExamples
+  ).length;
+  if (
+    !toolPattern.hasExamples &&
+    othersHaveExamples > relatedPatterns.length / 2
+  ) {
     inconsistencies.push('lacks examples that related tools have');
   }
 
@@ -171,7 +245,10 @@ const rule: Rule = {
     const issues: ValidationIssue[] = [];
 
     // Skip if description is empty (handled by LLM-001)
-    if (typeof tool.description !== 'string' || tool.description.trim() === '') {
+    if (
+      typeof tool.description !== 'string' ||
+      tool.description.trim() === ''
+    ) {
       return issues;
     }
 
@@ -190,18 +267,24 @@ const rule: Rule = {
         (t): t is ToolDefinition & { description: string } =>
           typeof t.description === 'string' && t.description.trim() !== ''
       )
-      .map(t => extractPattern(t.description));
+      .map((t) => extractPattern(t.description));
 
     if (relatedPatterns.length < 2) {
       return issues;
     }
 
     // Find inconsistencies
-    const inconsistencies = describeInconsistencies(toolPattern, relatedPatterns);
+    const inconsistencies = describeInconsistencies(
+      toolPattern,
+      relatedPatterns
+    );
 
     if (inconsistencies.length > 0) {
       const prefix = getToolPrefix(tool.name);
-      const relatedNames = relatedTools.slice(0, 3).map(t => t.name).join(', ');
+      const relatedNames = relatedTools
+        .slice(0, 3)
+        .map((t) => t.name)
+        .join(', ');
       issues.push({
         id: this.id,
         category: this.category,

@@ -215,9 +215,7 @@ function parseProtocolError(value: unknown): MCPProtocolError {
   const code = value.code as number;
   if (code === UNSUPPORTED_PROTOCOL_VERSION_CODE) {
     if (!isRecord(value.data)) {
-      throw new Error(
-        'UnsupportedProtocolVersionError data must be an object'
-      );
+      throw new Error('UnsupportedProtocolVersionError data must be an object');
     }
     if (
       !Array.isArray(value.data.supported) ||
@@ -247,7 +245,10 @@ function parseProtocolError(value: unknown): MCPProtocolError {
   );
 }
 
-function parseModernResponse(value: unknown, expectedId: number): ModernToolsPage {
+function parseModernResponse(
+  value: unknown,
+  expectedId: number
+): ModernToolsPage {
   if (!isRecord(value)) {
     throw new Error('MCP server returned a non-object JSON-RPC response');
   }
@@ -306,7 +307,9 @@ function parseModernResponse(value: unknown, expectedId: number): ModernToolsPag
       (tool) => typeof tool !== 'object' || tool === null || Array.isArray(tool)
     )
   ) {
-    throw new Error('MCP tools/list response contains a non-object tool definition');
+    throw new Error(
+      'MCP tools/list response contains a non-object tool definition'
+    );
   }
   const nextCursor = result.nextCursor;
   if (nextCursor !== undefined && typeof nextCursor !== 'string') {
@@ -425,7 +428,7 @@ async function fetchModernToolsOverHttp(
       if (/unsupported protocol version/i.test(body)) {
         throw new Error(
           `MCP server rejected discovery protocol ${MODERN_PROTOCOL_VERSION}: ${quoteServerOutput(body)}. ` +
-          'Retry explicitly with --discovery-spec-version 2025-11-25; the validator will not silently downgrade.'
+            'Retry explicitly with --discovery-spec-version 2025-11-25; the validator will not silently downgrade.'
         );
       }
       if (envelopeError instanceof Error) {
@@ -478,9 +481,7 @@ async function fetchModernToolsOverStdio(
     const tools: Record<string, unknown>[] = [];
     let cacheScope: ModernToolsPage['cacheScope'] | undefined;
 
-    const finish = (
-      action: () => void
-    ): void => {
+    const finish = (action: () => void): void => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
@@ -580,7 +581,9 @@ async function fetchModernToolsOverStdio(
  * const conn = await connectToServer({ server: 'http://localhost:3000/mcp' });
  * ```
  */
-export async function connectToServer(config: ServerConfig): Promise<MCPConnection> {
+export async function connectToServer(
+  config: ServerConfig
+): Promise<MCPConnection> {
   const { server, timeout = DEFAULT_DISCOVERY_TIMEOUT_MS } = config;
 
   let transport: Transport;
@@ -621,7 +624,9 @@ export async function connectToServer(config: ServerConfig): Promise<MCPConnecti
   let timeoutHandle: NodeJS.Timeout | undefined;
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutHandle = setTimeout(() => {
-      reject(new Error(`Connection to MCP server timed out after ${timeout}ms`));
+      reject(
+        new Error(`Connection to MCP server timed out after ${timeout}ms`)
+      );
     }, timeout);
   });
 
@@ -691,7 +696,9 @@ export async function disconnect(connection: MCPConnection): Promise<void> {
  * console.log(`Found ${tools.length} tools`);
  * ```
  */
-export async function fetchToolsFromServer(config: ServerConfig): Promise<ToolDefinition[]> {
+export async function fetchToolsFromServer(
+  config: ServerConfig
+): Promise<ToolDefinition[]> {
   const {
     server,
     timeout = DEFAULT_DISCOVERY_TIMEOUT_MS,

@@ -113,9 +113,7 @@ function overlaps(a: DescriptionProfile, b: DescriptionProfile): boolean {
  */
 const overlapCache = new WeakMap<object, Map<number, string>>();
 
-function getOverlapMap(
-  allTools: RuleContext['allTools']
-): Map<number, string> {
+function getOverlapMap(allTools: RuleContext['allTools']): Map<number, string> {
   const cached = overlapCache.get(allTools);
   if (cached) return cached;
 

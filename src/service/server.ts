@@ -135,20 +135,14 @@ export function createApp(options: CreateAppOptions = {}) {
     bodyLimit({
       maxSize: maxBodyBytes,
       onError: (c) =>
-        c.json(
-          { error: `Request body exceeds ${maxBodyBytes} bytes` },
-          413
-        ),
+        c.json({ error: `Request body exceeds ${maxBodyBytes} bytes` }, 413),
     }),
     async (c) => {
       // Requiring JSON also forces a CORS preflight for cross-origin
       // browser requests, which this service does not answer.
       const contentType = c.req.header('content-type') ?? '';
       if (!contentType.toLowerCase().startsWith('application/json')) {
-        return c.json(
-          { error: 'Content-Type must be application/json' },
-          415
-        );
+        return c.json({ error: 'Content-Type must be application/json' }, 415);
       }
 
       let body: unknown;
@@ -193,14 +187,16 @@ export function createApp(options: CreateAppOptions = {}) {
       }
 
       // Add source to tools if missing
-      const toolsWithSource = (tools as ToolDefinition[]).map((tool, index) => ({
-        ...tool,
-        source: tool.source || {
-          type: 'file' as const,
-          location: `request[${index}]`,
-          raw: tool,
-        },
-      }));
+      const toolsWithSource = (tools as ToolDefinition[]).map(
+        (tool, index) => ({
+          ...tool,
+          source: tool.source || {
+            type: 'file' as const,
+            location: `request[${index}]`,
+            raw: tool,
+          },
+        })
+      );
 
       try {
         const result = await validate(toolsWithSource, {

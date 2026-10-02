@@ -35,7 +35,8 @@ const rule: Rule = {
   id: 'SEC-010',
   category: 'security',
   defaultSeverity: 'warning',
-  description: 'Parameters accepting code/scripts should be documented as dangerous',
+  description:
+    'Parameters accepting code/scripts should be documented as dangerous',
 
   check(tool, _ctx) {
     const issues: ValidationIssue[] = [];
@@ -47,7 +48,9 @@ const rule: Rule = {
         // Check if the description mentions the security implications
         const description = (schema.description as string) || '';
         const hasSecurityWarning =
-          /danger|warning|security|caution|risk|unsafe|untrusted/i.test(description);
+          /danger|warning|security|caution|risk|unsafe|untrusted/i.test(
+            description
+          );
 
         if (!hasSecurityWarning) {
           issues.push({

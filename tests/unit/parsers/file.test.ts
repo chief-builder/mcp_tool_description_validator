@@ -38,8 +38,12 @@ describe('File Parser', () => {
     });
 
     it('should throw error for unsupported file formats', () => {
-      expect(() => detectFormat('tools.txt')).toThrow('Unsupported file format');
-      expect(() => detectFormat('tools.xml')).toThrow('Unsupported file format');
+      expect(() => detectFormat('tools.txt')).toThrow(
+        'Unsupported file format'
+      );
+      expect(() => detectFormat('tools.xml')).toThrow(
+        'Unsupported file format'
+      );
       expect(() => detectFormat('tools')).toThrow('Unsupported file format');
     });
   });
@@ -149,7 +153,9 @@ describe('File Parser', () => {
       const data = {
         name: 'my-server',
         version: '1.0.0',
-        tools: [{ name: 'search', description: 'Search files', inputSchema: {} }],
+        tools: [
+          { name: 'search', description: 'Search files', inputSchema: {} },
+        ],
       };
 
       const tools = normalizeToToolDefinitions(data, '/path/to/manifest.yaml');
@@ -168,9 +174,9 @@ describe('File Parser', () => {
     it('should throw error for invalid single tool', () => {
       const data = { name: 'incomplete' }; // Missing inputSchema
 
-      expect(() => normalizeToToolDefinitions(data, '/path/to/bad.json')).toThrow(
-        'Invalid tool definition'
-      );
+      expect(() =>
+        normalizeToToolDefinitions(data, '/path/to/bad.json')
+      ).toThrow('Invalid tool definition');
     });
 
     it('should throw error for invalid tool in array', () => {
@@ -181,9 +187,9 @@ describe('File Parser', () => {
         ],
       };
 
-      expect(() => normalizeToToolDefinitions(data, '/path/to/bad.json')).toThrow(
-        'Invalid tool definition at index 1'
-      );
+      expect(() =>
+        normalizeToToolDefinitions(data, '/path/to/bad.json')
+      ).toThrow('Invalid tool definition at index 1');
     });
 
     it('should attach ToolSource to each parsed tool', () => {
@@ -277,7 +283,9 @@ describe('File Parser', () => {
     it('should throw error for invalid JSON content', async () => {
       // Create a temp file with invalid JSON would be needed here
       // For now, test that detectFormat catches bad extensions
-      await expect(parseFile('invalid.xml')).rejects.toThrow('Unsupported file format');
+      await expect(parseFile('invalid.xml')).rejects.toThrow(
+        'Unsupported file format'
+      );
     });
   });
 });

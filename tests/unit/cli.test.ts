@@ -56,19 +56,22 @@ describe('CLI', () => {
 
     it('should handle invalid format gracefully', () => {
       const result = collectRules('invalid', {});
-      expect(result).toEqual({ 'invalid': '' });
+      expect(result).toEqual({ invalid: '' });
     });
 
     it('should handle value containing equals sign', () => {
       // Edge case: value itself contains =
       const result = collectRules('RULE=value=with=equals', {});
-      expect(result).toEqual({ 'RULE': 'value=with=equals' });
+      expect(result).toEqual({ RULE: 'value=with=equals' });
     });
   });
 
   describe('parseRuleOverrides()', () => {
     it('should parse off/false as false', () => {
-      const result = parseRuleOverrides({ 'SEC-001': 'off', 'SEC-002': 'false' });
+      const result = parseRuleOverrides({
+        'SEC-001': 'off',
+        'SEC-002': 'false',
+      });
       expect(result).toEqual({ 'SEC-001': false, 'SEC-002': false });
     });
 
@@ -251,7 +254,10 @@ describe('CLI', () => {
     });
 
     it('should validate a fixture file', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
       const { stdout, exitCode } = await runCLI([fixturePath]);
 
       expect(exitCode).toBe(0);
@@ -260,8 +266,15 @@ describe('CLI', () => {
     });
 
     it('should output JSON format', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
-      const { stdout, exitCode } = await runCLI([fixturePath, '--format', 'json']);
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
+      const { stdout, exitCode } = await runCLI([
+        fixturePath,
+        '--format',
+        'json',
+      ]);
 
       expect(exitCode).toBe(0);
 
@@ -272,8 +285,15 @@ describe('CLI', () => {
     });
 
     it('should output SARIF format', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
-      const { stdout, exitCode } = await runCLI([fixturePath, '--format', 'sarif']);
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
+      const { stdout, exitCode } = await runCLI([
+        fixturePath,
+        '--format',
+        'sarif',
+      ]);
 
       expect(exitCode).toBe(0);
 
@@ -320,12 +340,16 @@ describe('CLI', () => {
       // Disable NAM-002 rule
       const { stdout } = await runCLI([
         filePath,
-        '--rule', 'NAM-002=off',
-        '--format', 'json',
+        '--rule',
+        'NAM-002=off',
+        '--format',
+        'json',
       ]);
 
       const result = JSON.parse(stdout);
-      const nam002Issues = result.issues.filter((i: { id: string }) => i.id === 'NAM-002');
+      const nam002Issues = result.issues.filter(
+        (i: { id: string }) => i.id === 'NAM-002'
+      );
       expect(nam002Issues).toHaveLength(0);
     });
 
@@ -354,8 +378,10 @@ describe('CLI', () => {
 
       const legacyRun = await runCLI([
         filePath,
-        '--spec-version', '2025-11-25',
-        '--format', 'json',
+        '--spec-version',
+        '2025-11-25',
+        '--format',
+        'json',
       ]);
       const legacyResult = JSON.parse(legacyRun.stdout);
       expect(legacyResult.metadata.mcpSpecVersion).toBe('2025-11-25');
@@ -365,10 +391,14 @@ describe('CLI', () => {
     });
 
     it('should reject an invalid --spec-version value', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
       const { stderr, exitCode } = await runCLI([
         fixturePath,
-        '--spec-version', 'bogus',
+        '--spec-version',
+        'bogus',
       ]);
 
       expect(exitCode).not.toBe(0);
@@ -418,14 +448,22 @@ describe('CLI', () => {
       const badConfig = join(testDir, 'bad.yaml');
       await writeFile(badConfig, 'rules:\n  SEC-001: fatal\n');
 
-      const { stderr, exitCode } = await runCLI(['serve', '-c', badConfig, '-p', '0']);
+      const { stderr, exitCode } = await runCLI([
+        'serve',
+        '-c',
+        badConfig,
+        '-p',
+        '0',
+      ]);
 
       expect(exitCode).toBe(2);
       expect(stderr).toContain('Invalid configuration');
     });
 
     it('should handle non-existent file gracefully', async () => {
-      const { stderr, exitCode } = await runCLI(['/nonexistent/path/tools.json']);
+      const { stderr, exitCode } = await runCLI([
+        '/nonexistent/path/tools.json',
+      ]);
 
       expect(exitCode).toBe(2);
       expect(stderr).toContain('Error:');
@@ -474,8 +512,14 @@ describe('CLI', () => {
     });
 
     it('should respect verbose flag', async () => {
-      const fixturePath = join(process.cwd(), 'tests/fixtures/single-tool.json');
-      const { stdout: verboseOutput } = await runCLI([fixturePath, '--verbose']);
+      const fixturePath = join(
+        process.cwd(),
+        'tests/fixtures/single-tool.json'
+      );
+      const { stdout: verboseOutput } = await runCLI([
+        fixturePath,
+        '--verbose',
+      ]);
       const { stdout: normalOutput } = await runCLI([fixturePath]);
 
       // Verbose output might include suggestions

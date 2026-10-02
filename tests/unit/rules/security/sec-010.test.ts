@@ -31,7 +31,8 @@ describe('SEC-010: Parameters accepting code/scripts should be documented as dan
       const tool = createTool({
         script: {
           type: 'string',
-          description: 'DANGER: This executes arbitrary code. Use with caution.',
+          description:
+            'DANGER: This executes arbitrary code. Use with caution.',
         },
       });
       const issues = rule.check(tool, createContext());
@@ -42,7 +43,8 @@ describe('SEC-010: Parameters accepting code/scripts should be documented as dan
       const tool = createTool({
         code: {
           type: 'string',
-          description: 'Warning: Untrusted code execution may pose security risks.',
+          description:
+            'Warning: Untrusted code execution may pose security risks.',
         },
       });
       const issues = rule.check(tool, createContext());
@@ -64,7 +66,8 @@ describe('SEC-010: Parameters accepting code/scripts should be documented as dan
       const tool = createTool({
         command: {
           type: 'string',
-          description: 'Shell command. Security note: validate before execution.',
+          description:
+            'Shell command. Security note: validate before execution.',
         },
       });
       const issues = rule.check(tool, createContext());

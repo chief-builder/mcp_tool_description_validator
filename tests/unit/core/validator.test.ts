@@ -36,7 +36,9 @@ vi.mock('../../../src/llm/analyzer.js', () => ({
 /**
  * Create a valid tool definition for testing.
  */
-function createValidTool(overrides: Partial<ToolDefinition> = {}): ToolDefinition {
+function createValidTool(
+  overrides: Partial<ToolDefinition> = {}
+): ToolDefinition {
   return {
     name: 'test-tool',
     description: 'A test tool that performs validation testing operations.',
@@ -59,7 +61,9 @@ function createValidTool(overrides: Partial<ToolDefinition> = {}): ToolDefinitio
 /**
  * Create a tool with issues for testing.
  */
-function createInvalidTool(overrides: Partial<ToolDefinition> = {}): ToolDefinition {
+function createInvalidTool(
+  overrides: Partial<ToolDefinition> = {}
+): ToolDefinition {
   return {
     name: 'x', // Too short - NAM-002
     description: 'bad', // Too short - LLM-001
@@ -123,11 +127,59 @@ describe('Core Validator', () => {
       // Disable all rules
       const disabledRules: Record<string, boolean> = {};
       const ruleIds = [
-        'SCH-001', 'SCH-002', 'SCH-003', 'SCH-004', 'SCH-005', 'SCH-006', 'SCH-007', 'SCH-008', 'SCH-009', 'SCH-010', 'SCH-011',
-        'NAM-002', 'NAM-003', 'NAM-004', 'NAM-005', 'NAM-006', 'NAM-007',
-        'SEC-001', 'SEC-002', 'SEC-003', 'SEC-004', 'SEC-005', 'SEC-006', 'SEC-007', 'SEC-008', 'SEC-009', 'SEC-010', 'SEC-011',
-        'LLM-001', 'LLM-002', 'LLM-003', 'LLM-004', 'LLM-005', 'LLM-006', 'LLM-007', 'LLM-008', 'LLM-009', 'LLM-010', 'LLM-011', 'LLM-012', 'LLM-013',
-        'BP-001', 'BP-002', 'BP-003', 'BP-004', 'BP-005', 'BP-006', 'BP-007', 'BP-008', 'BP-009', 'BP-010', 'BP-011', 'BP-012',
+        'SCH-001',
+        'SCH-002',
+        'SCH-003',
+        'SCH-004',
+        'SCH-005',
+        'SCH-006',
+        'SCH-007',
+        'SCH-008',
+        'SCH-009',
+        'SCH-010',
+        'SCH-011',
+        'NAM-002',
+        'NAM-003',
+        'NAM-004',
+        'NAM-005',
+        'NAM-006',
+        'NAM-007',
+        'SEC-001',
+        'SEC-002',
+        'SEC-003',
+        'SEC-004',
+        'SEC-005',
+        'SEC-006',
+        'SEC-007',
+        'SEC-008',
+        'SEC-009',
+        'SEC-010',
+        'SEC-011',
+        'LLM-001',
+        'LLM-002',
+        'LLM-003',
+        'LLM-004',
+        'LLM-005',
+        'LLM-006',
+        'LLM-007',
+        'LLM-008',
+        'LLM-009',
+        'LLM-010',
+        'LLM-011',
+        'LLM-012',
+        'LLM-013',
+        'BP-001',
+        'BP-002',
+        'BP-003',
+        'BP-004',
+        'BP-005',
+        'BP-006',
+        'BP-007',
+        'BP-008',
+        'BP-009',
+        'BP-010',
+        'BP-011',
+        'BP-012',
       ];
       for (const id of ruleIds) {
         disabledRules[id] = false;
@@ -221,12 +273,16 @@ describe('Core Validator', () => {
       });
 
       const defaultResult = await validate([tool]);
-      expect(defaultResult.issues.filter((i) => i.id === 'SCH-009')).toHaveLength(1);
+      expect(
+        defaultResult.issues.filter((i) => i.id === 'SCH-009')
+      ).toHaveLength(1);
 
       const legacyResult = await validate([tool], {
         config: { specVersion: '2025-11-25' },
       });
-      expect(legacyResult.issues.filter((i) => i.id === 'SCH-009')).toHaveLength(0);
+      expect(
+        legacyResult.issues.filter((i) => i.id === 'SCH-009')
+      ).toHaveLength(0);
     });
 
     it('should include per-tool results', async () => {
@@ -350,14 +406,18 @@ inputSchema:
       const filePath = join(testDir, 'tool.txt');
       await writeFile(filePath, '{}');
 
-      await expect(validateFile(filePath)).rejects.toThrow(/Unsupported file format/);
+      await expect(validateFile(filePath)).rejects.toThrow(
+        /Unsupported file format/
+      );
     });
 
     it('should throw for invalid JSON', async () => {
       const filePath = join(testDir, 'invalid.json');
       await writeFile(filePath, '{ invalid json }');
 
-      await expect(validateFile(filePath)).rejects.toThrow(/Failed to parse JSON/);
+      await expect(validateFile(filePath)).rejects.toThrow(
+        /Failed to parse JSON/
+      );
     });
   });
 
@@ -393,7 +453,10 @@ inputSchema:
 
     it('should load config from file path when provided', async () => {
       const baseTmpDir = await realpath(tmpdir());
-      const testDir = join(baseTmpDir, `mcp-validator-config-test-${Date.now()}`);
+      const testDir = join(
+        baseTmpDir,
+        `mcp-validator-config-test-${Date.now()}`
+      );
       await mkdir(testDir, { recursive: true });
 
       try {
@@ -436,28 +499,27 @@ output:
       expect(result.summary.totalTools).toBe(1);
     });
 
-    it(
-      'completes when the schema is pathologically deep',
-      async () => {
-        let schema: Record<string, unknown> = { type: 'string' };
-        for (let i = 0; i < 20000; i++) {
-          schema = { type: 'object', properties: { a: schema } };
-        }
+    it('completes when the schema is pathologically deep', async () => {
+      let schema: Record<string, unknown> = { type: 'string' };
+      for (let i = 0; i < 20000; i++) {
+        schema = { type: 'object', properties: { a: schema } };
+      }
 
-        const result = await validate([
-          createValidTool({ inputSchema: schema }),
-        ]);
-        expect(result.summary.totalTools).toBe(1);
-      },
-      15_000
-    );
+      const result = await validate([createValidTool({ inputSchema: schema })]);
+      expect(result.summary.totalTools).toBe(1);
+    }, 15_000);
   });
 
   describe('LLM analysis wiring', () => {
     it('runs the analyzer and attaches per-tool results when enabled', async () => {
       const result = await validate([createValidTool()], {
         config: {
-          llm: { enabled: true, provider: 'anthropic', model: '', timeout: 1000 },
+          llm: {
+            enabled: true,
+            provider: 'anthropic',
+            model: '',
+            timeout: 1000,
+          },
         },
       });
 
