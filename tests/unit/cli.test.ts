@@ -9,6 +9,7 @@ import { spawn } from 'node:child_process';
 import { join } from 'node:path';
 import { mkdir, writeFile, rm, realpath, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
+import { VERSION } from '../../src/version.js';
 import {
   collectRules,
   enableLLM,
@@ -243,7 +244,7 @@ describe('CLI', () => {
       const { stdout, exitCode } = await runCLI(['--version']);
 
       expect(exitCode).toBe(0);
-      expect(stdout.trim()).toBe('0.1.0');
+      expect(stdout.trim()).toBe(VERSION);
     });
 
     it('should error when no file or server provided', async () => {

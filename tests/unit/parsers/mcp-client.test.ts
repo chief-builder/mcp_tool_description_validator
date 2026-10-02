@@ -9,6 +9,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { join } from 'node:path';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
+import { PACKAGE_NAME, VERSION } from '../../../src/version.js';
 
 // Create mock class instances
 const mockClientInstance = {
@@ -166,8 +167,8 @@ describe('MCP Client', () => {
 
       expect(Client).toHaveBeenCalledWith(
         {
-          name: 'mcp-tool-description-validator',
-          version: '0.1.0',
+          name: PACKAGE_NAME,
+          version: VERSION,
         },
         {
           capabilities: {},

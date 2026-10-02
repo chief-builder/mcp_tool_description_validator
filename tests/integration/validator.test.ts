@@ -7,6 +7,7 @@
 import { describe, it, expect } from 'vitest';
 import { validate, validateFile } from '../../src/index.js';
 import path from 'node:path';
+import { VERSION } from '../../src/version.js';
 
 describe('Validator Integration', () => {
   describe('validate() end-to-end', () => {
@@ -33,7 +34,7 @@ describe('Validator Integration', () => {
 
       const result = await validate(tools);
 
-      expect(result.metadata.validatorVersion).toBe('0.1.0');
+      expect(result.metadata.validatorVersion).toBe(VERSION);
       expect(result.metadata.mcpSpecVersion).toBe('2026-07-28');
       expect(result.tools).toHaveLength(1);
       expect(result.summary.totalTools).toBe(1);
