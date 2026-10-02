@@ -65,6 +65,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Check links to repository files
+        run: node scripts/check-repo-links.mjs
+
       - name: Check links
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
