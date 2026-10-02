@@ -198,6 +198,11 @@ const userConfigSchema = z.strictObject({
   llm: nullableSection(llmSchema),
 });
 
+// Remote callers of the HTTP service may tune rules and reporting, but not
+// the LLM section: it selects a provider endpoint and credentials, which
+// would let any client send the server's API key to a host of its choice.
+const requestConfigSchema = userConfigSchema.omit({ llm: true });
+
 /**
  * Inline configuration overrides (e.g. from CLI flags). Unlike a full
  * ValidatorConfig, every section may be partial.
@@ -224,15 +229,37 @@ export function validateUserConfig(
 ): Partial<ValidatorConfig> {
   const result = userConfigSchema.safeParse(raw);
   if (!result.success) {
-    const details = result.error.issues
-      .map((issue) => {
-        const path = issue.path.join('.') || '(root)';
-        return `  - ${path}: ${issue.message}`;
-      })
-      .join('\n');
-    throw new Error(`Invalid configuration in ${source}:\n${details}`);
+    throw new Error(formatConfigIssues(source, result.error.issues));
   }
   return result.data as Partial<ValidatorConfig>;
+}
+
+/**
+ * Validate and normalize configuration supplied by an untrusted remote
+ * caller (the HTTP service). Same rules as validateUserConfig, except the
+ * `llm` section is rejected.
+ *
+ * @throws Error with a human-readable message when the config is invalid
+ */
+export function validateRequestConfig(raw: unknown): ConfigOverrides {
+  const result = requestConfigSchema.safeParse(raw);
+  if (!result.success) {
+    throw new Error(formatConfigIssues('HTTP request', result.error.issues));
+  }
+  return result.data as ConfigOverrides;
+}
+
+function formatConfigIssues(
+  source: string,
+  issues: readonly { path: PropertyKey[]; message: string }[]
+): string {
+  const details = issues
+    .map((issue) => {
+      const path = issue.path.map(String).join('.') || '(root)';
+      return `  - ${path}: ${issue.message}`;
+    })
+    .join('\n');
+  return `Invalid configuration in ${source}:\n${details}`;
 }
 
 /**
@@ -289,12 +316,19 @@ export async function loadConfig(configPath?: string): Promise<LoadConfigResult>
  *
  * @param configPath - Optional explicit path to a config file
  * @param overrides - Inline overrides (e.g. from CLI flags)
+ * @param options.discover - Search the working directory for a config file
+ *   when no explicit path is given (default true). Pass false to start from
+ *   the built-in defaults without touching the filesystem.
  */
 export async function resolveConfig(
   configPath?: string,
-  overrides?: ConfigOverrides
+  overrides?: ConfigOverrides,
+  options: { discover?: boolean } = {}
 ): Promise<LoadConfigResult> {
-  const { config, filepath } = await loadConfig(configPath);
+  const { config, filepath } =
+    configPath !== undefined || options.discover !== false
+      ? await loadConfig(configPath)
+      : { config: getDefaultConfig(), filepath: null };
 
   if (!overrides) {
     return { config, filepath };

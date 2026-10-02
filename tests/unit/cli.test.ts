@@ -351,6 +351,16 @@ describe('CLI', () => {
       expect(stderr).toContain('Invalid port');
     });
 
+    it('should fail fast when the serve config is invalid', async () => {
+      const badConfig = join(testDir, 'bad.yaml');
+      await writeFile(badConfig, 'rules:\n  SEC-001: fatal\n');
+
+      const { stderr, exitCode } = await runCLI(['serve', '-c', badConfig, '-p', '0']);
+
+      expect(exitCode).toBe(2);
+      expect(stderr).toContain('Invalid configuration');
+    });
+
     it('should handle non-existent file gracefully', async () => {
       const { stderr, exitCode } = await runCLI(['/nonexistent/path/tools.json']);
 

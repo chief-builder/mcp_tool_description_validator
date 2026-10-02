@@ -13,6 +13,7 @@ import { validateFile, validateServer } from './core/validator.js';
 import { resolveConfig, type ConfigOverrides } from './core/config.js';
 import { VERSION } from './version.js';
 import { createDefaultLLMConfig } from './llm/analyzer.js';
+import { DEFAULT_HOST, DEFAULT_PORT, startServer } from './service/server.js';
 import {
   formatHumanOutput,
   formatJsonOutput,
@@ -217,6 +218,8 @@ program
     'Validate MCP tool definitions for quality, security, and LLM compatibility'
   )
   .version(VERSION)
+  // Options after `serve` belong to serve (e.g. `serve -c file`).
+  .enablePositionalOptions()
   .argument('[file]', 'Tool definition file to validate (JSON or YAML)')
   .option('-s, --server <url>', 'Validate tools from a live MCP server')
   .option(
@@ -274,17 +277,30 @@ program
 program
   .command('serve')
   .description('Start HTTP validation service')
-  .option('-p, --port <port>', 'Port to listen on', '8080')
-  .option('-h, --host <host>', 'Host to bind to', 'localhost')
-  .action(async (options: { port: string; host: string }) => {
+  .option('-p, --port <port>', 'Port to listen on', String(DEFAULT_PORT))
+  .option('-h, --host <host>', 'Host to bind to', DEFAULT_HOST)
+  .option('-c, --config <path>', 'Path to config file')
+  .action(async (options: { port: string; host: string; config?: string }) => {
     const port = Number.parseInt(options.port, 10);
     if (Number.isNaN(port) || port < 0 || port > 65535) {
       console.error(chalk.red('Error:'), `Invalid port: ${options.port}`);
       process.exitCode = 2;
       return;
     }
-    const { startServer } = await import('./service/server.js');
-    const server = startServer(port, options.host);
+    // Resolve and validate the server's config once, at startup, so a bad
+    // config fails fast instead of on every request.
+    let config: ValidatorConfig;
+    try {
+      ({ config } = await resolveConfig(options.config));
+    } catch (error) {
+      console.error(
+        chalk.red('Error:'),
+        error instanceof Error ? error.message : error
+      );
+      process.exitCode = 2;
+      return;
+    }
+    const server = startServer({ port, host: options.host, config });
     server.on('error', (error: Error) => {
       console.error(chalk.red('Error:'), `Cannot start server: ${error.message}`);
       process.exitCode = 2;

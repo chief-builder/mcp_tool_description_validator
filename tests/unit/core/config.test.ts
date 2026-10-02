@@ -16,6 +16,7 @@ import {
   isRuleEnabled,
   getRuleSeverity,
   resolveConfig,
+  validateRequestConfig,
 } from '../../../src/core/config.js';
 import type { ValidatorConfig, RuleConfig } from '../../../src/types/index.js';
 
@@ -536,5 +537,65 @@ describe('resolveConfig()', () => {
     } finally {
       await rm(tmpBase, { recursive: true, force: true });
     }
+  });
+
+  describe('validateRequestConfig', () => {
+    it('should accept and normalize rule, output, spec and profile settings', () => {
+      expect(
+        validateRequestConfig({
+          rules: { 'SEC-001': 'off', 'LLM-005': 'error' },
+          output: { verbose: true },
+          specVersion: '2025-11-25',
+          profile: 'compliance',
+        })
+      ).toEqual({
+        rules: { 'SEC-001': false, 'LLM-005': 'error' },
+        output: { verbose: true },
+        specVersion: '2025-11-25',
+        profile: 'compliance',
+      });
+    });
+
+    it('should reject an llm section', () => {
+      expect(() =>
+        validateRequestConfig({ llm: { enabled: true, apiKey: 'test-only' } })
+      ).toThrow(/Unrecognized key.*llm/);
+    });
+
+    it('should not echo rejected values in the error', () => {
+      expect(() =>
+        validateRequestConfig({ llm: { apiKey: 'test-only-secret-value' } })
+      ).not.toThrow(/test-only-secret-value/);
+    });
+
+    it('should reject invalid severities and unknown keys', () => {
+      expect(() => validateRequestConfig({ rules: { 'SEC-001': 'fatal' } })).toThrow(
+        'Invalid configuration in HTTP request'
+      );
+      expect(() => validateRequestConfig({ bogus: true })).toThrow(/bogus/);
+    });
+  });
+
+  describe('resolveConfig discovery', () => {
+    it('should skip filesystem discovery when discover is false', async () => {
+      // The repository root (the test cwd) contains mcp-validate.config.yaml.
+      const { config, filepath } = await resolveConfig(
+        undefined,
+        { profile: 'compliance' },
+        { discover: false }
+      );
+      expect(filepath).toBeNull();
+      expect(config.profile).toBe('compliance');
+      expect(config.rules).toEqual(getDefaultConfig().rules);
+    });
+
+    it('should still load an explicit path when discover is false', async () => {
+      const { filepath } = await resolveConfig(
+        join(process.cwd(), 'mcp-validate.config.yaml'),
+        undefined,
+        { discover: false }
+      );
+      expect(filepath).toContain('mcp-validate.config.yaml');
+    });
   });
 });

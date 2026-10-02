@@ -33,6 +33,12 @@ export interface ValidateOptions {
   config?: ConfigOverrides;
   /** Load config from file path */
   configPath?: string;
+  /**
+   * Search the working directory for a config file when `configPath` is
+   * not set (default true). Set to false to use only the built-in defaults
+   * plus `config`, e.g. when the caller has already resolved its config.
+   */
+  discoverConfig?: boolean;
   /** Reproducibility context for live-server discovery. */
   runContext?: {
     serverEndpoint: string;
@@ -79,7 +85,8 @@ export async function validate(
   // inline overrides per-section so they don't clobber file settings.
   const { config, filepath } = await resolveConfig(
     options.configPath,
-    options.config
+    options.config,
+    { discover: options.discoverConfig }
   );
 
   // Load enabled rules based on config and targeted spec version
@@ -211,7 +218,9 @@ export async function validateServer(
   serverUrl: string,
   options: ValidateOptions = {}
 ): Promise<ValidationResult> {
-  const { config } = await resolveConfig(options.configPath, options.config);
+  const { config } = await resolveConfig(options.configPath, options.config, {
+    discover: options.discoverConfig,
+  });
   const discoverySpecVersion =
     config.discoverySpecVersion ?? config.specVersion ?? DEFAULT_MCP_SPEC_VERSION;
   const tools = await fetchToolsFromServer({

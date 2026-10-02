@@ -71,8 +71,12 @@ export {
 export {
   createApp,
   startServer,
+  jsonLineLogger,
+  type CreateAppOptions,
   type StartServerOptions,
   type ValidateRequest,
+  type Logger,
+  type LogEntry,
 } from './service/server.js';
 
 // ============================================================================
