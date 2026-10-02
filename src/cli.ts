@@ -5,6 +5,8 @@
  * Command-line interface for validating MCP tool definitions.
  */
 
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { Command, Option } from 'commander';
 import chalk from 'chalk';
 import { validateFile, validateServer } from './core/validator.js';
@@ -105,7 +107,8 @@ async function runValidation(
       chalk.red('Error:'),
       'Must provide a file path or --server option'
     );
-    process.exit(2);
+    process.exitCode = 2;
+    return;
   }
 
   // Build overrides from options the user actually set, so config-file
@@ -200,9 +203,10 @@ async function runValidation(
 
   console.log(output);
 
-  // Exit code
+  // Exit code. Set rather than call process.exit() so piped output
+  // (large JSON/SARIF reports) is fully flushed before the process ends.
   if (options.ci && !result.valid) {
-    process.exit(1);
+    process.exitCode = 1;
   }
 }
 
@@ -262,7 +266,7 @@ program
         chalk.red('Error:'),
         error instanceof Error ? error.message : error
       );
-      process.exit(2);
+      process.exitCode = 2;
     }
   });
 
@@ -276,25 +280,40 @@ program
     const port = Number.parseInt(options.port, 10);
     if (Number.isNaN(port) || port < 0 || port > 65535) {
       console.error(chalk.red('Error:'), `Invalid port: ${options.port}`);
-      process.exit(2);
+      process.exitCode = 2;
+      return;
     }
     const { startServer } = await import('./service/server.js');
-    startServer(port, options.host);
+    const server = startServer(port, options.host);
+    server.on('error', (error: Error) => {
+      console.error(chalk.red('Error:'), `Cannot start server: ${error.message}`);
+      process.exitCode = 2;
+    });
   });
 
 // Export the program for testing
 export { program };
 
-// Only parse if this is the main module (not imported for testing)
-// Check if we're being run directly vs imported
-const isMainModule =
-  typeof process !== 'undefined' &&
-  process.argv[1] &&
-  (process.argv[1].endsWith('cli.js') ||
-    process.argv[1].endsWith('cli.ts') ||
-    process.argv[1].endsWith('mcp-validate.js') ||
-    process.argv[1].includes('/bin/mcp-validate'));
+/**
+ * Run the CLI with the given arguments. The `mcp-validate` bin calls this
+ * directly, so the CLI works however it is launched (npm/npx shims,
+ * symlinks, Windows paths).
+ */
+export async function run(argv: string[] = process.argv): Promise<void> {
+  await program.parseAsync(argv);
+}
 
-if (isMainModule) {
-  program.parse();
+// Also run when this file is executed directly (`node dist/cli.js`), but
+// not when it is imported (by bin/mcp-validate.js or by tests).
+function isMainModule(): boolean {
+  if (!process.argv[1]) return false;
+  try {
+    return realpathSync(process.argv[1]) === fileURLToPath(import.meta.url);
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule()) {
+  await run();
 }

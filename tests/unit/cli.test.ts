@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { spawn } from 'node:child_process';
 import { join } from 'node:path';
-import { mkdir, writeFile, rm, realpath } from 'node:fs/promises';
+import { mkdir, writeFile, rm, realpath, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { collectRules, parseRuleOverrides } from '../../src/cli.js';
 
@@ -128,10 +128,12 @@ describe('CLI', () => {
     /**
      * Helper to run the CLI and capture output.
      */
-    function runCLI(args: string[]): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+    function runCLI(
+      args: string[],
+      entry = join(process.cwd(), 'dist/cli.js')
+    ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
       return new Promise((resolve) => {
-        const cliPath = join(process.cwd(), 'dist/cli.js');
-        const child = spawn('node', [cliPath, ...args], {
+        const child = spawn('node', [entry, ...args], {
           cwd: process.cwd(),
           env: { ...process.env, FORCE_COLOR: '0' },
         });
@@ -354,6 +356,48 @@ describe('CLI', () => {
 
       expect(exitCode).toBe(2);
       expect(stderr).toContain('Error:');
+    });
+
+    it('should run through the bin script', async () => {
+      const binPath = join(process.cwd(), 'bin/mcp-validate.js');
+      const { stdout, exitCode } = await runCLI(['--version'], binPath);
+
+      expect(exitCode).toBe(0);
+      expect(stdout.trim()).toMatch(/^\d+\.\d+\.\d+/);
+    });
+
+    it('should run through a node_modules/.bin-style symlink', async () => {
+      // npm and npx launch the CLI through a symlink in node_modules/.bin;
+      // the entry point must not depend on the invoked path.
+      const binDir = join(testDir, 'node_modules', '.bin');
+      await mkdir(binDir, { recursive: true });
+      const link = join(binDir, 'mcp-validate');
+      await symlink(join(process.cwd(), 'bin/mcp-validate.js'), link);
+
+      const { stdout, exitCode } = await runCLI(['--version'], link);
+
+      expect(exitCode).toBe(0);
+      expect(stdout.trim()).toMatch(/^\d+\.\d+\.\d+/);
+    });
+
+    it('should flush large JSON output before exiting in CI mode', async () => {
+      const fixturePath = join(process.cwd(), 'examples/needs-work-tools.json');
+      const { stdout, exitCode } = await runCLI([
+        fixturePath,
+        '--format',
+        'json',
+        '--ci',
+      ]);
+
+      expect(exitCode).toBe(1);
+      expect(() => JSON.parse(stdout)).not.toThrow();
+    });
+
+    it('should exit 2 without a file or --server', async () => {
+      const { stderr, exitCode } = await runCLI([]);
+
+      expect(exitCode).toBe(2);
+      expect(stderr).toContain('Must provide a file path or --server option');
     });
 
     it('should respect verbose flag', async () => {
