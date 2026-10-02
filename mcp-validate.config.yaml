@@ -2,20 +2,22 @@
 # See https://github.com/chief-builder/mcp_tool_description_validator for full documentation
 
 # Rule configuration
-# Set to false to disable a rule, or set to 'error', 'warning', or 'suggestion' to override severity
+# Set to false (or off) to disable a rule, or set to 'error', 'warning', or
+# 'suggestion' to override severity. Unknown rule IDs are rejected.
+# See docs/RULES.md for every rule.
 rules:
   # Schema rules (SCH-xxx) - JSON Schema compliance
-  # SCH-001: true  # Require valid JSON Schema
+  # SCH-004: true  # inputSchema and outputSchema must be valid JSON Schema
 
   # Naming rules (NAM-xxx) - Naming convention enforcement
-  # NAM-001: true  # Tool names should be kebab-case
+  # NAM-002: true  # Tool name should be 1-128 characters using only [A-Za-z0-9_.-]
 
   # Security rules (SEC-xxx) - Security vulnerability detection
-  # SEC-001: true  # String parameters should have maxLength
-  # SEC-002: true  # Array parameters should have maxItems
+  # SEC-001: true  # String parameters must have maxLength (except content fields)
+  # SEC-002: true  # Array parameters must have maxItems
 
   # LLM compatibility rules (LLM-xxx) - LLM understanding optimization
-  # LLM-001: true  # Description should be present and non-empty
+  # LLM-001: true  # Tool description should be non-empty
   # LLM-005: error  # Override severity to error
 
   # Best practice rules (BP-xxx) - Recommended patterns
@@ -27,7 +29,8 @@ output:
   verbose: false   # Show additional details
   color: true      # Enable colored output (terminal only)
 
-# MCP protocol revision (2026-07-28 is the current finalized specification)
+# MCP protocol revision: 2026-07-28 (default, the latest released revision)
+# or 2025-11-25.
 specVersion: "2026-07-28"
 
 # Optional live-discovery revision. Omit to inherit specVersion.

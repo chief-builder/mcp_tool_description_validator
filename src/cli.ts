@@ -13,6 +13,7 @@ import { validateFile, validateServer } from './core/validator.js';
 import { resolveConfig, type ConfigOverrides } from './core/config.js';
 import { VERSION } from './version.js';
 import { MCP_SPEC_VERSIONS } from './core/spec-versions.js';
+import { RULES } from './rules/index.js';
 import { resolveLLMConfig } from './llm/defaults.js';
 import { DEFAULT_HOST, DEFAULT_PORT, startServer } from './service/server.js';
 import {
@@ -54,6 +55,8 @@ export function collectRules(
 
 /**
  * Parse rule settings from CLI into config format.
+ *
+ * @throws Error for an unknown rule ID or an unrecognized setting
  */
 export function parseRuleOverrides(
   ruleOverrides: Record<string, string>
@@ -61,6 +64,9 @@ export function parseRuleOverrides(
   const rules: Record<string, boolean | IssueSeverity> = {};
 
   for (const [id, setting] of Object.entries(ruleOverrides)) {
+    if (!Object.hasOwn(RULES, id)) {
+      throw new Error(`--rule: unknown rule ID "${id}"`);
+    }
     const normalizedSetting = setting.toLowerCase();
     if (normalizedSetting === 'off' || normalizedSetting === 'false') {
       rules[id] = false;
@@ -72,6 +78,10 @@ export function parseRuleOverrides(
       normalizedSetting === 'suggestion'
     ) {
       rules[id] = normalizedSetting as IssueSeverity;
+    } else {
+      throw new Error(
+        `--rule ${id}: invalid setting "${setting}" (use on, off, error, warning, or suggestion)`
+      );
     }
   }
 

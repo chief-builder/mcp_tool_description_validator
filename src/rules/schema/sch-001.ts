@@ -26,7 +26,7 @@ const rule: Rule = {
         message: 'Tool must include a non-empty string "name" field',
         tool: typeof tool.name === 'string' && tool.name ? tool.name : '(unnamed)',
         path: 'name',
-        suggestion: 'Add a descriptive name for the tool using kebab-case (e.g., "get-user-profile")',
+        suggestion: 'Add a descriptive name for the tool (e.g., "get-user-profile")',
         documentation: this.documentation,
       });
     }

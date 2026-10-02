@@ -128,8 +128,24 @@ const nullableSection = <T extends z.ZodType>(schema: T) =>
     .optional()
     .transform((value) => (value === null ? undefined : value));
 
+// Unknown rule IDs (typos, retired rules) would otherwise be silently
+// ignored, leaving the user believing a rule is configured.
+const rulesSchema = z
+  .record(z.string(), ruleSettingSchema)
+  .superRefine((rules, ctx) => {
+    for (const id of Object.keys(rules)) {
+      if (!Object.hasOwn(RULES, id)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: [id],
+          message: `Unknown rule ID "${id}"`,
+        });
+      }
+    }
+  });
+
 const userConfigSchema = z.strictObject({
-  rules: nullableSection(z.record(z.string(), ruleSettingSchema)),
+  rules: nullableSection(rulesSchema),
   output: nullableSection(outputSchema),
   specVersion: z.enum(MCP_SPEC_VERSIONS).optional(),
   discoverySpecVersion: z.enum(MCP_SPEC_VERSIONS).optional(),

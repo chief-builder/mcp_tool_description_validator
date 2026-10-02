@@ -279,7 +279,7 @@ output:
         JSON.stringify({
           rules: {
             'BP-001': false,
-            'NAM-001': 'suggestion',
+            'NAM-002': 'suggestion',
           },
           output: {
             format: 'sarif',
@@ -293,7 +293,7 @@ output:
 
       expect(result.filepath).toBe(configPath);
       expect(result.config.rules['BP-001']).toBe(false);
-      expect(result.config.rules['NAM-001']).toBe('suggestion');
+      expect(result.config.rules['NAM-002']).toBe('suggestion');
       expect(result.config.output.format).toBe('sarif');
     });
 
@@ -533,6 +533,12 @@ describe('resolveConfig()', () => {
       expect(() =>
         validateRequestConfig({ llm: { apiKey: 'test-only-secret-value' } })
       ).not.toThrow(/test-only-secret-value/);
+    });
+
+    it('should reject unknown rule IDs', () => {
+      expect(() => validateRequestConfig({ rules: { 'NAM-001': false } })).toThrow(
+        'Unknown rule ID "NAM-001"'
+      );
     });
 
     it('should reject invalid severities and unknown keys', () => {

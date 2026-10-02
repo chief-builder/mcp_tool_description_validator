@@ -103,12 +103,22 @@ describe('CLI', () => {
       });
     });
 
-    it('should ignore invalid values', () => {
-      const result = parseRuleOverrides({
-        'SEC-001': 'invalid',
-        'SEC-002': 'error',
-      });
-      expect(result).toEqual({ 'SEC-002': 'error' });
+    it('should reject invalid values', () => {
+      expect(() =>
+        parseRuleOverrides({ 'SEC-001': 'invalid', 'SEC-002': 'error' })
+      ).toThrow('--rule SEC-001: invalid setting "invalid"');
+    });
+
+    it('should reject a missing value', () => {
+      expect(() => parseRuleOverrides(collectRules('SEC-001', {}))).toThrow(
+        'invalid setting'
+      );
+    });
+
+    it('should reject unknown rule IDs', () => {
+      expect(() => parseRuleOverrides({ 'NAM-001': 'off' })).toThrow(
+        '--rule: unknown rule ID "NAM-001"'
+      );
     });
 
     it('should handle empty input', () => {

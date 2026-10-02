@@ -23,7 +23,7 @@ export type JSONSchema = Record<string, unknown>;
  * Internal representation of an MCP tool definition.
  */
 export interface ToolDefinition {
-  /** Tool name (kebab-case recommended) */
+  /** Tool name (1-128 characters of [A-Za-z0-9_.-]) */
   name: string;
 
   /** Optional human-readable display name (takes precedence over annotations.title) */
