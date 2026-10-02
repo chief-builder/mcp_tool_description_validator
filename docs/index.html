@@ -6,7 +6,7 @@
     <title>MCP Tool Validator</title>
     <meta
       name="description"
-      content="Validate MCP tool definitions against the finalized 2026-07-28 specification, governance policy, and LLM ergonomics. CLI, library, HTTP API, and live-server discovery."
+      content="Validate MCP tool definitions against the MCP 2026-07-28 specification, governance policy, and LLM ergonomics. CLI, library, HTTP API, and live-server discovery."
     />
     <style>
       :root {
@@ -536,7 +536,7 @@
                   <span>report formats</span>
                 </div>
                 <div class="metric">
-                  <strong>1,036</strong>
+                  <strong>1,086</strong>
                   <span>tests in the current suite</span>
                 </div>
               </div>
@@ -552,17 +552,20 @@
               <pre class="terminal-body"><span class="muted-code">$ mcp-validate --server https://drivemcp.googleapis.com/mcp/v1 \</span>
 <span class="muted-code">    --discovery-spec-version 2025-11-25 --spec-version 2026-07-28 \</span>
 <span class="muted-code">    --profile compliance</span>
-MCP Tool Validator v0.1.0
+MCP Tool Validator v0.2.0
 
 Validating: 8 tool(s)
 Profile: compliance
 Validation spec: 2026-07-28
 Discovery spec: 2025-11-25
-
+<span class="muted-code">…per-tool findings omitted…</span>
 Summary: <span class="ok">8/8 tools valid</span>
+  Errors: 0  Warnings: 48  Suggestions: 17
+
+Maturity: <span class="ok">MATURE</span> (86/100)
 MCP specification compliance passed.
 Governance threshold passed.
-Maturity: <span class="ok">MATURE</span> (87/100)</pre>
+<span class="muted-code"># excerpt of a run on 2026-10-02</span></pre>
             </figure>
           </div>
         </section>
@@ -657,9 +660,10 @@ Maturity: <span class="ok">MATURE</span> (87/100)</pre>
         <section class="section">
           <h2>Proven Against a Live MCP Server</h2>
           <p class="section-intro">
-            A documented run against Google's managed Drive MCP server used
-            legacy discovery and finalized-rule validation independently. All
-            eight public tools passed the compliance profile at 87/100 without
+            Runs against Google's managed Drive MCP server used legacy
+            discovery and 2026-07-28 rule validation independently. All eight
+            public tools passed the compliance profile (86/100 on the
+            2026-10-02 re-run, with its full report committed) without
             accessing Drive data or executing a tool.
           </p>
           <div class="actions">
@@ -695,8 +699,9 @@ Maturity: <span class="ok">MATURE</span> (87/100)</pre>
         <section class="section">
           <h2>Quick Commands</h2>
           <div class="code-panel">
-            <pre>npm install
-npm run build
+            <pre>git clone https://github.com/chief-builder/mcp_tool_description_validator.git
+cd mcp_tool_description_validator
+npm ci && npm run build && npm link
 mcp-validate examples/polished-tools.json --profile compliance
 mcp-validate examples/needs-work-tools.json --verbose
 mcp-validate --server "node ./server.js" --discovery-spec-version 2025-11-25
