@@ -97,6 +97,7 @@
     "examples",
     "README.md"
   ],
+  "homepage": "https://chief-builder.github.io/mcp_tool_description_validator/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chief-builder/mcp_tool_description_validator.git"
